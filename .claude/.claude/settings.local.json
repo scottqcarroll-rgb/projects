@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/scarroll/OneDrive/Desktop/Claude_Code//**)",
+      "PowerShell(& \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" repo create nc-wedding-venues --public --description \"NC wedding venue research and scoring data\")",
+      "Bash(sshpass -p 'admin' ssh -o StrictHostKeyChecking=no scott@192.168.1.222 'uname -a')",
+      "Read(//c/Users/scarroll/.ssh/**)",
+      "Bash(ssh -i ~/.ssh/id_ed25519 scott@192.168.1.222 'ls -la ~/gemma_env/')",
+      "Bash(ssh -i ~/.ssh/id_ed25519 scott@192.168.1.222 'ls -lah ~/Downloads/ | head -30')",
+      "PowerShell(choco --version)",
+      "PowerShell(choco install ffmpeg -y)",
+      "Bash(sshpass -p \"admin\" ssh Scott@192.168.1.222 \"uname -a && echo '---' && which ffmpeg\")",
+      "Bash(ssh -o *)",
+      "Bash(echo \"SSH connection attempt completed with result: $?\")",
+      "Bash(expect -c ' *)",
+      "Bash(ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no Scott@192.168.1.222 \"echo 'Successfully connected!' && uname -a\")",
+      "Bash(scp -i ~/.ssh/id_ed25519_linux -r top-down-shooter scott@192.168.1.222:~/projects/games/)",
+      "Bash(scp -i ~/.ssh/id_ed25519_linux tic-tac-toe.html scott@192.168.1.222:~/projects/games/)",
+      "Bash(scp -i '~/.ssh/id_ed25519_linux' nc_distressed_wedding_venues.csv nc_venues_scorecard.csv venue_dossier.html greater_atlanta_metro_venue_dossier.html greater_atlanta_metro_venues_scorecard.csv 'scott@192.168.1.222:~/projects/venue-research/')",
+      "Bash(scp -i ~/.ssh/id_ed25519_linux -r .claude scott@192.168.1.222:~/projects/)",
+      "Bash(scp -i ~/.ssh/id_ed25519_linux CLAUDE.md scott@192.168.1.222:~/projects/)"
+    ]
+  }
+}

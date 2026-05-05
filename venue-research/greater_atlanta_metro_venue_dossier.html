@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greater Atlanta Metro Distressed Venue Targets — Strategy Dossier</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 40px 24px; }
+  header { max-width: 1100px; margin: 0 auto 48px; border-bottom: 1px solid #2d3748; padding-bottom: 28px; }
+  header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #a0aec0; }
+  header h2 { font-size: 36px; font-weight: 800; color: #f7fafc; margin-top: 6px; line-height: 1.2; }
+  header p { margin-top: 12px; color: #718096; font-size: 14px; }
+  .legend { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #a0aec0; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 24px; }
+  .card { background: #1a1f2e; border-radius: 16px; border: 1px solid #2d3748; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s; }
+  .card:hover { border-color: #4a5568; }
+  .card-header { padding: 20px 24px 16px; border-bottom: 1px solid #2d3748; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .card-title-block { flex: 1; }
+  .card-title { font-size: 18px; font-weight: 700; color: #f7fafc; line-height: 1.3; }
+  .card-location { font-size: 12px; color: #718096; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .badge-group { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+  .badge-acquire { background: #2d1b1b; color: #fc8181; border: 1px solid #9b2c2c; }
+  .badge-partner { background: #1a2d1e; color: #68d391; border: 1px solid #276749; }
+  .badge-monitor { background: #1a1f2d; color: #76e4f7; border: 1px solid #2b6cb0; }
+  .badge-nodata  { background: #2d2d1a; color: #f6e05e; border: 1px solid #975a16; }
+  .score-ring { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; font-size: 22px; font-weight: 900; flex-shrink: 0; }
+  .score-5 { background: #1a2d20; color: #48bb78; border: 2px solid #48bb78; }
+  .score-4 { background: #1a2820; color: #68d391; border: 2px solid #68d391; }
+  .score-3 { background: #1e2a1a; color: #f6e05e; border: 2px solid #d69e2e; }
+  .score-2 { background: #2a1e1a; color: #fbd38d; border: 2px solid #c05621; }
+  .score-1 { background: #2d1a1a; color: #fc8181; border: 2px solid #9b2c2c; }
+  .card-body { padding: 20px 24px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4a5568; margin-bottom: 6px; }
+  .status-pill { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+  .status-open    { background: #1a2d20; color: #68d391; }
+  .status-closed  { background: #2d1b1b; color: #fc8181; }
+  .status-active  { background: #1a2438; color: #76e4f7; }
+  .status-unclear { background: #2d2d1a; color: #f6e05e; }
+  .scores-row { display: flex; gap: 12px; }
+  .score-mini-block { flex: 1; background: #131720; border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .score-mini-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #4a5568; margin-bottom: 4px; }
+  .score-mini-val { font-size: 24px; font-weight: 800; line-height: 1; }
+  .score-mini-dots { display: flex; justify-content: center; gap: 3px; margin-top: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #2d3748; }
+  .dot.on-acq  { background: #fc8181; }
+  .dot.on-part { background: #68d391; }
+  .bar-bg { flex: 1; height: 6px; background: #2d3748; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .conf-high   { background: #48bb78; width: 100%; }
+  .conf-medium { background: #f6e05e; width: 60%; }
+  .conf-low    { background: #e53e3e; width: 25%; }
+  .time-sensitivity-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
+  .ts-critical { background: #2d1b1b; color: #fc8181; border: 1px solid #9b2c2c; }
+  .ts-high     { background: #2d2415; color: #fbd38d; border: 1px solid #c05621; }
+  .ts-medium   { background: #1a2438; color: #76e4f7; border: 1px solid #2b6cb0; }
+  .ts-low      { background: #1e2030; color: #718096; border: 1px solid #4a5568; }
+  .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .pulse-critical { background: #fc8181; animation: pulse 1.2s infinite; }
+  .pulse-high     { background: #fbd38d; }
+  .pulse-medium   { background: #76e4f7; }
+  .pulse-low      { background: #718096; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .distress-box { background: #131720; border-left: 3px solid #4a5568; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #a0aec0; line-height: 1.6; }
+  .outreach-box { background: #131a14; border-left: 3px solid #276749; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #9ae6b4; line-height: 1.6; font-style: italic; }
+  .card-footer { padding: 12px 24px; border-top: 1px solid #2d3748; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #4a5568; }
+  .insufficient { opacity: 0.55; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Greater Atlanta Metro Distressed Wedding Venue Intelligence</h1>
+  <h2>Acquisition &amp; Partnership Target Dossier</h2>
+  <p>Generated May 1, 2026 &nbsp;·&nbsp; 5 targets identified &nbsp;·&nbsp; 3 actionable &nbsp;·&nbsp; 1 monitor &nbsp;·&nbsp; 0 insufficient data</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#fc8181"></div> Acquire</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#68d391"></div> Partner</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#76e4f7"></div> Monitor</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f6e05e"></div> Insufficient Data</div>
+  </div>
+</header>
+
+<div class="grid">
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-block">
+      <div class="card-title">Champagne Manor</div>
+      <div class="card-location">Monroe &nbsp;·&nbsp; Union County, NC</div>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-acquire">ACQUIRE</span>
+      <span class="score-ring score-5">5</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div>
+      <div class="section-label">Status</div>
+      <span class="status-pill status-closed">FORECLOSED</span>
+    </div>
+
+    <div>
+      <div class="section-label">Time Sensitivity</div>
+      <span class="time-sensitivity-chip ts-critical">
+        <span class="pulse pulse-critical"></span>
+        CRITICAL
+      </span>
+      <div style="font-size:12px;color:#718096;margin-top:8px;">Active court proceedings. Foreclosure filing in progress. Asset window is open NOW.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Scores</div>
+      <div class="scores-row">
+        <div class="score-mini-block">
+          <div class="score-mini-label">Acquisition</div>
+          <div class="score-mini-val" style="color:#fc8181;">5</div>
+          <div class="score-mini-dots">
+            <span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Partnership</div>
+          <div class="score-mini-val" style="color:#68d391;">3</div>
+          <div class="score-mini-dots">
+            <span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Data Confidence</div>
+          <div class="score-mini-val" style="color:#48bb78;">HIGH</div>
+          <div class="bar-bg" style="margin-top:6px;"><div class="bar-fill conf-high"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Key Distress Signals</div>
+      <div class="distress-box">Owner Jason Lottmann arrested for $4.6M fraud scheme. Property in foreclosure. 30+ couples defrauded ($40-50K each). Owner actively accepting deposits from new victims while property in foreclosure. Federal charges pending.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Outreach Angle</div>
+      <div class="outreach-box">We specialize in venue acquisition of foreclosed properties with existing customer base. We can accelerate your exit timeline and minimize legal exposure from pending fraud cases.</div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <span>Source: WBTV, WCNC, WECT, WMBFNews, OK Magazine, Union County Sheriff</span>
+    <span>Outreach Priority: <strong style="color:#fc8181">HIGH</strong></span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-block">
+      <div class="card-title">409 South Main</div>
+      <div class="card-location">Memphis &nbsp;·&nbsp; Shelby County, TN</div>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-acquire">ACQUIRE</span>
+      <span class="score-ring score-5">5</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div>
+      <div class="section-label">Status</div>
+      <span class="status-pill status-closed">CLOSED — FORECLOSURE</span>
+    </div>
+
+    <div>
+      <div class="section-label">Time Sensitivity</div>
+      <span class="time-sensitivity-chip ts-critical">
+        <span class="pulse pulse-critical"></span>
+        CRITICAL
+      </span>
+      <div style="font-size:12px;color:#718096;margin-top:8px;">Building in active foreclosure/sale process. Asset window closing imminently.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Scores</div>
+      <div class="scores-row">
+        <div class="score-mini-block">
+          <div class="score-mini-label">Acquisition</div>
+          <div class="score-mini-val" style="color:#fc8181;">5</div>
+          <div class="score-mini-dots">
+            <span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Partnership</div>
+          <div class="score-mini-val" style="color:#68d391;">3</div>
+          <div class="score-mini-dots">
+            <span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Data Confidence</div>
+          <div class="score-mini-val" style="color:#48bb78;">HIGH</div>
+          <div class="bar-bg" style="margin-top:6px;"><div class="bar-fill conf-high"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Key Distress Signals</div>
+      <div class="distress-box">Building in active foreclosure/sale. Renovation loan from Downtown Memphis Commission cancelled. Social media inactive since summer 2024. Owner failed to communicate closure to booked couples. Multiple deposits unrecovered ($3,600+).</div>
+    </div>
+
+    <div>
+      <div class="section-label">Outreach Angle</div>
+      <div class="outreach-box">The building is a strong downtown asset with existing events infrastructure. We can work directly with foreclosure trustee to accelerate acquisition and minimize your carrying costs. We specialize in venue operations in secondary markets.</div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <span>Source: Action News 5 (Memphis), WVLT, Local media reports</span>
+    <span>Outreach Priority: <strong style="color:#fc8181">HIGH</strong></span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-block">
+      <div class="card-title">The Cotton Room</div>
+      <div class="card-location">Durham &nbsp;·&nbsp; Durham County, NC</div>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-partner">PARTNER</span>
+      <span class="score-ring score-5">5</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div>
+      <div class="section-label">Status</div>
+      <span class="status-pill status-open">OPEN</span>
+    </div>
+
+    <div>
+      <div class="section-label">Time Sensitivity</div>
+      <span class="time-sensitivity-chip ts-medium">
+        <span class="pulse pulse-medium"></span>
+        MEDIUM
+      </span>
+      <div style="font-size:12px;color:#718096;margin-top:8px;">Fresh media crisis (national coverage). Family actively pursuing refund; legal escalation likely.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Scores</div>
+      <div class="scores-row">
+        <div class="score-mini-block">
+          <div class="score-mini-label">Acquisition</div>
+          <div class="score-mini-val" style="color:#fc8181;">1</div>
+          <div class="score-mini-dots">
+            <span class="dot on-acq"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Partnership</div>
+          <div class="score-mini-val" style="color:#68d391;">5</div>
+          <div class="score-mini-dots">
+            <span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Data Confidence</div>
+          <div class="score-mini-val" style="color:#48bb78;">HIGH</div>
+          <div class="bar-bg" style="margin-top:6px;"><div class="bar-fill conf-high"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Key Distress Signals</div>
+      <div class="distress-box">Owner refusing $18,382 refund after groom's sudden death (May 2025). National media backlash (Fox News, WRAL, social media). 100+ negative reviews posted since incident. Family publicly demanding compassion-based refund.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Outreach Angle</div>
+      <div class="outreach-box">Reputation crisis = acquisition opportunity. Offering refund + modest goodwill to Perry family would generate positive press, clear reputational debt. We specialize in rebranding distressed venues and can absorb PR recovery costs.</div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <span>Source: Fox News, WRAL, national media, social media</span>
+    <span>Outreach Priority: <strong style="color:#76e4f7">MEDIUM</strong></span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-block">
+      <div class="card-title">The Farm's Champion Estate</div>
+      <div class="card-location">Durham &nbsp;·&nbsp; Durham County, NC</div>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-partner">PARTNER</span>
+      <span class="score-ring score-4">4</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div>
+      <div class="section-label">Status</div>
+      <span class="status-pill status-active">OPEN — CHAPTER 11 BANKRUPTCY</span>
+    </div>
+
+    <div>
+      <div class="section-label">Time Sensitivity</div>
+      <span class="time-sensitivity-chip ts-high">
+        <span class="pulse pulse-high"></span>
+        HIGH
+      </span>
+      <div style="font-size:12px;color:#718096;margin-top:8px;">Still-open venue facing bankruptcy court payment deadlines. Reorganization contingent on strict compliance.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Scores</div>
+      <div class="scores-row">
+        <div class="score-mini-block">
+          <div class="score-mini-label">Acquisition</div>
+          <div class="score-mini-val" style="color:#68d391;">4</div>
+          <div class="score-mini-dots">
+            <span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Partnership</div>
+          <div class="score-mini-val" style="color:#68d391;">5</div>
+          <div class="score-mini-dots">
+            <span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span><span class="dot on-part"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Data Confidence</div>
+          <div class="score-mini-val" style="color:#f6e05e;">MEDIUM</div>
+          <div class="bar-bg" style="margin-top:6px;"><div class="bar-fill conf-medium"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Key Distress Signals</div>
+      <div class="distress-box">Chapter 11 bankruptcy filed January 2024. <200 couples affected. Company stated "simply not confident we will comply" with court payment schedule. Pre-bankruptcy bookings at high risk; post-Jan 25 bookings carry 100% refund guarantee.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Outreach Angle</div>
+      <div class="outreach-box">We specialize in managing venues through bankruptcy restructuring. Your location and customer relationships have inherent value. We can assume Chapter 11 obligations and stabilize operations under new management, converting your liability into an asset.</div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <span>Source: ABC11, WTVD, bankruptcy court filings</span>
+    <span>Outreach Priority: <strong style="color:#fc8181">HIGH</strong></span>
+  </div>
+</div>
+
+<div class="card insufficient">
+  <div class="card-header">
+    <div class="card-title-block">
+      <div class="card-title">Unnamed Raleigh Venue</div>
+      <div class="card-location">Raleigh &nbsp;·&nbsp; Wake County, NC</div>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-monitor">MONITOR</span>
+      <span class="score-ring score-2">2</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div>
+      <div class="section-label">Status</div>
+      <span class="status-pill status-closed">CLOSED</span>
+    </div>
+
+    <div>
+      <div class="section-label">Time Sensitivity</div>
+      <span class="time-sensitivity-chip ts-low">
+        <span class="pulse pulse-low"></span>
+        LOW
+      </span>
+      <div style="font-size:12px;color:#718096;margin-top:8px;">Closure already occurred. Couples recovered via media pressure. Underlying opportunity unclear.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Scores</div>
+      <div class="scores-row">
+        <div class="score-mini-block">
+          <div class="score-mini-label">Acquisition</div>
+          <div class="score-mini-val" style="color:#fbd38d;">3</div>
+          <div class="score-mini-dots">
+            <span class="dot on-acq"></span><span class="dot on-acq"></span><span class="dot on-acq"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Partnership</div>
+          <div class="score-mini-val" style="color:#fbd38d;">1</div>
+          <div class="score-mini-dots">
+            <span class="dot on-part"></span>
+          </div>
+        </div>
+        <div class="score-mini-block">
+          <div class="score-mini-label">Data Confidence</div>
+          <div class="score-mini-val" style="color:#e53e3e;">LOW</div>
+          <div class="bar-bg" style="margin-top:6px;"><div class="bar-fill conf-low"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Key Distress Signals</div>
+      <div class="distress-box">Venue closed suddenly. CBS 17 investigation prompted refund recovery. Limited public data on owner identity, property status, or underlying financials. Closure likely resolved or venue may be defunct.</div>
+    </div>
+
+    <div>
+      <div class="section-label">Outreach Angle</div>
+      <div class="outreach-box">Monitor only—insufficient data for immediate action. Recommend tracking for future opportunity if property/ownership changes surface additional distress signals or real estate movement.</div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <span>Source: CBS 17</span>
+    <span>Outreach Priority: <strong style="color:#718096">LOW</strong></span>
+  </div>
+</div>
+
+</div>
+
+<div style="max-width:1100px;margin:48px auto 0;padding:24px;border-top:1px solid #2d3748;font-size:12px;color:#4a5568;text-align:center;">
+  Greater Atlanta Metro Distressed Wedding Venue Intelligence &nbsp;·&nbsp; Compiled May 1, 2026 &nbsp;·&nbsp; For internal strategy use only
+</div>
+
+</body>
+</html>

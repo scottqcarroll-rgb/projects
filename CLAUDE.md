@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL: Linux Server Setup
+
+**ON EVERY SESSION START:** You must read `SETUP_SUMMARY.md` in this directory. It contains:
+
+- Server login credentials and connection methods
+- SSH configuration (Host: `clawz840`, IP: `100.124.71.12`)
+- Project locations on the Linux server (`~/projects/`)
+- Tailscale VPN network configuration
+- Daily automated tasks and monitoring
+- Quick start commands for all operations
+
+**Never ask the user how to login to the Linux server.** If you need to SSH, use `ssh clawz840` and reference the setup guide.
+
+---
+
 ## Repository Overview
 
 This repository is a **collection of independent projects and tools**, not a monolithic codebase. Each project operates independently:

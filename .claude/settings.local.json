@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh scott@100.124.71.12 'cd ~/projects && git add docs/superpowers/specs/2026-05-07-odoo17-production-crm-design.md && git commit -m '\\\\''Add Odoo 17 production CRM installation design spec *)"
+    ]
+  }
+}

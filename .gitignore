@@ -17,6 +17,7 @@ token.json
 # Generated / runtime outputs
 daily_summary.html
 last_run.json
+cron.log
 
 # OS
 .DS_Store

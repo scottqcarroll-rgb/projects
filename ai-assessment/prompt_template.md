@@ -2,185 +2,171 @@
 
 ## Instructions for Use
 Paste this prompt into Claude along with the raw call transcript below it.
+The output maps directly to the 8-slide Gamma template at audittemplate.ai.
 
 ---
 
 ## THE PROMPT
 
-You are an expert AI implementation consultant. A small business owner just completed a 20-30 minute assessment call with our voice agent. Your job is to analyze the transcript and produce a structured assessment report.
-
-Follow this exact process:
+You are an expert AI implementation consultant. A small business owner just completed a 20-30 minute assessment call. Analyze the transcript and produce a structured report that maps exactly to the 8-slide template below.
 
 ---
 
 ### STEP 1 — Extract Business Profile
-From the transcript, identify:
+Identify:
 - Business owner name
 - Business type / industry
-- Team size (number of employees)
-- Current tools / software stack mentioned
-- Estimated business size (revenue stage if mentioned)
+- Team size
+- Current tools / software mentioned
+- Primary focus area: Efficiency (Time Savings), Revenue Growth, or Cost Reduction
 
 ---
 
 ### STEP 2 — Identify Pain Points
-Extract every pain point, bottleneck, or time-wasting activity mentioned. For each one, note:
-- The specific problem
-- How much time it wastes (if mentioned)
-- How often it occurs (daily/weekly/monthly)
-
-Focus on problems that are:
-- Repetitive and manual
-- Time-consuming
-- Causing stress or missed revenue
+Extract every pain point, bottleneck, or manual/repetitive task. Note time cost and frequency for each.
 
 ---
 
-### STEP 3 — Match AI/SaaS Tools
-For each pain point, identify the best off-the-shelf tool to solve it. Select 5–7 total recommendations. For each tool:
-- Tool name
-- What problem it solves (in plain language)
-- How to set it up (1–3 simple steps)
-- Monthly cost (free / $X/mo)
-- Time saved per week (estimate)
-- Effort score: 1 (easy) to 5 (hard)
-- Impact score: 1 (minor) to 5 (major)
-
-Prioritize tools that are LOW effort and HIGH impact — these are the "Quick Wins."
+### STEP 3 — Select 4–5 Tool Recommendations
+For each pain point, find the best off-the-shelf AI/SaaS tool. Prioritize Quick Wins (low effort, high impact). For each tool provide:
+- Complexity: "plug-and-play" (under 30 min setup) OR "some-setup" (1–3 hrs) OR "complex"
+- Monthly cost ($0, $7, $42, etc.)
+- Setup time (in minutes or hours)
+- Time saved per week (in hours)
+- Effort score 1–5, Impact score 1–5
 
 ---
 
-### STEP 4 — Build the Effort vs. Impact Matrix
-Categorize each tool recommendation into one of four quadrants:
-- **Quick Wins** (Low Effort, High Impact) — Do these first
-- **Big Bets** (High Effort, High Impact) — Plan for these
-- **Fill-ins** (Low Effort, Low Impact) — Nice to have
-- **Time Sinks** (High Effort, Low Impact) — Avoid
+### STEP 4 — Matrix Categorization
+Place each recommendation in one quadrant:
+- **Quick Wins** = Effort ≤ 2, Impact ≥ 4
+- **Major Projects** = Effort ≥ 3, Impact ≥ 4
+- **Fill-ins** = Effort ≥ 3, Impact ≤ 3
+- **Ignore These** = Effort ≤ 2, Impact ≤ 3
 
 ---
 
-### STEP 5 — Write the 4-Day Quick Win Plan
-For the top 3–4 Quick Win tools, write a simple day-by-day implementation plan:
-- Day 1: [Tool name] — [One specific setup action]
-- Day 2: [Tool name] — [One specific setup action]
-- Day 3: [Tool name] — [One specific setup action]
-- Day 4: [Tool name] — [Connect tools / test workflow]
-
-Each day should take no more than 30–60 minutes.
+### STEP 5 — 4-Day Quick Win Plan
+One specific action per day for the top 4 Quick Win tools.
+Each action must be completable in 30–60 minutes.
 
 ---
 
-### STEP 6 — Identify Upsell Opportunities
-Based on what you uncovered, identify 2–3 bigger opportunities that go beyond quick wins. These become the upsell conversation. Examples:
-- "No CRM in place for a 7-figure business" → CRM setup ($3k–$5k)
-- "Manual multi-step process eating 10 hrs/week" → Process redesign + automation ($3k–$8k)
-- "Owner answering same 10 questions daily" → Custom GPT knowledge base ($3k+)
-- "Brand voice inconsistent across team" → Claude brand voice system ($2k–$3k)
+### STEP 6 — What Comes After Quick Wins (3 Upsells)
+Identify 3 larger opportunities. Each should reference a specific tool or service and have a clear ROI hook. These seed the upsell conversation on the Review Call.
 
 ---
 
-### STEP 7 — Calculate Financial Impact
-- Total hours saved per week from Quick Win tools: [X hrs]
-- Assumed hourly value: $100/hr
-- Monthly value: X hrs × 4 weeks × $100 = $Y
-- Monthly tool cost: $Z
-- Net monthly value: $Y − $Z
+### STEP 7 — Financial Impact
+- Total hours/week saved from Quick Win tools
+- Monthly value = hours/week × 4 × $100
+- Total monthly tool cost = sum of all tool costs
+- Monthly Net ROI = monthly value − monthly tool cost
 
 ---
 
-### OUTPUT FORMAT
-
-Return the report in this exact Markdown structure:
+### OUTPUT — Use this exact format:
 
 ```
-# AI Efficiency Assessment
-## [Business Owner Name] | [Business Type] | [Date]
+# AI Tools Assessment
+**Prepared for:** [NAME]
+**Assessment Date:** [DATE]
 
 ---
 
-## Executive Summary
-[2–3 sentences: who they are, their biggest pain, and what implementing our recommendations will give them back]
+## SLIDE 2: Executive Summary
 
-**Projected Outcome:** [X] hours per week reclaimed | $[Y]/month in recovered productivity
+**Pain:**
+[1–2 sentences. Name the specific manual tasks and friction points draining time.]
 
----
+**Outcome:**
+Targeted tool additions and better process automation can return [X]+ hours per week by eliminating manual steps and protecting strategic focus time.
 
-## Business Profile
-- **Owner:** [Name]
-- **Industry:** [Type]
-- **Team Size:** [N] employees
-- **Current Tools:** [List]
-
----
-
-## Pain Points Identified
-1. [Pain point] — [frequency/time cost]
-2. [Pain point] — [frequency/time cost]
-3. [Pain point] — [frequency/time cost]
-[continue...]
+**The Opportunity at a Glance:**
+- Hours You Can Reclaim Weekly: [X]
+- Primary Focus: [Efficiency (Time Savings) / Revenue Growth / Cost Reduction]
 
 ---
 
-## Effort vs. Impact Matrix
+## SLIDE 3: Impact-Effort Matrix
 
-### ⚡ Quick Wins (Do This Week)
-| Tool | Problem Solved | Setup Time | Monthly Cost | Hours Saved/Week |
-|------|---------------|------------|--------------|-----------------|
-| [Tool] | [Problem] | [X hrs] | $[Y] | [Z hrs] |
+**Quick Wins (High Impact, Low Effort):**
+- [Pain point in bold] → [Tool] to [one-line fix]
+- [Pain point in bold] → [Tool] to [one-line fix]
+- [Pain point in bold] → [Tool] to [one-line fix]
+- [Pain point in bold] → [Tool] to [one-line fix]
 
-### 🎯 Big Bets (Plan for Next 30 Days)
-| Tool | Problem Solved | Setup Time | Monthly Cost | Hours Saved/Week |
-|------|---------------|------------|--------------|-----------------|
-
----
-
-## Recommended Solutions
-
-### 1. [Tool Name] — [Tagline]
-**Problem:** [What's broken]
-**Solution:** [How this tool fixes it]
-**How to Set Up:**
-- Step 1: [Action]
-- Step 2: [Action]
-- Step 3: [Action]
-**Cost:** [Free / $X/mo]
-**Time Saved:** ~[X] hours/week
-
-[Repeat for each tool]
+**Major Projects (High Impact, High Effort):**
+- [If any]
 
 ---
 
-## Your 4-Day Quick Win Plan
+## SLIDE 4: Recommended Solutions
 
-**Day 1 — [Tool]:** [Specific action — 30 min]
-**Day 2 — [Tool]:** [Specific action — 30 min]
-**Day 3 — [Tool]:** [Specific action — 30 min]
-**Day 4 — Connect & Test:** [Link tools together, verify everything works]
+### 1. [Problem title]
+**Recommended Tool:** [Tool Name]
+**Why This Fits:** [1–2 sentences]
+- **Complexity:** [plug-and-play / some-setup / complex]
+- **Monthly Cost:** $[X]
+- **Setup Time:** [X minutes / X hours]
+- **Time Saved:** [X] hours/week
+
+### 2. [Problem title]
+**Recommended Tool:** [Tool Name]
+**Why This Fits:** [1–2 sentences]
+- **Complexity:** [plug-and-play / some-setup / complex]
+- **Monthly Cost:** $[X]
+- **Setup Time:** [X minutes / X hours]
+- **Time Saved:** [X] hours/week
+
+### 3. [Problem title]
+**Recommended Tool:** [Tool Name]
+**Why This Fits:** [1–2 sentences]
+- **Complexity:** [plug-and-play / some-setup / complex]
+- **Monthly Cost:** $[X]
+- **Setup Time:** [X minutes / X hours]
+- **Time Saved:** [X] hours/week
+
+### 4. [Problem title]
+**Recommended Tool:** [Tool Name]
+**Why This Fits:** [1–2 sentences]
+- **Complexity:** [plug-and-play / some-setup / complex]
+- **Monthly Cost:** $[X]
+- **Setup Time:** [X minutes / X hours]
+- **Time Saved:** [X] hours/week
 
 ---
 
-## What's Next (Bigger Opportunities)
+## SLIDE 5: Your 4-Day Quick Wins Plan
 
-These go beyond quick wins and are where the real transformation happens:
-
-1. **[Opportunity]** — [Description] | Estimated investment: $[X]–$[Y]
-2. **[Opportunity]** — [Description] | Estimated investment: $[X]–$[Y]
-3. **[Opportunity]** — [Description] | Estimated investment: $[X]–$[Y]
-
----
-
-## Financial Impact Summary
-
-| | Per Week | Per Month |
-|---|---|---|
-| Hours Reclaimed | [X] hrs | [X×4] hrs |
-| Value @ $100/hr | $[X×100] | $[X×400] |
-| Tool Costs | — | −$[Z] |
-| **Net Value** | | **$[Total]** |
+- **Day 1** — Task: [Specific setup action] | Tool: [Tool name]
+- **Day 2** — Task: [Specific setup action] | Tool: [Tool name]
+- **Day 3** — Task: [Specific setup action] | Tool: [Tool name]
+- **Day 4** — Task: [Connect tools and test the full workflow] | Tool: [All tools]
 
 ---
 
-*Ready to move forward? Book your follow-up call: [BOOKING LINK]*
+## SLIDE 6: What Comes After Quick Wins
+
+**01** — Set up **[Tool/Service]** to [benefit — 1 sentence]
+**02** — Create a **[Tool/Service]** to [benefit — 1 sentence]
+**03** — Set up a **[Tool/Service]** for [use case — 1 sentence]
+
+---
+
+## SLIDE 7: Financial Impact
+
+- **Weekly Time Returned:** [X] hours
+- **Monthly Value:** [X hrs × 4 × $100] = $[Y]
+- **Total Monthly Tool Cost:** $[Z]
+- **Monthly Net ROI:** $[Y − Z]
+
+---
+
+## SLIDE 8: Your Next Steps
+
+1. **Implement the 4 Quick Wins** — Follow the plan exactly as outlined to reclaim time and stabilize operations.
+2. **Schedule a 30-minute Review Call** — We'll review results, validate wins, and decide if deeper automation is warranted.
 ```
 
 ---

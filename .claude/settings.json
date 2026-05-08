@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(find /home/scott -maxdepth 4 -name \"*.py\" -o -name \"*.md\" -o -name \"*.js\" 2>/dev/null | grep -iv \"venv\\\\|node_modules\\\\|\\\\.claude\\\\|projects\" | head -20)",
+      "Read(//home/scott/**)",
+      "Bash(mkdir -p /home/scott/projects/ai-assessment/sample_transcripts /home/scott/projects/ai-assessment/reports /home/scott/projects/ai-assessment/report_template && echo \"Folders created\")"
+    ],
+    "additionalDirectories": [
+      "/home/scott/projects/ai-assessment"
     ]
   }
 }

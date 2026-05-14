@@ -12,6 +12,7 @@ build/
 # Secrets & credentials
 .env
 .env.apify
+.env.samgov
 credentials.json
 token.json
 

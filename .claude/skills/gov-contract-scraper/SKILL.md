@@ -13,21 +13,17 @@ If not found, ask the user to paste their SAM.gov API key.
 
 ---
 
-## Step 2 — Ask Three Questions Only
+## Step 2 — Apply Default Search Settings
 
-**Question 1 — Max price:**
-> "What's the maximum contract value you want to see? (e.g. $300,000)"
+Use these defaults every time. Do NOT ask the user about these unless they specifically say they want to change something:
 
-**Question 2 — Min price (optional):**
-> "Any minimum? Or just show everything under that max?"
+- **Max price:** $300,000
+- **Min price:** None (no floor)
+- **Location:** Nationwide (no state filter)
+- **Results:** Pull as many as the API returns (use limit=100)
 
-**Question 3 — Location (optional):**
-> "Any specific state? Or search nationwide?"
-
-Do NOT ask about industry. Do NOT ask about NAICS. Search broad unless the user specifically requests a category.
-
-Confirm:
-> "Searching SAM.gov for contracts under $[MAX], [location or nationwide]. Running now..."
+Just confirm and go:
+> "Searching SAM.gov — contracts under $300,000, nationwide. Running now..."
 
 ---
 
@@ -42,7 +38,7 @@ GET https://api.sam.gov/opportunities/v2/search?
   &awardCeiling={MAX_PRICE}
   &postedFrom={DATE_14_DAYS_AGO}
   &postedTo={TODAY}
-  &limit=25
+  &limit=100
   &offset=0
 ```
 

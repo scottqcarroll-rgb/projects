@@ -1,6 +1,6 @@
-# Government Contracts Business — Breezar Investments LLC
+# Government Contracts Business — Brisar Investments LLC
 **Created:** 2026-05-14
-**Entity:** Breezar Investments LLC — registered Georgia
+**Entity:** Brisar Investments LLC — registered Georgia
 **Model:** Prime contractor → subcontract the work → keep the margin
 
 ---
@@ -34,7 +34,7 @@
 ---
 
 ## Setup Checklist
-- [x] LLC formed — Breezar Investments LLC (Georgia)
+- [x] LLC formed — Brisar Investments LLC (Georgia)
 - [ ] SAM.gov registration — **NEXT STEP**
 - [ ] Get SAM.gov API key (free at sam.gov/profile/developer)
 - [ ] First contract found and bid
@@ -44,7 +44,7 @@
 
 ## SAM.gov Setup Instructions
 1. Go to sam.gov → Create Account
-2. Register your entity (Breezar Investments LLC)
+2. Register your entity (Brisar Investments LLC)
    - Have your EIN ready
    - Have your NAICS codes ready (use the list above)
    - Bank account for EFT payment setup
@@ -111,7 +111,7 @@ Once past performance is established:
 ---
 
 ## Notes from Transcript
-- Generic name "Breezar Investments" = can bid on ANY industry ✓
+- Generic name "Brisar Investments" = can bid on ANY industry ✓
 - Under $350K = RFQ (Request for Quote) — no past performance needed
 - Over $350K = RFP (Request for Proposal) — need past performance or teaming partner
 - Government modifications: if scope creep, push back and get paid more

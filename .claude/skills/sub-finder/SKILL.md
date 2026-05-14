@@ -104,7 +104,7 @@ Contract Deadline: [DATE] — Call HOT candidates TODAY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CALLING SCRIPT (read this when they pick up):
 
-"Hi, this is Scott Carroll from Breezar Investments. We're a government
+"Hi, this is Scott Carroll from Brisar Investments. We're a government
 contracting firm and we have an opportunity — the [AGENCY] is putting out
 a contract for [BRIEF DESCRIPTION] in [CITY]. The job runs [TIMEFRAME].
 We'd like to bring you on as our subcontractor for this. I need a quote

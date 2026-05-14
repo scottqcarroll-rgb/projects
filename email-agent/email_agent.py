@@ -117,6 +117,7 @@ def main():
         return
 
     all_emails = []
+    gmail_service = None
 
     # Fetch from Gmail
     if check_gmail:

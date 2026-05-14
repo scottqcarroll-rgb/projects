@@ -11,6 +11,7 @@ build/
 
 # Secrets & credentials
 .env
+.env.apify
 credentials.json
 token.json
 

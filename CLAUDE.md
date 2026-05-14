@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL: Session Continuity — Read Previous Sessions
+
+**ON EVERY SESSION START:** Read the most recent session log from `.claude/sessions/`. Session logs are named `YYYY-MM-DD.md` and contain a full summary of what was built, decisions made, next steps, and active projects.
+
+```bash
+ls /home/scott/projects/.claude/sessions/
+```
+
+Read the most recent file to get full context before starting any work. This is how you know what Scott has been working on without him having to explain it every time.
+
+**At the END of every session:** Save a new session log to `.claude/sessions/YYYY-MM-DD.md` (use today's date), then commit and push it to GitHub.
+
+---
+
 ## ⚠️ CRITICAL: Linux Server Setup
 
 **ON EVERY SESSION START:** You must read `SETUP_SUMMARY.md` in this directory. It contains:

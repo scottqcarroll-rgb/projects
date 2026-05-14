@@ -43,38 +43,39 @@ Confirm before running:
 
 ---
 
-## Step 3 — Map Industry to NAICS Codes
+## Step 3 — Map Industry to Search Keywords
 
-Use this mapping to build the NAICS filter:
+Use keyword search — NOT NAICS codes — for best results. NAICS filtering on the SAM.gov API is too broad and returns hardware/parts contracts. Keywords pull targeted service contracts.
 
-| User Says | NAICS Codes to Search |
+| User Says | Keywords to Search |
 |---|---|
-| HVAC | 238220 |
-| Facility Maintenance | 561210, 811310 |
-| IT Services | 541519, 334111 |
-| Construction | 236220, 236118 |
-| Landscaping | 561730 |
-| Janitorial | 561720 |
-| Hazardous Waste | 562112 |
-| Equipment Repair | 811310 |
-| All | 238220, 561210, 811310, 541519, 236220, 561730, 561720, 562112 |
+| HVAC | "HVAC maintenance", "HVAC repair", "air conditioning service", "heating ventilation" |
+| Facility Maintenance | "facility maintenance", "building maintenance", "facilities support" |
+| IT Services | "IT support", "information technology services", "network support", "help desk" |
+| Construction | "construction services", "renovation", "building repair" |
+| Landscaping | "grounds maintenance", "landscaping services", "mowing", "lawn care" |
+| Janitorial | "janitorial services", "custodial services", "cleaning services" |
+| Hazardous Waste | "hazardous waste", "waste disposal", "environmental services", "spill response" |
+| Equipment Repair | "equipment repair", "equipment maintenance", "preventive maintenance" |
+| All | run one search per industry keyword set above — ONE AT A TIME with 2 second delay between each |
 
 ---
 
 ## Step 4 — Call SAM.gov API
 
-Make this GET request for each NAICS code:
+**CRITICAL: Make ONE request at a time. Wait 2 seconds between each request. Never batch rapid calls or the API key will be rate-limited (429 error).**
+
+Make this GET request for each keyword:
 
 ```
 GET https://api.sam.gov/opportunities/v2/search?
   api_key={SAM_API_KEY}
   &ptype=o,k
-  &naicsCode={NAICS}
+  &keyword={URL_ENCODED_KEYWORD}
   &postedFrom={DATE_14_DAYS_AGO}
   &postedTo={TODAY}
-  &limit=25
+  &limit=10
   &offset=0
-  &typeOfSetAside=SBA,8A,HZC,WOSB,EDWOSB,VSB,SDVOSB
 ```
 
 Date format: MM/dd/yyyy
@@ -83,6 +84,8 @@ If a location was specified, add:
 ```
   &state={STATE_ABBREVIATION}
 ```
+
+Wait 2 seconds between each keyword search call.
 
 Parse the response JSON. Each result contains:
 - `title` — contract name

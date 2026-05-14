@@ -17,6 +17,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## ⚠️ CRITICAL: GitHub Push Protocol
+
+**EVERY skill, project, or file created on this server must be committed and pushed to GitHub immediately.**
+
+- After every `git commit` → immediately run `git push`
+- Every new project folder → add to git, commit, push
+- Every new skill (.md file) → copy to `/home/scott/projects/.claude/skills/`, commit, push
+- Skills live in TWO places: `~/.claude/skills/` (active) AND `projects/.claude/skills/` (backed up to GitHub)
+- Never leave work only on the server — if the server is lost, GitHub is the backup
+
+**No exceptions. Every session. Every change.**
+
+---
+
 ## Repository Overview
 
 This repository is a **collection of independent projects and tools**, not a monolithic codebase. Each project operates independently:

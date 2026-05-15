@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "telegram": {
+      "command": "/home/scott/.bun/bin/bun",
+      "args": ["run", "--cwd", "/home/scott/.claude/plugins/telegram@claude-plugins-official", "--shell=bun", "--silent", "start"],
+      "env": {
+        "TELEGRAM_BOT_TOKEN": "8956120702:AAHkybZGPINiy5HkP4sX3R07Z1GxBnfF-gg"
+      }
+    }
+  }
+}

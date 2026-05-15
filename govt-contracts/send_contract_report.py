@@ -22,19 +22,27 @@ SAM_KEY_FILE = '/home/scott/projects/.env.samgov'
 RECIPIENT    = 'scottqcarroll@gmail.com'
 PROSPECT_DIR = '/home/scott/projects/govt-contracts/prospect-lists'
 
-WINDOW_DAYS  = 30
-RECORD_LIMIT = 1000
+WINDOW_DAYS   = 30
+RECORD_LIMIT  = 1000
+AWARD_CEILING = 350000
 
 CATEGORIES = {
     'Facility & Grounds Services': {
-        'codes':  ['561730', '561720'],
+        'codes':  ['561210', '561720', '561730', '561740', '238910'],
         'bg':     '#f0fdf4',
         'border': '#22c55e',
         'accent': '#16a34a',
         'icon':   '🏗️',
     },
-    'Environmental & Waste Management': {
-        'codes':  ['562112', '562211'],
+    'Security & Pest Control': {
+        'codes':  ['561612', '561710'],
+        'bg':     '#fef2f2',
+        'border': '#ef4444',
+        'accent': '#dc2626',
+        'icon':   '🛡️',
+    },
+    'Waste & Environmental Services': {
+        'codes':  ['562111', '562112', '562211', '562998'],
         'bg':     '#fff7ed',
         'border': '#f97316',
         'accent': '#ea580c',
@@ -46,13 +54,6 @@ CATEGORIES = {
         'border': '#3b82f6',
         'accent': '#2563eb',
         'icon':   '🧺',
-    },
-    'Clothing & Apparel Supply': {
-        'codes':  ['424350', '458110'],
-        'bg':     '#faf5ff',
-        'border': '#a855f7',
-        'accent': '#7c3aed',
-        'icon':   '👔',
     },
 }
 
@@ -79,7 +80,7 @@ def fetch_contracts(api_key):
         f'https://api.sam.gov/opportunities/v2/search'
         f'?api_key={api_key}'
         f'&ptype=o,k'
-        f'&awardCeiling=300000'
+        f'&awardCeiling={AWARD_CEILING}'
         f'&postedFrom={from_date}'
         f'&postedTo={to_date}'
         f'&limit={RECORD_LIMIT}'
@@ -288,7 +289,7 @@ def build_html(bucketed, run_date):
       📋 Brisar Investments — Government Contract Report
     </h1>
     <p style="margin:0 0 20px;color:#6b7280">
-      Under $300,000 &nbsp;|&nbsp; Nationwide &nbsp;|&nbsp; Posted last {WINDOW_DAYS} days &nbsp;|&nbsp; {run_date}
+      Under $350,000 &nbsp;|&nbsp; Nationwide &nbsp;|&nbsp; Posted last {WINDOW_DAYS} days &nbsp;|&nbsp; {run_date}
     </p>
     <div style="display:flex;gap:20px;flex-wrap:wrap">
       <div style="text-align:center;background:#f0fdf4;border-radius:8px;padding:12px 20px;min-width:90px">
@@ -427,7 +428,7 @@ def main():
     html         = build_html(bucketed, run_date)
     gmail        = get_authenticated_service()
     urgent_total = sum(1 for v in bucketed.values() for c in v if c['urgent'])
-    subject      = f'📋 Brisar Contracts {run_date} — {total_matched} matched, {urgent_total} closing soon'
+    subject      = f'📋 Brisar Contracts {run_date} — {total_matched} matched (under $350K), {urgent_total} closing soon'
     send_email(gmail, subject, html)
 
 

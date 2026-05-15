@@ -553,6 +553,39 @@ def api_bids_delete(bid_id):
     return jsonify({"error": "Not found"}), 404
 
 
+def _usaspending_awards(naics, state="", limit=100):
+    """Shared helper — fetch recent contract awards from USASpending.gov for a NAICS code.
+    Max 100 per page (USASpending hard limit)."""
+    body = {
+        "subawards": False,
+        "fields": [
+            "Award ID", "Recipient Name", "Award Amount",
+            "Awarding Agency", "Awarding Sub Agency",
+            "Period of Performance Start Date", "Place of Performance State Code",
+            "NAICS Code",
+        ],
+        "filters": {
+            "award_type_codes": ["A", "B", "C", "D"],   # procurement contracts only
+            "naics_codes": [naics],
+            "award_amounts": [{"lower_bound": 1, "upper_bound": 350000}],
+        },
+        "limit": min(limit, 100),   # USASpending max is 100 per page
+        "page": 1,
+        "sort": "Award Amount",
+        "order": "desc",
+    }
+    if state:
+        body["filters"]["place_of_performance_scope"] = "domestic"
+        body["filters"]["place_of_performance_states"] = [state]
+
+    resp = requests.post(
+        "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+        json=body, timeout=30
+    )
+    resp.raise_for_status()
+    return resp.json().get("results") or []
+
+
 @app.route("/api/usaspending/pricing")
 def api_pricing():
     naics = request.args.get("naics", "")
@@ -560,34 +593,82 @@ def api_pricing():
     if not naics:
         return jsonify({"error": "naics required"}), 400
     try:
-        body = {
-            "filters": {
-                "naics_codes": [naics],
-                "award_amounts": [{"lower_bound": 0, "upper_bound": 350000}],
-            },
-            "fields": ["Award Amount", "recipient_name", "awarding_agency_name", "place_of_performance_state_code"],
-            "limit": 100,
-            "page": 1,
-            "sort": "Award Amount",
-            "order": "desc",
-        }
-        if state:
-            body["filters"]["place_of_performance_scope"] = "domestic"
-            body["filters"]["place_of_performance_states"] = [state]
-        resp = requests.post(
-            "https://api.usaspending.gov/api/v2/search/spending_by_award/",
-            json=body, timeout=20
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        awards = [r["data"] for r in (data.get("results") or [])]
-        if awards:
-            amounts = [float(a[0]) for a in awards if a and a[0]]
-            avg = sum(amounts) / len(amounts) if amounts else 0
-            high = max(amounts) if amounts else 0
-            low  = min(amounts) if amounts else 0
-            return jsonify({"naics": naics, "avg": avg, "high": high, "low": low, "count": len(amounts)})
+        results = _usaspending_awards(naics, state, limit=100)
+        amounts = []
+        for r in results:
+            try:
+                v = float(r.get("Award Amount") or 0)
+                if v > 0:
+                    amounts.append(v)
+            except Exception:
+                pass
+        if amounts:
+            return jsonify({
+                "naics": naics,
+                "avg":   sum(amounts) / len(amounts),
+                "high":  max(amounts),
+                "low":   min(amounts),
+                "count": len(amounts),
+            })
         return jsonify({"naics": naics, "avg": 0, "high": 0, "low": 0, "count": 0})
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
+
+
+@app.route("/api/usaspending/competitors")
+def api_competitors():
+    """Return top previous winners for a NAICS code — the Competitor X-Ray."""
+    naics = request.args.get("naics", "")
+    state = request.args.get("state", "")
+    if not naics:
+        return jsonify({"error": "naics required"}), 400
+    try:
+        results = _usaspending_awards(naics, state, limit=200)
+
+        # Group by recipient
+        winners = {}
+        for r in results:
+            name   = (r.get("Recipient Name") or "Unknown").title()
+            amount = float(r.get("Award Amount") or 0)
+            agency = r.get("Awarding Sub Agency") or r.get("Awarding Agency") or "Unknown"
+            date   = (r.get("Period of Performance Start Date") or "")[:10]
+            st     = r.get("Place of Performance State Code") or ""
+
+            if name not in winners:
+                winners[name] = {
+                    "name":        name,
+                    "win_count":   0,
+                    "total_value": 0,
+                    "agencies":    set(),
+                    "states":      set(),
+                    "latest":      "",
+                }
+            w = winners[name]
+            w["win_count"]   += 1
+            w["total_value"] += amount
+            w["agencies"].add(agency)
+            if st:
+                w["states"].add(st)
+            if date > w["latest"]:
+                w["latest"] = date
+
+        # Serialize and sort by win count
+        ranked = sorted(
+            [
+                {
+                    "name":        v["name"],
+                    "win_count":   v["win_count"],
+                    "total_value": v["total_value"],
+                    "avg_value":   v["total_value"] / v["win_count"] if v["win_count"] else 0,
+                    "agencies":    sorted(v["agencies"])[:3],   # top 3 agencies
+                    "states":      sorted(v["states"]),
+                    "latest":      v["latest"],
+                }
+                for v in winners.values()
+            ],
+            key=lambda x: (-x["win_count"], -x["total_value"])
+        )
+        return jsonify({"naics": naics, "competitors": ranked[:20], "total_awards": len(results)})
     except Exception as ex:
         return jsonify({"error": str(ex)}), 500
 

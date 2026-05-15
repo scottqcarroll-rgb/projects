@@ -502,8 +502,12 @@ function analysisHTML(c) {
     </div>
   </div>` : ''}
   <div class="analysis-section">
-    <button class="btn-secondary" onclick="loadPricing('${c.naics}', '${c.state}')">Load Historical Pricing from USASpending.gov</button>
-    <div id="pricing-results"></div>
+    <h4>Historical Pricing — NAICS ${c.naics}</h4>
+    <div id="pricing-results"><div class="spinner-inline"></div> Loading from USASpending.gov…</div>
+  </div>
+  <div class="analysis-section">
+    <h4>Competitor X-Ray — Previous Winners</h4>
+    <div id="competitor-results"><div class="spinner-inline"></div> Loading…</div>
   </div>`;
 }
 
@@ -558,21 +562,54 @@ function loadSubs(naics, state) {
 
 function loadPricing(naics, state) {
   const el = document.getElementById("pricing-results");
-  el.innerHTML = '<div class="spinner-inline"></div> Loading…';
-  fetch(`/api/usaspending/pricing?naics=${naics}&state=${state}`)
+  if (!el) return;
+  el.innerHTML = '<div class="spinner-inline"></div> Querying USASpending.gov…';
+  fetch(`/api/usaspending/pricing?naics=${naics}&state=${encodeURIComponent(state)}`)
     .then(r => r.json())
     .then(d => {
-      if (d.error) { el.innerHTML = `<p class="error">Error: ${d.error}</p>`; return; }
+      if (d.error) { el.innerHTML = `<p class="error">USASpending error: ${d.error}</p>`; return; }
       el.innerHTML = d.count ? `
         <div class="pricing-box">
-          <h5>USASpending.gov — NAICS ${naics} Historical Awards</h5>
           <div class="pricing-grid">
-            <div><label>Avg Award</label><span>${fmtDollar(d.avg)}</span></div>
-            <div><label>High</label><span>${fmtDollar(d.high)}</span></div>
             <div><label>Low</label><span>${fmtDollar(d.low)}</span></div>
-            <div><label>Sample Size</label><span>${d.count} awards</span></div>
+            <div><label>Average</label><span class="pricing-avg">${fmtDollar(d.avg)}</span></div>
+            <div><label>High</label><span>${fmtDollar(d.high)}</span></div>
+            <div><label>Sample</label><span>${d.count} awards</span></div>
           </div>
-        </div>` : '<p class="muted">No comparable awards found.</p>';
+          <div class="pricing-note">Based on similar NAICS ${naics} awards under $350K on USASpending.gov</div>
+        </div>` : '<p class="muted">No comparable awards found on USASpending.gov.</p>';
+    })
+    .catch(e => { el.innerHTML = `<p class="error">${e}</p>`; });
+}
+
+function loadCompetitors(naics, state) {
+  const el = document.getElementById("competitor-results");
+  if (!el) return;
+  el.innerHTML = '<div class="spinner-inline"></div> Analyzing previous winners…';
+  fetch(`/api/usaspending/competitors?naics=${naics}&state=${encodeURIComponent(state)}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { el.innerHTML = `<p class="error">${d.error}</p>`; return; }
+      const comps = d.competitors || [];
+      if (!comps.length) { el.innerHTML = '<p class="muted">No previous winners found.</p>'; return; }
+      el.innerHTML = `
+        <div class="comp-meta">${d.total_awards} recent awards analyzed · top ${comps.length} winners shown</div>
+        <div class="comp-table">
+          <div class="comp-header">
+            <span>Company</span><span>Wins</span><span>Avg Value</span><span>Last Win</span>
+          </div>
+          ${comps.map((c, i) => `
+          <div class="comp-row ${i === 0 ? 'comp-top' : ''}">
+            <div class="comp-name">
+              ${i === 0 ? '🏆 ' : ''}${escHtml(c.name)}
+              <div class="comp-agencies">${c.agencies.map(a => escHtml(a)).join(' · ')}</div>
+              ${c.states.length ? `<div class="comp-states">📍 ${c.states.join(', ')}</div>` : ''}
+            </div>
+            <div class="comp-wins"><strong>${c.win_count}</strong></div>
+            <div class="comp-value">${fmtDollar(c.avg_value)}</div>
+            <div class="comp-date">${c.latest || '—'}</div>
+          </div>`).join('')}
+        </div>`;
     })
     .catch(e => { el.innerHTML = `<p class="error">${e}</p>`; });
 }
@@ -607,6 +644,14 @@ function switchTab(name, btn) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("tab-" + name).classList.remove("hidden");
   btn.classList.add("active");
+  // Auto-load intelligence data when analysis tab is opened
+  if (name === "analysis" && selectedId) {
+    const c = allResults.find(r => r.id === selectedId);
+    if (c) {
+      loadPricing(c.naics, c.state);
+      loadCompetitors(c.naics, c.state);
+    }
+  }
 }
 
 function setView(view) {

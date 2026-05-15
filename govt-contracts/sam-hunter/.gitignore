@@ -1,0 +1,5 @@
+sam-hunter.log
+data/search_cache.json
+data/api_usage.json
+__pycache__/
+*.pyc

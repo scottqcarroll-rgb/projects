@@ -109,10 +109,13 @@
     <button class="btn-primary btn-search-go" onclick="runSearch()">
       🔍 Search Contracts
     </button>
-    <button class="btn-secondary btn-search-go" onclick="runSearch(false)"
-            title="Force fresh API call, ignore cache">
+    <button class="btn-secondary btn-search-go" id="btn-refresh" onclick="confirmRefresh()"
+            title="Pull fresh 1,000 records from SAM.gov (costs 1 daily API call)">
       ↺ Refresh from SAM.gov
     </button>
+    <div class="api-usage-bar" id="api-usage-bar">
+      <span id="usage-text">Loading…</span>
+    </div>
 
     <div class="filter-section score-legend">
       <div class="legend-title">Score Legend</div>
@@ -173,35 +176,128 @@
 const NAICS_LABELS = {{ naics_labels | tojson }};
 let allResults = [];
 let currentView = "cards";
-let selectedId   = null;
+let selectedId  = null;
+let statusData  = {};
 
-function runSearch(useCache = true) {
+// ── Status bar ─────────────────────────────────────────────
+function loadStatus() {
+  fetch("/api/status")
+    .then(r => r.json())
+    .then(s => {
+      statusData = s;
+      const el = document.getElementById("usage-text");
+      const calls = s.api_calls_today;
+      const lim   = s.api_limit;
+      const pct   = Math.round((calls / lim) * 100);
+      if (s.has_daily_file) {
+        el.innerHTML = `📦 <strong>${s.daily_record_count.toLocaleString()}</strong> records on file · pulled ${s.daily_pulled} &nbsp;|&nbsp; API: <span class="${calls > 900 ? 'usage-warn' : ''}">${calls}/${lim}</span> calls used today`;
+      } else {
+        el.innerHTML = `⚠️ No data file for today — click <strong>Refresh from SAM.gov</strong> to pull 1,000 records (costs 1 API call) &nbsp;|&nbsp; API: ${calls}/${lim} used`;
+      }
+    })
+    .catch(() => {});
+}
+
+function confirmRefresh() {
+  const calls = statusData.api_calls_today ?? 0;
+  const lim   = statusData.api_limit ?? 1000;
+  if (calls >= lim) {
+    showToast(`Daily SAM.gov limit reached (${lim} calls). Resets at midnight UTC.`, "error");
+    return;
+  }
+  const msg = `This will pull 1,000 records from SAM.gov.\nCost: 1 of your ${lim - calls} remaining calls today.\n\nProceed?`;
+  if (!confirm(msg)) return;
+  doRefresh();
+}
+
+function doRefresh() {
+  const container = document.getElementById("results-container");
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div>Pulling 1,000 records from SAM.gov… (this may take 10–30 seconds)</div>';
+  document.getElementById("results-meta").textContent = "Fetching from SAM.gov…";
+  document.getElementById("btn-refresh").disabled = true;
+
   const params = new URLSearchParams({
     keyword:  document.getElementById("f-keyword").value.trim(),
     naics:    document.getElementById("f-naics").value,
     setaside: document.getElementById("f-setaside").value,
     val_max:  document.getElementById("f-valmax").value || "350000",
-    deadline: document.getElementById("f-deadline").value,
     state:    document.getElementById("f-state").value,
-    limit:    document.getElementById("f-limit").value,
-    cache:    useCache ? "1" : "0",
+    force:    "1",
+  });
+
+  fetch("/api/search?" + params)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("btn-refresh").disabled = false;
+      if (data.error === "rate_limited") {
+        showRateLimitError();
+        return;
+      }
+      if (data.error) { showToast("Error: " + data.message || data.error, "error"); return; }
+      allResults = data.results || [];
+      renderResults(allResults);
+      document.getElementById("results-meta").textContent =
+        `${allResults.length} contracts matched from ${data.record_pool?.toLocaleString()} records pulled — ${data.pulled}`;
+      loadStatus();
+      showToast(`Pulled ${data.record_pool?.toLocaleString()} records. ${data.calls_used} API call used today.`, "success");
+    })
+    .catch(e => {
+      document.getElementById("btn-refresh").disabled = false;
+      showToast("Network error: " + e, "error");
+    });
+}
+
+// ── Regular search (reads from daily file, zero API calls) ─
+function runSearch() {
+  const params = new URLSearchParams({
+    keyword:  document.getElementById("f-keyword").value.trim(),
+    naics:    document.getElementById("f-naics").value,
+    setaside: document.getElementById("f-setaside").value,
+    val_max:  document.getElementById("f-valmax").value || "350000",
+    state:    document.getElementById("f-state").value,
+    force:    "0",
   });
 
   const container = document.getElementById("results-container");
-  container.innerHTML = '<div class="loading-state"><div class="spinner"></div>Searching SAM.gov…</div>';
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div>Filtering contracts…</div>';
   document.getElementById("results-meta").textContent = "Loading…";
 
   fetch("/api/search?" + params)
     .then(r => r.json())
     .then(data => {
-      if (data.error) { showToast("Error: " + data.error, "error"); return; }
+      if (data.error === "rate_limited" || data.error === "daily_limit") {
+        showRateLimitError();
+        return;
+      }
+      if (data.error) {
+        container.innerHTML = `<div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-title">No data yet</div>
+          <div class="empty-sub">No records on file for today. Click <strong>Refresh from SAM.gov</strong> to pull the latest 1,000 contracts.<br>This will use 1 of your 1,000 daily API calls.</div>
+        </div>`;
+        document.getElementById("results-meta").textContent = "No data — click Refresh to pull from SAM.gov";
+        return;
+      }
       allResults = data.results || [];
       renderResults(allResults);
-      const src = data.source === "cache" ? " (cached)" : ` (${data.total?.toLocaleString()} available on SAM.gov)`;
+      const src = data.source === "api"
+        ? ` — just pulled from SAM.gov`
+        : ` from ${data.record_pool?.toLocaleString()} records · pulled ${data.pulled}`;
       document.getElementById("results-meta").textContent =
         `${allResults.length} contracts matched${src}`;
     })
     .catch(e => { showToast("Network error: " + e, "error"); });
+}
+
+function showRateLimitError() {
+  const container = document.getElementById("results-container");
+  container.innerHTML = `<div class="empty-state">
+    <div class="empty-icon">⏳</div>
+    <div class="empty-title">SAM.gov Rate Limited</div>
+    <div class="empty-sub">Too many requests this minute. Wait 60 seconds and try <strong>Refresh from SAM.gov</strong> again.<br><br>
+    Once you have a daily file, all searches are free — no more API calls needed until tomorrow.</div>
+  </div>`;
+  document.getElementById("results-meta").textContent = "Rate limited — wait 60 seconds";
 }
 
 function renderResults(results) {
@@ -560,7 +656,10 @@ function escHtml(s) {
   return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
-// Auto-run search on load using cached data
-window.addEventListener("DOMContentLoaded", () => runSearch(true));
+// On load: check status bar, then load from daily file (zero API calls)
+window.addEventListener("DOMContentLoaded", () => {
+  loadStatus();
+  runSearch();
+});
 </script>
 {% endblock %}

@@ -5,14 +5,15 @@ import requests
 
 app = Flask(__name__)
 
-BASE_DIR = Path(__file__).parent
-DATA_DIR = BASE_DIR / "data"
+BASE_DIR      = Path(__file__).parent
+DATA_DIR      = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
+PROSPECT_DIR  = BASE_DIR.parent / "prospect-lists"
 
-ENV_FILE = Path("/home/scott/projects/.env.samgov")
-PROFILE_FILE = DATA_DIR / "profile.json"
-BIDS_FILE    = DATA_DIR / "bids.json"
-CACHE_FILE   = DATA_DIR / "search_cache.json"
+ENV_FILE      = Path("/home/scott/projects/.env.samgov")
+PROFILE_FILE  = DATA_DIR / "profile.json"
+BIDS_FILE     = DATA_DIR / "bids.json"
+USAGE_FILE    = DATA_DIR / "api_usage.json"   # tracks daily API call count
 
 UEI = "QMGQE3CJK923"
 
@@ -226,106 +227,208 @@ def proposal_wizard():
     return render_template("proposal_wizard.html", profile=profile, bid_count=bid_count)
 
 
-@app.route("/api/search")
-def api_search():
-    api_key = get_api_key()
-    if not api_key:
-        return jsonify({"error": "No SAM.gov API key found"}), 500
+def get_daily_raw_file(date_str=None):
+    """Return path to today's 1000-record raw JSON saved by the daily report cron."""
+    d = date_str or datetime.date.today().isoformat()
+    return PROSPECT_DIR / f"{d}-raw.json"
 
-    keyword   = request.args.get("keyword", "").strip()
-    naics     = request.args.get("naics", "").strip()
-    setaside  = request.args.get("setaside", "").strip()
-    val_max   = request.args.get("val_max", "350000")
-    deadline  = request.args.get("deadline", "30")
-    state     = request.args.get("state", "").strip()
-    limit     = int(request.args.get("limit", 200))
-    use_cache = request.args.get("cache", "1") == "1"
 
-    # Use today's cache if available and no filters changed
-    cache_key = f"{keyword}|{naics}|{setaside}|{val_max}|{deadline}|{state}"
-    cache = {}
-    if CACHE_FILE.exists():
-        try:
-            cache = json.loads(CACHE_FILE.read_text())
-        except Exception:
-            cache = {}
+def load_daily_raw(date_str=None):
+    """Load opportunitiesData from the daily raw JSON. Checks multiple filename patterns."""
+    d = date_str or datetime.date.today().isoformat()
+    # Check candidate filenames in order of preference (newest/biggest first)
+    candidates = [
+        PROSPECT_DIR / f"{d}-raw.json",        # written by daily cron going forward
+        PROSPECT_DIR / f"{d}-naics-raw.json",   # legacy name from early test runs
+    ]
+    for path in candidates:
+        if path.exists():
+            try:
+                data = json.loads(path.read_text())
+                records = data.get("opportunitiesData") or []
+                total   = data.get("totalRecords", len(records))
+                pulled  = datetime.datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %I:%M %p")
+                return records, {"total": total, "pulled": pulled, "file": str(path.name)}
+            except Exception:
+                pass
+    return None, {}
 
+
+def load_usage():
     today = datetime.date.today().isoformat()
-    cached = cache.get(today, {}).get(cache_key)
-    if use_cache and cached:
-        return jsonify({"results": cached, "source": "cache", "count": len(cached)})
+    if USAGE_FILE.exists():
+        try:
+            u = json.loads(USAGE_FILE.read_text())
+            if u.get("date") == today:
+                return u
+        except Exception:
+            pass
+    return {"date": today, "calls": 0, "limit": 1000, "last_call": None}
 
-    # Build API call
-    days = int(deadline) if deadline.isdigit() else 30
-    posted_from = (datetime.date.today() - datetime.timedelta(days=days)).strftime("%m/%d/%Y")
 
-    params = {
-        "api_key": api_key,
-        "ptype":   "o,p,k,r,s,g,i",
-        "postedFrom": posted_from,
-        "limit":   min(limit, 1000),
-        "offset":  0,
-    }
-    if keyword:
-        params["keyword"] = keyword
-    if naics:
-        params["naicsCode"] = naics
-    if state:
-        params["state"] = state
+def save_usage(u):
+    USAGE_FILE.write_text(json.dumps(u))
 
-    try:
-        resp = requests.get(
-            "https://api.sam.gov/opportunities/v2/search",
-            params=params, timeout=30
-        )
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-    raw = data.get("opportunitiesData") or []
+def filter_records(records, keyword, naics, setaside, val_max, state):
+    """Filter raw SAM.gov records client-side — no extra API calls."""
+    tracked = set(NAICS_LABELS.keys())
+    out = []
+    val_ceiling = float(val_max) if val_max else 350000.0
 
-    # Client-side filtering
-    def passes(c):
-        # NAICS filter
-        if naics and c.get("naicsCode") != naics:
-            return False
-        # Set-aside
+    for c in records:
+        code = c.get("naicsCode") or ""
+
+        # Always restrict to Brisar's tracked codes unless a specific code is chosen
+        if naics:
+            if code != naics:
+                continue
+        else:
+            if code not in tracked:
+                continue
+
+        # Set-aside filter
         if setaside and c.get("typeOfSetAside") != setaside:
-            return False
+            continue
+
         # Value ceiling
         try:
             award = c.get("award") or {}
             v = float(re.sub(r"[^0-9.]", "", str(award.get("amount") or c.get("baseAndAllOptionsValue") or 0)))
-            if v and v > float(val_max):
-                return False
+            if v and v > val_ceiling:
+                continue
         except Exception:
             pass
-        return True
 
-    filtered = [c for c in raw if passes(c)]
+        # State filter
+        if state:
+            pop = c.get("placeOfPerformance") or {}
+            s = pop.get("state", {}).get("code", "") if isinstance(pop.get("state"), dict) else ""
+            if s.upper() != state.upper():
+                continue
 
-    # If no naics filter was specified, apply Brisar's tracked codes
-    if not naics:
-        tracked = set(NAICS_LABELS.keys())
-        brisar_matches = [c for c in filtered if c.get("naicsCode") in tracked]
-        if brisar_matches:
-            filtered = brisar_matches
+        # Keyword filter (title search)
+        if keyword:
+            title = (c.get("title") or "").lower()
+            if keyword.lower() not in title:
+                continue
 
-    results = sorted(enrich(filtered), key=lambda x: -x["score"])
+        out.append(c)
+    return out
 
-    # Save to cache
-    if today not in cache:
-        cache[today] = {}
-    cache[today][cache_key] = results
-    # Keep only last 3 days
-    keys = sorted(cache.keys())
-    if len(keys) > 3:
-        for old in keys[:-3]:
-            del cache[old]
-    CACHE_FILE.write_text(json.dumps(cache))
 
-    return jsonify({"results": results, "source": "api", "count": len(results), "total": data.get("totalRecords", 0)})
+@app.route("/api/status")
+def api_status():
+    """Returns data source info + API usage counter. Called on page load."""
+    today = datetime.date.today().isoformat()
+    records, meta = load_daily_raw()
+    usage = load_usage()
+    has_daily = records is not None
+
+    return jsonify({
+        "has_daily_file": has_daily,
+        "daily_record_count": len(records) if records else 0,
+        "daily_pulled": meta.get("pulled"),
+        "daily_file": meta.get("file"),
+        "api_calls_today": usage["calls"],
+        "api_limit": usage["limit"],
+        "date": today,
+    })
+
+
+@app.route("/api/search")
+def api_search():
+    keyword  = request.args.get("keyword", "").strip()
+    naics    = request.args.get("naics", "").strip()
+    setaside = request.args.get("setaside", "").strip()
+    val_max  = request.args.get("val_max", "350000")
+    state    = request.args.get("state", "").strip()
+    force    = request.args.get("force", "0") == "1"   # explicit SAM.gov refresh
+
+    # ── Step 1: Try today's daily raw file (written by 8 AM cron) ──
+    if not force:
+        records, meta = load_daily_raw()
+        if records is not None:
+            filtered = filter_records(records, keyword, naics, setaside, val_max, state)
+            results  = sorted(enrich(filtered), key=lambda x: -x["score"])
+            return jsonify({
+                "results":     results,
+                "source":      "daily",
+                "count":       len(results),
+                "total":       meta.get("total", len(records)),
+                "pulled":      meta.get("pulled"),
+                "record_pool": len(records),
+            })
+        # No daily file and not a forced refresh — tell frontend to prompt user
+        return jsonify({"error": "no_data", "message": "No data file for today yet."}), 404
+
+    # ── Step 2: Force refresh — call SAM.gov API ──────────────────
+    api_key = get_api_key()
+    if not api_key:
+        return jsonify({"error": "No SAM.gov API key found"}), 500
+
+    usage = load_usage()
+    if usage["calls"] >= usage["limit"]:
+        return jsonify({
+            "error": "daily_limit",
+            "message": f"Daily SAM.gov limit reached ({usage['limit']} calls). Resets at midnight UTC."
+        }), 429
+
+    today      = datetime.date.today().isoformat()
+    posted_from = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%m/%d/%Y")
+    posted_to   = datetime.date.today().strftime("%m/%d/%Y")
+
+    url = (
+        f"https://api.sam.gov/opportunities/v2/search"
+        f"?api_key={api_key}"
+        f"&ptype=o,k"
+        f"&awardCeiling=350000"
+        f"&postedFrom={posted_from}"
+        f"&postedTo={posted_to}"
+        f"&limit=1000"
+        f"&offset=0"
+    )
+
+    try:
+        resp = requests.get(url, timeout=60)
+        if resp.status_code == 429:
+            return jsonify({
+                "error": "rate_limited",
+                "message": "SAM.gov rate limit hit. Wait 60 seconds and try again."
+            }), 429
+        resp.raise_for_status()
+        data = resp.json()
+    except requests.exceptions.HTTPError as e:
+        if "429" in str(e):
+            return jsonify({"error": "rate_limited", "message": "SAM.gov rate limit. Wait 60 seconds."}), 429
+        return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    # Save as today's daily file so all future searches read from it
+    raw_path = get_daily_raw_file()
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    raw_path.write_text(json.dumps(data))
+
+    # Update usage counter
+    usage["calls"] += 1
+    usage["last_call"] = datetime.datetime.now().isoformat()
+    save_usage(usage)
+
+    records = data.get("opportunitiesData") or []
+    filtered = filter_records(records, keyword, naics, setaside, val_max, state)
+    results  = sorted(enrich(filtered), key=lambda x: -x["score"])
+    pulled   = datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p")
+
+    return jsonify({
+        "results":     results,
+        "source":      "api",
+        "count":       len(results),
+        "total":       data.get("totalRecords", 0),
+        "pulled":      pulled,
+        "record_pool": len(records),
+        "calls_used":  usage["calls"],
+    })
 
 
 @app.route("/api/profile")

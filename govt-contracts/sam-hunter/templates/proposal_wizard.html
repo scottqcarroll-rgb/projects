@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+{% block title %}Sam Hunter — Proposal Wizard{% endblock %}
+
+{% block content %}
+<div class="wizard-layout">
+  <div class="wizard-header">
+    <h2>Proposal Wizard</h2>
+    <div class="wizard-sub">Generate a complete proposal package for a federal opportunity</div>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="wizard-stepper">
+    <div class="step active" id="step-indicator-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Analyze</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" id="step-indicator-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Write</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" id="step-indicator-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Brand</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" id="step-indicator-4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Download</div>
+    </div>
+  </div>
+
+  <div class="wizard-body">
+
+    <!-- STEP 1: Analyze -->
+    <div class="wizard-step active" id="wizard-step-1">
+      <h3>Step 1 — Analyze the Opportunity</h3>
+      <p class="step-desc">Enter the contract details or pull from a tracked bid to begin your proposal.</p>
+
+      <div class="wizard-form">
+        <div class="form-row">
+          <label>Opportunity Title</label>
+          <input type="text" id="w-title" class="filter-input" style="width:100%"
+                 placeholder="e.g. Janitorial Services — Fort Benning, GA">
+        </div>
+        <div class="form-row">
+          <label>Solicitation Number</label>
+          <input type="text" id="w-sol-num" class="filter-input" style="width:100%"
+                 placeholder="e.g. W912HN-26-R-0042">
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Agency</label>
+            <input type="text" id="w-agency" class="filter-input" style="width:100%"
+                   placeholder="e.g. Department of the Army">
+          </div>
+          <div>
+            <label>Contract Value</label>
+            <input type="text" id="w-value" class="filter-input" style="width:100%"
+                   placeholder="e.g. $85,000">
+          </div>
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Place of Performance</label>
+            <input type="text" id="w-location" class="filter-input" style="width:100%"
+                   placeholder="e.g. Fort Benning, GA">
+          </div>
+          <div>
+            <label>Response Deadline</label>
+            <input type="date" id="w-deadline" class="filter-input" style="width:100%">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>NAICS Code</label>
+          <select id="w-naics" class="filter-select" style="width:100%">
+            <option value="">Select NAICS…</option>
+            <option value="561210">561210 – Facilities Support</option>
+            <option value="561720">561720 – Janitorial</option>
+            <option value="561730">561730 – Landscaping</option>
+            <option value="561740">561740 – Carpet Cleaning</option>
+            <option value="238910">238910 – Site Preparation</option>
+            <option value="561612">561612 – Security Guards</option>
+            <option value="561710">561710 – Pest Control</option>
+            <option value="562111">562111 – Solid Waste</option>
+            <option value="562112">562112 – Hazardous Waste Collection</option>
+            <option value="562211">562211 – Hazardous Waste Treatment</option>
+            <option value="562998">562998 – Other Waste Management</option>
+            <option value="812331">812331 – Linen Supply</option>
+            <option value="812332">812332 – Industrial Launderers</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Scope of Work Summary</label>
+          <textarea id="w-scope" rows="4" class="filter-input" style="width:100%"
+                    placeholder="Describe what services are required, frequency, facilities, and any special requirements…"></textarea>
+        </div>
+        <div class="form-row">
+          <label>Subcontractor Name (if known)</label>
+          <input type="text" id="w-sub-name" class="filter-input" style="width:100%"
+                 placeholder="e.g. CleanPro Services LLC">
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Sub Quote ($)</label>
+            <input type="text" id="w-sub-quote" class="filter-input" style="width:100%"
+                   placeholder="e.g. 62000">
+          </div>
+          <div>
+            <label>Our Bid Price ($)</label>
+            <input type="text" id="w-bid-price" class="filter-input" style="width:100%"
+                   placeholder="e.g. 82000">
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <div></div>
+        <button class="btn-primary" onclick="gotoStep(2)">Next: Write Proposal →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Write -->
+    <div class="wizard-step hidden" id="wizard-step-2">
+      <h3>Step 2 — Proposal Content</h3>
+      <p class="step-desc">Review and customize the generated proposal sections. Template slots are auto-filled with your company profile.</p>
+
+      <div class="proposal-sections" id="proposal-content">
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">§1</span> Cover Letter / Executive Summary
+            <span class="section-status auto">Auto-generated</span>
+          </div>
+          <div class="section-body" id="section-cover" contenteditable="true"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">§2</span> Technical Approach
+            <span class="section-status auto">Auto-generated</span>
+          </div>
+          <div class="section-body" id="section-technical" contenteditable="true"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">§3</span> Management Plan
+            <span class="section-status auto">Auto-generated</span>
+          </div>
+          <div class="section-body" id="section-management" contenteditable="true"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">§4</span> Price / Cost Summary
+            <span class="section-status auto">Auto-generated</span>
+          </div>
+          <div class="section-body" id="section-price" contenteditable="true"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">§5</span> Company Qualifications
+            <span class="section-status fixed">From Profile</span>
+          </div>
+          <div class="section-body" id="section-quals" contenteditable="true"></div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="gotoStep(1)">← Back</button>
+        <button class="btn-primary" onclick="gotoStep(3)">Next: Brand →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Brand -->
+    <div class="wizard-step hidden" id="wizard-step-3">
+      <h3>Step 3 — Branding &amp; Formatting</h3>
+      <p class="step-desc">Customize the proposal appearance before generating the final document.</p>
+
+      <div class="branding-options">
+        <div class="brand-row">
+          <label>Company Name on Cover</label>
+          <input type="text" id="b-company" class="filter-input" style="width:100%" value="{{ profile.legal_name }}">
+        </div>
+        <div class="brand-row">
+          <label>UEI Number</label>
+          <input type="text" id="b-uei" class="filter-input" style="width:100%" value="{{ profile.uei }}">
+        </div>
+        <div class="brand-row">
+          <label>CAGE Code</label>
+          <input type="text" id="b-cage" class="filter-input" style="width:100%" value="{{ profile.cage_code or 'Pending' }}">
+        </div>
+        <div class="brand-row">
+          <label>Company Address</label>
+          <input type="text" id="b-address" class="filter-input" style="width:100%" value="{{ profile.address }}">
+        </div>
+        <div class="brand-row">
+          <label>Contact Name</label>
+          <input type="text" id="b-contact" class="filter-input" style="width:100%" placeholder="e.g. Scott Carroll">
+        </div>
+        <div class="brand-row">
+          <label>Contact Email</label>
+          <input type="text" id="b-email" class="filter-input" style="width:100%" placeholder="sqc@bellsouth.net">
+        </div>
+        <div class="brand-row">
+          <label>Contact Phone</label>
+          <input type="text" id="b-phone" class="filter-input" style="width:100%" placeholder="(XXX) XXX-XXXX">
+        </div>
+
+        <div class="brand-row">
+          <label>Header Color</label>
+          <div class="color-options">
+            <div class="color-opt selected" data-color="#1e3a5f" style="background:#1e3a5f" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#16a34a" style="background:#16a34a" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#dc2626" style="background:#dc2626" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#7c3aed" style="background:#7c3aed" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#0369a1" style="background:#0369a1" onclick="selectColor(this)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="gotoStep(2)">← Back</button>
+        <button class="btn-primary" onclick="gotoStep(4)">Generate Proposal →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Download -->
+    <div class="wizard-step hidden" id="wizard-step-4">
+      <h3>Step 4 — Download &amp; Submit</h3>
+      <p class="step-desc">Your proposal package is ready.</p>
+
+      <div class="download-box" id="download-preview">
+        <div class="doc-preview">
+          <div class="doc-cover" id="doc-cover-preview">
+            <div class="doc-logo">🎯 Sam Hunter</div>
+            <div class="doc-title" id="preview-title"></div>
+            <div class="doc-sol" id="preview-sol"></div>
+            <div class="doc-company">{{ profile.legal_name }}</div>
+            <div class="doc-uei">UEI: {{ profile.uei }}</div>
+            <div class="doc-address">{{ profile.address }}</div>
+          </div>
+        </div>
+
+        <div class="download-actions">
+          <h4>Proposal Package</h4>
+          <p>Contents: Cover Page, Technical Approach, Management Plan, Price Summary, Qualifications</p>
+          <div class="download-btns">
+            <button class="btn-primary btn-lg" onclick="downloadHTML()">Download HTML</button>
+            <button class="btn-secondary btn-lg" onclick="window.print()">Print / Save as PDF</button>
+          </div>
+          <div class="submit-note">
+            <strong>Submission:</strong> Upload via SAM.gov eBuy or email to contracting officer.
+            Always submit before the response deadline.
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn-secondary" onclick="gotoStep(3)">← Back to Branding</button>
+        <a href="/bid-tracker" class="btn-primary">View Bid Tracker →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const profile = {{ profile | tojson }};
+let currentStep = 1;
+let selectedColor = "#1e3a5f";
+
+function gotoStep(n) {
+  if (n === 2) populateProposal();
+  if (n === 4) buildPreview();
+
+  document.querySelectorAll(".wizard-step").forEach(s => s.classList.add("hidden"));
+  document.getElementById("wizard-step-" + n).classList.remove("hidden");
+
+  document.querySelectorAll(".step").forEach((s, i) => {
+    s.classList.toggle("active", i < n);
+    s.classList.toggle("done",   i < n - 1);
+  });
+  currentStep = n;
+}
+
+function populateProposal() {
+  const title     = document.getElementById("w-title").value || "Service Contract";
+  const agency    = document.getElementById("w-agency").value || "[Agency]";
+  const location  = document.getElementById("w-location").value || "[Location]";
+  const sol       = document.getElementById("w-sol-num").value || "[Solicitation #]";
+  const scope     = document.getElementById("w-scope").value || "professional services as specified";
+  const subName   = document.getElementById("w-sub-name").value || "[Subcontractor]";
+  const bidPrice  = document.getElementById("w-bid-price").value || "[Bid Price]";
+  const subQuote  = document.getElementById("w-sub-quote").value || "[Sub Quote]";
+  const naics     = document.getElementById("w-naics").value || "";
+
+  document.getElementById("section-cover").innerHTML = `
+    <p>Date: ${new Date().toLocaleDateString("en-US", {year:"numeric",month:"long",day:"numeric"})}</p>
+    <p>Contracting Officer<br>${agency}</p>
+    <p>Re: <strong>${sol}</strong> — ${title}</p>
+    <p>Dear Contracting Officer,</p>
+    <p>${profile.legal_name} (UEI: ${profile.uei}) is pleased to submit this proposal in response to
+    Solicitation ${sol} for ${title}. We are a registered small business entity based in Georgia,
+    fully qualified to perform the requirements outlined in this solicitation.</p>
+    <p>We bring a dedicated team of local professionals and experienced subcontractors to deliver
+    reliable, cost-effective services at ${location}. Our approach emphasizes quality, compliance,
+    and on-time performance throughout the contract period.</p>
+    <p>Our total proposed price is <strong>${bidPrice}</strong>. We welcome the opportunity to
+    discuss our proposal.</p>
+    <p>Respectfully,<br><br>${profile.legal_name}<br>${profile.address}<br>UEI: ${profile.uei}</p>`;
+
+  document.getElementById("section-technical").innerHTML = `
+    <h4>Technical Approach</h4>
+    <p>${profile.legal_name} proposes to deliver ${scope} at ${location} through the following approach:</p>
+    <ul>
+      <li><strong>Qualified Personnel:</strong> All staff will be licensed, bonded, and insured in accordance with applicable regulations.</li>
+      <li><strong>Equipment &amp; Materials:</strong> We will provide all equipment, supplies, and materials required to complete the work.</li>
+      <li><strong>Quality Control:</strong> A dedicated project manager will conduct regular inspections and maintain a written QC log.</li>
+      <li><strong>Scheduling:</strong> Work will be performed during approved hours with no disruption to government operations.</li>
+      <li><strong>Subcontracting:</strong> We will partner with ${subName} as our primary subcontractor for on-site service delivery.</li>
+    </ul>`;
+
+  document.getElementById("section-management").innerHTML = `
+    <h4>Management Plan</h4>
+    <p><strong>Prime Contractor:</strong> ${profile.legal_name}<br>
+    <strong>Subcontractor:</strong> ${subName}<br>
+    <strong>Role:</strong> ${profile.legal_name} serves as the prime contractor and is responsible for contract administration, invoice submission, and quality oversight.</p>
+    <p>All work will be performed under direct supervision with a single point of contact available to the government during all business hours. We commit to responsive communication with the Contracting Officer and COR.</p>`;
+
+  const margin = bidPrice && subQuote
+    ? `<p><strong>Prime Margin:</strong> $${(parseFloat(bidPrice.replace(/[^0-9.]/g,'')) - parseFloat(subQuote.replace(/[^0-9.]/g,''))).toLocaleString()} (${Math.round(((parseFloat(bidPrice.replace(/[^0-9.]/g,'')) - parseFloat(subQuote.replace(/[^0-9.]/g,''))) / parseFloat(bidPrice.replace(/[^0-9.]/g,''))) * 100)}% margin)</p>`
+    : '';
+  document.getElementById("section-price").innerHTML = `
+    <h4>Price Summary</h4>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px">
+      <tr style="background:#f0f0f0"><th style="padding:8px;text-align:left;border:1px solid #ddd">Line Item</th><th style="padding:8px;border:1px solid #ddd">Amount</th></tr>
+      <tr><td style="padding:8px;border:1px solid #ddd">Subcontractor Labor &amp; Materials (${subName})</td><td style="padding:8px;border:1px solid #ddd">${subQuote}</td></tr>
+      <tr><td style="padding:8px;border:1px solid #ddd">Prime Management &amp; Overhead</td><td style="padding:8px;border:1px solid #ddd">Included</td></tr>
+      <tr style="font-weight:bold;background:#f0f0f0"><td style="padding:8px;border:1px solid #ddd">Total Proposed Price</td><td style="padding:8px;border:1px solid #ddd">${bidPrice}</td></tr>
+    </table>
+    ${margin}
+    <p><em>Price is firm-fixed-price for the base period. All taxes, insurance, and applicable fees are included.</em></p>`;
+
+  document.getElementById("section-quals").innerHTML = `
+    <h4>Company Qualifications</h4>
+    <ul>
+      <li><strong>Entity Name:</strong> ${profile.legal_name}</li>
+      <li><strong>UEI:</strong> ${profile.uei}</li>
+      ${profile.cage_code ? `<li><strong>CAGE Code:</strong> ${profile.cage_code}</li>` : ''}
+      <li><strong>SAM.gov Registration:</strong> Active</li>
+      <li><strong>Business Size:</strong> Small Business</li>
+      <li><strong>State of Incorporation:</strong> Georgia</li>
+      <li><strong>Primary NAICS:</strong> ${naics || profile.naics_primary}</li>
+      <li><strong>Address:</strong> ${profile.address}</li>
+    </ul>`;
+}
+
+function buildPreview() {
+  document.getElementById("preview-title").textContent = document.getElementById("w-title").value || "Service Contract Proposal";
+  document.getElementById("preview-sol").textContent = "Solicitation: " + (document.getElementById("w-sol-num").value || "—");
+  document.getElementById("doc-cover-preview").style.borderTop = `6px solid ${selectedColor}`;
+}
+
+function selectColor(el) {
+  document.querySelectorAll(".color-opt").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedColor = el.dataset.color;
+}
+
+function downloadHTML() {
+  const title    = document.getElementById("w-title").value || "Proposal";
+  const cover    = document.getElementById("section-cover").innerHTML;
+  const tech     = document.getElementById("section-technical").innerHTML;
+  const mgmt     = document.getElementById("section-management").innerHTML;
+  const price    = document.getElementById("section-price").innerHTML;
+  const quals    = document.getElementById("section-quals").innerHTML;
+  const company  = document.getElementById("b-company").value;
+  const uei      = document.getElementById("b-uei").value;
+  const address  = document.getElementById("b-address").value;
+  const contact  = document.getElementById("b-contact").value;
+  const email    = document.getElementById("b-email").value;
+  const phone    = document.getElementById("b-phone").value;
+  const sol      = document.getElementById("w-sol-num").value;
+  const agency   = document.getElementById("w-agency").value;
+  const color    = selectedColor;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>${title} — Proposal</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; color:#222; }
+  .cover { background:${color}; color:white; padding:80px 60px; min-height:300px; }
+  .cover h1 { font-size:2em; margin:0 0 16px; }
+  .cover .sol { font-size:1.1em; opacity:0.85; margin-bottom:32px; }
+  .cover .company { font-size:1.3em; font-weight:bold; }
+  .cover .meta { opacity:0.8; margin-top:8px; }
+  .section { padding:40px 60px; border-bottom:1px solid #eee; }
+  .section h4 { color:${color}; border-bottom:2px solid ${color}; padding-bottom:6px; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:8px 12px; border:1px solid #ddd; text-align:left; }
+  th { background:#f5f5f5; }
+  @media print { .section { page-break-inside:avoid; } }
+</style></head><body>
+<div class="cover">
+  <h1>${title}</h1>
+  <div class="sol">Solicitation: ${sol} &nbsp;|&nbsp; ${agency}</div>
+  <div class="company">${company}</div>
+  <div class="meta">UEI: ${uei}</div>
+  <div class="meta">${address}</div>
+  ${contact ? `<div class="meta">${contact} &nbsp;|&nbsp; ${email} &nbsp;|&nbsp; ${phone}</div>` : ''}
+  <div class="meta" style="margin-top:24px">Prepared: ${new Date().toLocaleDateString()}</div>
+</div>
+<div class="section">${cover}</div>
+<div class="section">${tech}</div>
+<div class="section">${mgmt}</div>
+<div class="section">${price}</div>
+<div class="section">${quals}</div>
+</body></html>`;
+
+  const blob = new Blob([html], {type:"text/html"});
+  const a    = document.createElement("a");
+  a.href     = URL.createObjectURL(blob);
+  a.download = `Proposal_${sol || 'package'}_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+}
+
+// Pre-fill from URL params if coming from contract detail
+const params = new URLSearchParams(location.search);
+if (params.get("id")) {
+  // Load from bid tracker or search results — placeholder
+  document.getElementById("w-sol-num").value = params.get("id");
+}
+</script>
+{% endblock %}

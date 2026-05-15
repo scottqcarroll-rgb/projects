@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+{% block title %}Sam Hunter — Search Federal Opportunities{% endblock %}
+
+{% block content %}
+<div class="search-layout">
+
+  <!-- LEFT: Filter Panel -->
+  <aside class="filter-panel">
+    <div class="filter-header">
+      <h3>Search Filters</h3>
+      <button class="btn-link" onclick="clearFilters()">Clear All</button>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">Keyword</label>
+      <input type="text" id="f-keyword" class="filter-input" placeholder="e.g. janitorial, mowing..."
+             onkeydown="if(event.key==='Enter') runSearch()">
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">NAICS Code</label>
+      <select id="f-naics" class="filter-select">
+        <option value="">All Brisar Codes (13)</option>
+        <optgroup label="🏗️ Facility &amp; Grounds">
+          <option value="561210">561210 – Facilities Support</option>
+          <option value="561720">561720 – Janitorial</option>
+          <option value="561730">561730 – Landscaping</option>
+          <option value="561740">561740 – Carpet Cleaning</option>
+          <option value="238910">238910 – Site Preparation</option>
+        </optgroup>
+        <optgroup label="🛡️ Security &amp; Pest">
+          <option value="561612">561612 – Security Guards</option>
+          <option value="561710">561710 – Pest Control</option>
+        </optgroup>
+        <optgroup label="♻️ Waste &amp; Environmental">
+          <option value="562111">562111 – Solid Waste</option>
+          <option value="562112">562112 – Hazardous Waste Collection</option>
+          <option value="562211">562211 – Hazardous Waste Treatment</option>
+          <option value="562998">562998 – Other Waste Management</option>
+        </optgroup>
+        <optgroup label="🧺 Textile &amp; Linen">
+          <option value="812331">812331 – Linen Supply</option>
+          <option value="812332">812332 – Industrial Launderers</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">Set-Aside Type</label>
+      <select id="f-setaside" class="filter-select">
+        <option value="">Any</option>
+        <option value="SBA">Small Business</option>
+        <option value="8AN">8(a)</option>
+        <option value="SDVOSB">SDVOSB</option>
+        <option value="HZC">HUBZone</option>
+        <option value="WOSB">WOSB</option>
+        <option value="VSB">Veteran-Owned</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">Value Ceiling</label>
+      <div class="filter-row">
+        <input type="number" id="f-valmax" class="filter-input" value="350000"
+               placeholder="Max $" style="width:100%">
+      </div>
+      <div class="val-hint">Simplified Acquisition Threshold: $350K</div>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">Window (days back)</label>
+      <select id="f-deadline" class="filter-select">
+        <option value="7">Last 7 days</option>
+        <option value="14">Last 14 days</option>
+        <option value="21">Last 21 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="45">Last 45 days</option>
+        <option value="60">Last 60 days</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">State</label>
+      <select id="f-state" class="filter-select">
+        <option value="">All States</option>
+        <option value="GA">Georgia</option>
+        <option value="AL">Alabama</option>
+        <option value="FL">Florida</option>
+        <option value="TN">Tennessee</option>
+        <option value="SC">South Carolina</option>
+        <option value="NC">North Carolina</option>
+        <option value="VA">Virginia</option>
+        <option value="TX">Texas</option>
+        <option value="CA">California</option>
+        <option value="NY">New York</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="filter-label">Result Limit</label>
+      <select id="f-limit" class="filter-select">
+        <option value="100">100 records</option>
+        <option value="200" selected>200 records</option>
+        <option value="500">500 records</option>
+        <option value="1000">1,000 records (max)</option>
+      </select>
+    </div>
+
+    <button class="btn-primary btn-search-go" onclick="runSearch()">
+      🔍 Search Contracts
+    </button>
+    <button class="btn-secondary btn-search-go" onclick="runSearch(false)"
+            title="Force fresh API call, ignore cache">
+      ↺ Refresh from SAM.gov
+    </button>
+
+    <div class="filter-section score-legend">
+      <div class="legend-title">Score Legend</div>
+      <div class="legend-row"><span class="score-badge score-high">8–10</span> High priority — bid now</div>
+      <div class="legend-row"><span class="score-badge score-med">5–7</span>  Solid opportunity</div>
+      <div class="legend-row"><span class="score-badge score-low">1–4</span>  Low / tight deadline</div>
+      <div class="legend-note">⚠️ Under 14 days = may not be actionable (need time to find sub)</div>
+    </div>
+  </aside>
+
+  <!-- CENTER: Results -->
+  <section class="results-panel">
+    <div class="results-toolbar">
+      <div class="results-meta" id="results-meta">Enter search or click Search to load contracts</div>
+      <div class="view-switcher">
+        <button class="view-btn active" data-view="cards" onclick="setView('cards')" title="Card view">⊞</button>
+        <button class="view-btn" data-view="list"  onclick="setView('list')"  title="List view">≡</button>
+        <button class="view-btn" data-view="table" onclick="setView('table')" title="Table view">⊟</button>
+      </div>
+    </div>
+
+    <div id="results-container" class="results-cards">
+      <div class="empty-state">
+        <div class="empty-icon">🎯</div>
+        <div class="empty-title">Ready to hunt</div>
+        <div class="empty-sub">Use the filters on the left and click Search Contracts.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: Detail Panel -->
+  <aside class="detail-panel" id="detail-panel">
+    <div class="detail-empty">
+      <div class="empty-icon">📄</div>
+      <div class="empty-title">Select a contract</div>
+      <div class="empty-sub">Click any result to see full details.</div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- Table view (hidden until selected) -->
+<div id="table-container" class="table-wrapper hidden">
+  <table class="results-table">
+    <thead>
+      <tr>
+        <th>Score</th><th>Title</th><th>Agency</th><th>NAICS</th>
+        <th>Value</th><th>Deadline</th><th>Location</th><th>Set-Aside</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const NAICS_LABELS = {{ naics_labels | tojson }};
+let allResults = [];
+let currentView = "cards";
+let selectedId   = null;
+
+function runSearch(useCache = true) {
+  const params = new URLSearchParams({
+    keyword:  document.getElementById("f-keyword").value.trim(),
+    naics:    document.getElementById("f-naics").value,
+    setaside: document.getElementById("f-setaside").value,
+    val_max:  document.getElementById("f-valmax").value || "350000",
+    deadline: document.getElementById("f-deadline").value,
+    state:    document.getElementById("f-state").value,
+    limit:    document.getElementById("f-limit").value,
+    cache:    useCache ? "1" : "0",
+  });
+
+  const container = document.getElementById("results-container");
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div>Searching SAM.gov…</div>';
+  document.getElementById("results-meta").textContent = "Loading…";
+
+  fetch("/api/search?" + params)
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) { showToast("Error: " + data.error, "error"); return; }
+      allResults = data.results || [];
+      renderResults(allResults);
+      const src = data.source === "cache" ? " (cached)" : ` (${data.total?.toLocaleString()} available on SAM.gov)`;
+      document.getElementById("results-meta").textContent =
+        `${allResults.length} contracts matched${src}`;
+    })
+    .catch(e => { showToast("Network error: " + e, "error"); });
+}
+
+function renderResults(results) {
+  const container = document.getElementById("results-container");
+  const tableContainer = document.getElementById("table-container");
+
+  if (!results.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No matches</div><div class="empty-sub">Try widening your filters.</div></div>';
+    return;
+  }
+
+  if (currentView === "table") {
+    container.classList.add("hidden");
+    tableContainer.classList.remove("hidden");
+    renderTable(results);
+  } else {
+    tableContainer.classList.add("hidden");
+    container.classList.remove("hidden");
+    if (currentView === "cards") renderCards(results);
+    else renderList(results);
+  }
+}
+
+function renderCards(results) {
+  const container = document.getElementById("results-container");
+  container.className = "results-cards";
+  container.innerHTML = results.map(c => cardHTML(c)).join("");
+}
+
+function renderList(results) {
+  const container = document.getElementById("results-container");
+  container.className = "results-list";
+  container.innerHTML = results.map(c => listRowHTML(c)).join("");
+}
+
+function renderTable(results) {
+  document.getElementById("table-body").innerHTML = results.map(c => `
+    <tr class="table-row" onclick="showDetail('${c.id}')">
+      <td><span class="score-badge ${scoreClass(c.score)}">${c.score}</span></td>
+      <td class="td-title">${escHtml(c.title)}</td>
+      <td>${escHtml(c.agency)}</td>
+      <td>${c.naics} <small>${escHtml(c.naics_label)}</small></td>
+      <td>${c.value_fmt}</td>
+      <td class="${c.urgent ? 'urgent-text' : ''}">${formatDeadline(c.deadline, c.days_away)}</td>
+      <td>${escHtml(c.location)}</td>
+      <td>${escHtml(c.setaside_label)}</td>
+    </tr>`).join("");
+}
+
+function cardHTML(c) {
+  return `
+  <div class="contract-card ${c.urgent ? 'urgent-card' : ''}" onclick="showDetail('${c.id}')">
+    <div class="card-header">
+      <span class="score-badge ${scoreClass(c.score)}">${c.score}</span>
+      ${c.urgent ? '<span class="urgent-badge">⚠️ &lt;14 days</span>' : ''}
+      <span class="naics-tag">${c.naics} ${escHtml(c.naics_label)}</span>
+    </div>
+    <div class="card-title">${escHtml(c.title)}</div>
+    <div class="card-agency">${escHtml(c.agency)}</div>
+    <div class="card-meta">
+      <span>💰 ${c.value_fmt}</span>
+      <span>📅 ${formatDeadline(c.deadline, c.days_away)}</span>
+      <span>📍 ${escHtml(c.location)}</span>
+    </div>
+    <div class="card-setaside">${escHtml(c.setaside_label) || 'No set-aside'}</div>
+  </div>`;
+}
+
+function listRowHTML(c) {
+  return `
+  <div class="list-row ${c.urgent ? 'urgent-row' : ''}" onclick="showDetail('${c.id}')">
+    <span class="score-badge ${scoreClass(c.score)}">${c.score}</span>
+    <div class="list-main">
+      <div class="list-title">${escHtml(c.title)}</div>
+      <div class="list-sub">${escHtml(c.agency)} · ${c.naics} · ${escHtml(c.location)}</div>
+    </div>
+    <div class="list-right">
+      <div class="list-value">${c.value_fmt}</div>
+      <div class="list-deadline ${c.urgent ? 'urgent-text' : ''}">${formatDeadline(c.deadline, c.days_away)}</div>
+    </div>
+  </div>`;
+}
+
+function showDetail(id) {
+  selectedId = id;
+  const c = allResults.find(r => r.id === id);
+  if (!c) return;
+
+  const panel = document.getElementById("detail-panel");
+  panel.innerHTML = `
+    <div class="detail-content">
+      <div class="detail-top">
+        <span class="score-badge ${scoreClass(c.score)} score-lg">${c.score}/10</span>
+        ${c.urgent ? '<span class="urgent-badge">⚠️ UNDER 14 DAYS</span>' : ''}
+        <button class="btn-track" onclick="trackBid('${id}')">+ Track Bid</button>
+        ${c.sam_url ? `<a class="btn-sam" href="${c.sam_url}" target="_blank">SAM.gov ↗</a>` : ''}
+      </div>
+
+      <h2 class="detail-title">${escHtml(c.title)}</h2>
+      <div class="detail-agency">${escHtml(c.agency)}${c.subtier ? ' · ' + escHtml(c.subtier) : ''}</div>
+
+      <div class="detail-tabs">
+        <button class="tab-btn active" onclick="switchTab('details', this)">Details</button>
+        <button class="tab-btn" onclick="switchTab('analysis', this)">AI Analysis</button>
+        <button class="tab-btn" onclick="switchTab('subcontractors', this)">Subcontractors</button>
+        <button class="tab-btn" onclick="switchTab('requirements', this)">Requirements</button>
+        <button class="tab-btn" onclick="switchTab('templates', this)">Templates</button>
+        <button class="tab-btn" onclick="switchTab('proposal', this)">Proposal</button>
+      </div>
+
+      <div id="tab-details" class="tab-pane active">
+        <div class="detail-grid">
+          <div class="detail-item"><label>Solicitation #</label><span>${escHtml(c.solicitation_number) || '—'}</span></div>
+          <div class="detail-item"><label>NAICS</label><span>${c.naics} – ${escHtml(c.naics_label)}</span></div>
+          <div class="detail-item"><label>Contract Value</label><span>${c.value_fmt}</span></div>
+          <div class="detail-item"><label>Set-Aside</label><span>${escHtml(c.setaside_label) || 'None'}</span></div>
+          <div class="detail-item"><label>Response Deadline</label><span class="${c.urgent ? 'urgent-text' : ''}">${formatDeadline(c.deadline, c.days_away)}</span></div>
+          <div class="detail-item"><label>Posted Date</label><span>${c.posted ? c.posted.slice(0,10) : '—'}</span></div>
+          <div class="detail-item"><label>Place of Performance</label><span>${escHtml(c.location)}</span></div>
+          <div class="detail-item"><label>Notice Type</label><span>${escHtml(c.type) || '—'}</span></div>
+        </div>
+        ${c.co_name || c.co_email ? `
+        <div class="co-card">
+          <div class="co-label">Contracting Officer</div>
+          <div class="co-name">${escHtml(c.co_name)}</div>
+          ${c.co_email ? `<a class="co-link" href="mailto:${escHtml(c.co_email)}">${escHtml(c.co_email)}</a>` : ''}
+          ${c.co_phone ? `<div class="co-phone">${escHtml(c.co_phone)}</div>` : ''}
+        </div>` : ''}
+        ${c.description ? `<div class="detail-desc"><label>Description</label><p>${escHtml(c.description).slice(0, 600)}${c.description.length > 600 ? '…' : ''}</p></div>` : ''}
+      </div>
+
+      <div id="tab-analysis" class="tab-pane hidden">
+        ${analysisHTML(c)}
+      </div>
+
+      <div id="tab-subcontractors" class="tab-pane hidden">
+        <div class="sub-info">
+          <p>SAM-registered subcontractors within 100 miles of <strong>${escHtml(c.location)}</strong> for NAICS <strong>${c.naics}</strong>.</p>
+          <button class="btn-primary" onclick="loadSubs('${c.naics}', '${c.state}')">Find Subcontractors</button>
+          <div id="sub-results"></div>
+        </div>
+      </div>
+
+      <div id="tab-requirements" class="tab-pane hidden">
+        <div class="req-info">
+          <h4>Compliance Checklist</h4>
+          <div class="checklist">
+            ${requirementsHTML(c)}
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-templates" class="tab-pane hidden">
+        <div class="templates-list">
+          ${templatesHTML(c)}
+        </div>
+      </div>
+
+      <div id="tab-proposal" class="tab-pane hidden">
+        <div class="proposal-launch">
+          <h4>Proposal Wizard</h4>
+          <p>Generate a complete proposal package for this opportunity.</p>
+          <button class="btn-primary" onclick="launchWizard('${c.id}')">Launch Proposal Wizard →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function analysisHTML(c) {
+  const reasons = [];
+  if (c.score >= 8) reasons.push("✅ High score — strong match for Brisar");
+  if (c.score >= 5 && c.score < 8) reasons.push("⚡ Solid opportunity — worth pursuing");
+  if (c.score < 5) reasons.push("⚠️ Low score — tight deadline or poor fit");
+  if (c.setaside_label && c.setaside_label !== "None") reasons.push(`✅ Set-aside: ${c.setaside_label} — Brisar qualifies`);
+  if (c.value > 0 && c.value <= 25000) reasons.push("✅ Under $25K — minimal competition expected");
+  else if (c.value > 0 && c.value <= 100000) reasons.push("✅ Under $100K — simplified acquisition range");
+  else if (c.value > 0) reasons.push(`📊 Contract value ${c.value_fmt} — research comparable awards`);
+  if (c.days_away >= 21) reasons.push(`✅ ${c.days_away} days to deadline — ample time to find sub`);
+  else if (c.days_away >= 14) reasons.push(`⚠️ ${c.days_away} days — tight but workable`);
+  else reasons.push(`🚨 Only ${c.days_away} days — likely not actionable`);
+  if (c.naics && NAICS_LABELS[c.naics]) reasons.push(`✅ NAICS ${c.naics} is in Brisar's tracked categories`);
+
+  const margin = c.value > 0 ? { low: c.value * 0.25, high: c.value * 0.40 } : null;
+
+  return `
+  <div class="analysis-section">
+    <h4>Opportunity Assessment</h4>
+    <div class="score-meter">
+      <div class="score-fill" style="width:${c.score * 10}%; background:${c.score>=8?'#22c55e':c.score>=5?'#f59e0b':'#ef4444'}"></div>
+    </div>
+    <div class="score-label">Score: ${c.score}/10</div>
+    <ul class="analysis-reasons">
+      ${reasons.map(r => `<li>${r}</li>`).join("")}
+    </ul>
+  </div>
+  ${margin ? `
+  <div class="analysis-section">
+    <h4>Estimated Margin (25–40%)</h4>
+    <div class="margin-row">
+      <div class="margin-item"><label>Sub Quote Target</label><span>${fmtDollar(c.value * 0.65)} – ${fmtDollar(c.value * 0.75)}</span></div>
+      <div class="margin-item"><label>Projected Margin</label><span>${fmtDollar(margin.low)} – ${fmtDollar(margin.high)}</span></div>
+    </div>
+  </div>` : ''}
+  <div class="analysis-section">
+    <button class="btn-secondary" onclick="loadPricing('${c.naics}', '${c.state}')">Load Historical Pricing from USASpending.gov</button>
+    <div id="pricing-results"></div>
+  </div>`;
+}
+
+function requirementsHTML(c) {
+  const checks = [
+    { label: "SAM.gov Registration Active", done: true },
+    { label: `UEI on file (${c.id ? 'QMGQE3CJK923' : 'N/A'})`, done: true },
+    { label: "Small Business Certification", done: true },
+    { label: "NAICS Code Matches Primary", done: !!c.naics && c.naics in NAICS_LABELS },
+    { label: "Response Deadline > 14 Days", done: c.days_away >= 14 },
+    { label: "Subcontractor Quote Obtained", done: false },
+    { label: "Scope of Work Reviewed", done: false },
+    { label: "Bid Price Calculated", done: false },
+    { label: "Proposal Submitted", done: false },
+  ];
+  return checks.map(ch => `
+    <div class="check-item ${ch.done ? 'done' : 'todo'}">
+      <span class="check-icon">${ch.done ? '✅' : '☐'}</span>
+      <span>${ch.label}</span>
+    </div>`).join("");
+}
+
+function templatesHTML(c) {
+  const templates = [
+    { name: "Cover Page", icon: "📄", desc: "Company letterhead + opportunity header" },
+    { name: "Consultant Agreement", icon: "🤝", desc: "Prime–consultant agreement template" },
+    { name: "Subcontractor Agreement", icon: "🔧", desc: "Prime–sub teaming agreement" },
+    { name: "Proposal Template", icon: "📝", desc: "Full 44-page proposal package" },
+  ];
+  return templates.map(t => `
+    <div class="template-card">
+      <span class="template-icon">${t.icon}</span>
+      <div class="template-info">
+        <div class="template-name">${t.name}</div>
+        <div class="template-desc">${t.desc}</div>
+      </div>
+      <button class="btn-secondary btn-sm" onclick="openWizardTemplate('${t.name}', '${c.id}')">Use →</button>
+    </div>`).join("");
+}
+
+function loadSubs(naics, state) {
+  document.getElementById("sub-results").innerHTML = '<div class="loading-state"><div class="spinner"></div>Searching SAM.gov entity registry…</div>';
+  setTimeout(() => {
+    document.getElementById("sub-results").innerHTML = `
+      <div class="sub-placeholder">
+        <p>SAM Entity API search for NAICS ${naics} within 100 miles${state ? ' of '+state : ''}.</p>
+        <p class="muted">Full subcontractor roster requires SAM.gov Entity API call (uses daily quota).</p>
+        <button class="btn-primary btn-sm">Search SAM Entity Registry (uses API call)</button>
+      </div>`;
+  }, 500);
+}
+
+function loadPricing(naics, state) {
+  const el = document.getElementById("pricing-results");
+  el.innerHTML = '<div class="spinner-inline"></div> Loading…';
+  fetch(`/api/usaspending/pricing?naics=${naics}&state=${state}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { el.innerHTML = `<p class="error">Error: ${d.error}</p>`; return; }
+      el.innerHTML = d.count ? `
+        <div class="pricing-box">
+          <h5>USASpending.gov — NAICS ${naics} Historical Awards</h5>
+          <div class="pricing-grid">
+            <div><label>Avg Award</label><span>${fmtDollar(d.avg)}</span></div>
+            <div><label>High</label><span>${fmtDollar(d.high)}</span></div>
+            <div><label>Low</label><span>${fmtDollar(d.low)}</span></div>
+            <div><label>Sample Size</label><span>${d.count} awards</span></div>
+          </div>
+        </div>` : '<p class="muted">No comparable awards found.</p>';
+    })
+    .catch(e => { el.innerHTML = `<p class="error">${e}</p>`; });
+}
+
+function trackBid(id) {
+  const c = allResults.find(r => r.id === id);
+  if (!c) return;
+  fetch("/api/bids", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      id: c.id,
+      title: c.title,
+      agency: c.agency,
+      value: c.value_fmt,
+      deadline: c.deadline,
+      naics: c.naics,
+      location: c.location,
+      score: c.score,
+      sam_url: c.sam_url,
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) showToast("Added to Bid Tracker", "success");
+    else showToast("Error: " + d.error, "error");
+  });
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.add("hidden"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.remove("hidden");
+  btn.classList.add("active");
+}
+
+function setView(view) {
+  currentView = view;
+  document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector(`[data-view="${view}"]`).classList.add("active");
+  renderResults(allResults);
+}
+
+function clearFilters() {
+  document.getElementById("f-keyword").value = "";
+  document.getElementById("f-naics").value = "";
+  document.getElementById("f-setaside").value = "";
+  document.getElementById("f-valmax").value = "350000";
+  document.getElementById("f-deadline").value = "30";
+  document.getElementById("f-state").value = "";
+}
+
+function launchWizard(contractId) {
+  window.location.href = `/proposal-wizard?id=${contractId}`;
+}
+
+function openWizardTemplate(templateName, contractId) {
+  window.location.href = `/proposal-wizard?id=${contractId}&template=${encodeURIComponent(templateName)}`;
+}
+
+function formatDeadline(str, days) {
+  if (!str) return "—";
+  const d = str.slice(0, 10);
+  if (days === 999 || days === undefined) return d;
+  if (days < 0) return `${d} (expired)`;
+  if (days === 0) return `${d} (TODAY)`;
+  return `${d} (${days}d)`;
+}
+
+function scoreClass(s) {
+  if (s >= 8) return "score-high";
+  if (s >= 5) return "score-med";
+  return "score-low";
+}
+
+function fmtDollar(n) {
+  return "$" + Number(n).toLocaleString("en-US", {maximumFractionDigits: 0});
+}
+
+function escHtml(s) {
+  return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// Auto-run search on load using cached data
+window.addEventListener("DOMContentLoaded", () => runSearch(true));
+</script>
+{% endblock %}

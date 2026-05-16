@@ -781,6 +781,7 @@ function loadHistory(naics, state) {
               ${a.state ? `<span class="history-state">📍 ${escHtml(a.state)}</span>` : ''}
               ${a.agency ? `<span class="history-awarding">🏛️ ${escHtml(a.agency)}</span>` : ''}
             </div>
+            ${a.description ? `<div class="history-desc">${escHtml(a.description)}</div>` : ''}
             ${i === 0 && a.end ? `<div class="history-expiry ${isExpiringSoon(a.end) ? 'expiry-soon' : ''}">${expiryLabel(a.end)}</div>` : ''}
           </div>`).join('')}
         </div>`;

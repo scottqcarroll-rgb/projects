@@ -792,7 +792,7 @@ def api_contract_history():
                 "Awarding Agency", "Awarding Sub Agency",
                 "Start Date", "End Date",
                 "Place of Performance State Code",
-                "generated_internal_id",
+                "generated_internal_id", "Description",
             ],
             "filters": {
                 "award_type_codes": ["A", "B", "C", "D"],
@@ -827,6 +827,7 @@ def api_contract_history():
                 "end":        end,
                 "duration":   _calc_duration(start, end),
                 "award_id":   r.get("generated_internal_id") or r.get("Award ID") or "",
+                "description": (r.get("Description") or "").strip(),
             })
 
         return jsonify({

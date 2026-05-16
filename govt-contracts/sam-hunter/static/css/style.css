@@ -317,6 +317,7 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .history-duration { background: #dbeafe; color: #1e40af; font-weight: 700; padding: 1px 7px; border-radius: 10px; font-size: 11px; }
 .history-dates { font-size: 11px; }
 .history-state { font-size: 11px; }
+.history-desc { margin-top: 6px; font-size: 11px; color: #4b5563; font-style: italic; line-height: 1.4; border-left: 2px solid #e5e7eb; padding-left: 8px; }
 .history-expiry { margin-top: 6px; font-size: 11px; color: #374151; }
 .expiry-soon { color: #b45309; font-weight: 600; }
 

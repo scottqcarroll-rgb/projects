@@ -504,8 +504,10 @@ function analysisHTML(c) {
     <div id="pricing-results"><div class="spinner-inline"></div> Loading from USASpending.gov…</div>
   </div>
   <div class="analysis-section">
-    <h4>Competitor Landscape — ${escHtml(c.naics_label || c.naics)}</h4>
-    <div id="competitor-results"><div class="spinner-inline"></div> Loading…</div>
+    <h4 class="collapsible-header" onclick="toggleCompetitors('${c.naics}', '${c.state}', this)">
+      <span class="collapse-arrow">▶</span> Competitor Landscape — ${escHtml(c.naics_label || c.naics)}
+    </h4>
+    <div id="competitor-results" class="hidden"></div>
   </div>`;
 }
 
@@ -706,6 +708,22 @@ function loadPricing(naics, state) {
     .catch(e => { el.innerHTML = `<p class="error">${e}</p>`; });
 }
 
+function toggleCompetitors(naics, state, headerEl) {
+  const el = document.getElementById("competitor-results");
+  const arrow = headerEl.querySelector(".collapse-arrow");
+  if (!el) return;
+  if (!el.classList.contains("hidden")) {
+    el.classList.add("hidden");
+    arrow.textContent = "▶";
+    return;
+  }
+  el.classList.remove("hidden");
+  arrow.textContent = "▼";
+  if (el.dataset.loaded) return;
+  el.dataset.loaded = "1";
+  loadCompetitors(naics, state);
+}
+
 function loadCompetitors(naics, state) {
   const el = document.getElementById("competitor-results");
   if (!el) return;
@@ -774,13 +792,10 @@ function switchTab(name, btn) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("tab-" + name).classList.remove("hidden");
   btn.classList.add("active");
-  // Auto-load intelligence data when analysis tab is opened
+  // Auto-load pricing when analysis tab is opened; competitors are user-triggered
   if (name === "analysis" && selectedId) {
     const c = allResults.find(r => r.id === selectedId);
-    if (c) {
-      loadPricing(c.naics, c.state);
-      loadCompetitors(c.naics, c.state);
-    }
+    if (c) loadPricing(c.naics, c.state);
   }
 }
 

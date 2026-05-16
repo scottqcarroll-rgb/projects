@@ -276,6 +276,9 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .entity-free-data { margin-bottom: 8px; }
 .entity-sam-data { border-top: 1px dashed #e5e7eb; padding-top: 8px; margin-top: 6px; }
 .cached-badge { font-size: 9px; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 8px; }
+.collapsible-header { cursor: pointer; user-select: none; }
+.collapsible-header:hover { color: #3b5bdb; }
+.collapse-arrow { font-size: 10px; margin-right: 4px; }
 .btn-pull-sam { margin-top: 6px; background: #1e2d4f; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; }
 .btn-pull-sam:hover { background: #2d4070; }
 .btn-odoo { margin-top: 8px; background: #7c3aed; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; display: inline-block; }

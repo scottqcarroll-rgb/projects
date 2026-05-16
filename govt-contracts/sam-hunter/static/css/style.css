@@ -263,6 +263,8 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .comp-row:hover { background: #f8faff; }
 .comp-top { background: #fffbeb; }
 .comp-name { font-weight: 600; line-height: 1.3; }
+.comp-link { color: #1e2d4f; text-decoration: underline; text-decoration-color: #c7d2fe; text-underline-offset: 2px; }
+.comp-link:hover { color: #3b5bdb; }
 .comp-agencies { font-size: 10px; color: #6b7280; font-weight: 400; margin-top: 2px; }
 .comp-states { font-size: 10px; color: #9ca3af; margin-top: 1px; }
 .comp-wins { font-weight: 700; color: #1e2d4f; text-align: center; }

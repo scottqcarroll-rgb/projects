@@ -270,6 +270,9 @@ def save_usage(u):
     USAGE_FILE.write_text(json.dumps(u))
 
 
+INELIGIBLE_SETASIDES = {"VSB", "SDVOSB"}  # Brisar is not veteran-owned
+
+
 def filter_records(records, keyword, naics, setaside, val_max, state):
     """Filter raw SAM.gov records client-side — no extra API calls."""
     tracked = set(NAICS_LABELS.keys())
@@ -286,6 +289,10 @@ def filter_records(records, keyword, naics, setaside, val_max, state):
         else:
             if code not in tracked:
                 continue
+
+        # Always exclude set-asides Brisar doesn't qualify for
+        if c.get("typeOfSetAside") in INELIGIBLE_SETASIDES:
+            continue
 
         # Set-aside filter
         if setaside and c.get("typeOfSetAside") != setaside:

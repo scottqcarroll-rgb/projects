@@ -14,5 +14,5 @@ else
     echo "Starting new Claude+Telegram session..."
     tmux new-session -s "$SESSION" \
         -x 220 -y 50 \
-        "/home/scott/.vscode-server/extensions/anthropic.claude-code-2.1.142-linux-x64/resources/native-binary/claude --dangerously-load-development-channels plugin:telegram@claude-plugins-official --plugin-dir $PLUGIN_DIR"
+        "/home/scott/.vscode-server/extensions/anthropic.claude-code-2.1.142-linux-x64/resources/native-binary/claude --dangerously-load-development-channels server:telegram"
 fi

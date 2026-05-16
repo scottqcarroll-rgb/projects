@@ -805,8 +805,7 @@ def api_contract_history():
             "order": "desc",
         }
         if state:
-            body["filters"]["place_of_performance_scope"] = "domestic"
-            body["filters"]["place_of_performance_states"] = [state]
+            body["filters"]["place_of_performance_locations"] = [{"country": "USA", "state": state}]
 
         resp = requests.post(
             "https://api.usaspending.gov/api/v2/search/spending_by_award/",

@@ -560,6 +560,101 @@ def api_bids_delete(bid_id):
     return jsonify({"error": "Not found"}), 404
 
 
+def parse_entity(e):
+    """Extract useful display fields from a SAM.gov entity record."""
+    reg  = e.get("coreData", {}).get("entityRegistration", {})
+    addr = e.get("coreData", {}).get("physicalAddress", {})
+    biz  = e.get("coreData", {}).get("businessTypes", {})
+    pocs = e.get("pointsOfContact", {})
+    poc  = pocs.get("governmentBusinessPOC") or pocs.get("electronicBusinessPOC") or {}
+    sba_types = biz.get("sbaBusinessTypeList") or []
+    certs = [b["sbaBusinessTypeDesc"] for b in sba_types if b.get("certificationEntryDate") and b.get("sbaBusinessTypeDesc")]
+    return {
+        "uei":           reg.get("ueiSAM", ""),
+        "cage":          reg.get("cageCode", ""),
+        "name":          reg.get("legalBusinessName", ""),
+        "status":        reg.get("registrationStatus", ""),
+        "expires":       (reg.get("registrationExpirationDate") or "")[:10],
+        "website":       reg.get("entityURL", ""),
+        "address":       ", ".join(filter(None, [
+                             addr.get("addressLine1",""),
+                             addr.get("city",""),
+                             addr.get("stateOrProvinceCode",""),
+                             addr.get("zipCode",""),
+                         ])),
+        "contact_name":  f"{poc.get('firstName','')} {poc.get('lastName','')}".strip(),
+        "contact_title": poc.get("title", ""),
+        "contact_phone": poc.get("phoneNumber", ""),
+        "contact_email": poc.get("emailAddress", ""),
+        "certifications": certs,
+    }
+
+
+@app.route("/api/entity/lookup")
+def api_entity_lookup():
+    name = request.args.get("name", "").strip()
+    if not name:
+        return jsonify({"error": "name required"}), 400
+    api_key = get_api_key()
+    if not api_key:
+        return jsonify({"error": "No SAM.gov API key"}), 500
+    try:
+        resp = requests.get(
+            "https://api.sam.gov/entity-information/v3/entities",
+            params={
+                "api_key": api_key,
+                "legalBusinessName": name,
+                "includeSections": "entityRegistration,coreData,pointsOfContact",
+                "registrationStatus": "A",
+            },
+            timeout=30
+        )
+        resp.raise_for_status()
+        entities = resp.json().get("entityData") or []
+        if not entities:
+            return jsonify({"found": False})
+        return jsonify({"found": True, "entity": parse_entity(entities[0])})
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
+
+
+@app.route("/api/entity/subs")
+def api_entity_subs():
+    naics = request.args.get("naics", "").strip()
+    state = request.args.get("state", "").strip()
+    if not naics:
+        return jsonify({"error": "naics required"}), 400
+    api_key = get_api_key()
+    if not api_key:
+        return jsonify({"error": "No SAM.gov API key"}), 500
+    try:
+        params = {
+            "api_key": api_key,
+            "naicsCode": naics,
+            "includeSections": "entityRegistration,coreData,pointsOfContact",
+            "registrationStatus": "A",
+            "purposeOfRegistrationCode": "Z2",
+            "limit": 25,
+        }
+        if state:
+            params["stateOrProvinceCode"] = state
+        resp = requests.get(
+            "https://api.sam.gov/entity-information/v3/entities",
+            params=params,
+            timeout=30
+        )
+        resp.raise_for_status()
+        entities = resp.json().get("entityData") or []
+        return jsonify({
+            "naics": naics,
+            "state": state,
+            "count": len(entities),
+            "entities": [parse_entity(e) for e in entities],
+        })
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
+
+
 def _usaspending_awards(naics, state="", limit=100):
     """Shared helper — fetch recent contract awards from USASpending.gov for a NAICS code.
     Max 100 per page (USASpending hard limit)."""

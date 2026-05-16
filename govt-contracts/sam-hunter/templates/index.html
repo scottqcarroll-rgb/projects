@@ -547,15 +547,89 @@ function templatesHTML(c) {
 }
 
 function loadSubs(naics, state) {
-  document.getElementById("sub-results").innerHTML = '<div class="loading-state"><div class="spinner"></div>Searching SAM.gov entity registry…</div>';
-  setTimeout(() => {
-    document.getElementById("sub-results").innerHTML = `
-      <div class="sub-placeholder">
-        <p>SAM Entity API search for NAICS ${naics} within 100 miles${state ? ' of '+state : ''}.</p>
-        <p class="muted">Full subcontractor roster requires SAM.gov Entity API call (uses daily quota).</p>
-        <button class="btn-primary btn-sm">Search SAM Entity Registry (uses API call)</button>
-      </div>`;
-  }, 500);
+  const el = document.getElementById("sub-results");
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div>Searching SAM.gov entity registry… (uses 1 API call)</div>';
+  fetch(`/api/entity/subs?naics=${naics}&state=${encodeURIComponent(state || '')}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { el.innerHTML = `<p class="error">SAM.gov error: ${d.error}</p>`; return; }
+      if (!d.entities.length) {
+        el.innerHTML = `<p class="muted">No active SAM-registered entities found for NAICS ${naics}${d.state ? ' in ' + d.state : ''}.</p>`;
+        return;
+      }
+      el.innerHTML = `
+        <div class="sub-count">${d.count} active SAM entities found · NAICS ${d.naics}${d.state ? ' · ' + d.state : ''}</div>
+        <div class="sub-list">
+          ${d.entities.map(e => `
+          <div class="sub-card">
+            <div class="sub-name">${escHtml(e.name)}</div>
+            ${e.website ? `<a href="${escHtml(e.website)}" target="_blank" class="sub-website">🌐 ${escHtml(e.website)}</a>` : ''}
+            ${e.address ? `<div class="sub-detail">📍 ${escHtml(e.address)}</div>` : ''}
+            ${e.contact_name ? `<div class="sub-detail">👤 ${escHtml(e.contact_name)}${e.contact_title ? ' · ' + escHtml(e.contact_title) : ''}</div>` : ''}
+            ${e.contact_email ? `<div class="sub-detail"><a href="mailto:${escHtml(e.contact_email)}" class="sub-email">${escHtml(e.contact_email)}</a></div>` : ''}
+            ${e.contact_phone ? `<div class="sub-detail">📞 ${escHtml(e.contact_phone)}</div>` : ''}
+            ${e.cage ? `<div class="sub-detail sub-cage">CAGE: ${escHtml(e.cage)}</div>` : ''}
+            ${e.certifications.length ? `<div class="sub-certs">${e.certifications.map(c => `<span class="cert-tag">${escHtml(c)}</span>`).join('')}</div>` : ''}
+          </div>`).join('')}
+        </div>`;
+    })
+    .catch(err => { el.innerHTML = `<p class="error">Network error: ${err}</p>`; });
+}
+
+function toggleEntityProfile(rowEl) {
+  const name = rowEl.dataset.name;
+  const idx  = rowEl.dataset.idx;
+  const panel = document.getElementById(`entity-expand-${idx}`);
+  if (!panel) return;
+
+  // Collapse other open panels
+  document.querySelectorAll('.entity-expand:not(.hidden)').forEach(el => {
+    if (el.id !== `entity-expand-${idx}`) el.classList.add('hidden');
+  });
+
+  if (!panel.classList.contains('hidden')) {
+    panel.classList.add('hidden');
+    return;
+  }
+
+  panel.classList.remove('hidden');
+  if (panel.dataset.loaded) return;
+  panel.dataset.loaded = '1';
+
+  panel.innerHTML = '<div class="entity-loading">🔍 Pulling SAM.gov profile… (1 API call)</div>';
+
+  fetch(`/api/entity/lookup?name=${encodeURIComponent(name)}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) {
+        panel.innerHTML = `<div class="entity-error">SAM.gov error: ${d.error}</div>`;
+        delete panel.dataset.loaded;
+        return;
+      }
+      if (!d.found) {
+        panel.innerHTML = `<div class="entity-error">Not found in SAM.gov — may be registered under a different name.</div>`;
+        return;
+      }
+      const e = d.entity;
+      panel.innerHTML = `
+        <div class="entity-card">
+          <div class="entity-row-top">
+            <span class="entity-status-badge ${e.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${e.status}</span>
+            ${e.expires ? `<span class="entity-expires">Expires ${e.expires}</span>` : ''}
+            ${e.cage ? `<span class="entity-cage">CAGE: ${escHtml(e.cage)}</span>` : ''}
+          </div>
+          ${e.website ? `<div><a href="${escHtml(e.website)}" target="_blank" class="entity-website">🌐 ${escHtml(e.website)}</a></div>` : ''}
+          ${e.address ? `<div class="entity-detail">📍 ${escHtml(e.address)}</div>` : ''}
+          ${e.contact_name ? `<div class="entity-detail">👤 ${escHtml(e.contact_name)}${e.contact_title ? ' · <em>' + escHtml(e.contact_title) + '</em>' : ''}</div>` : ''}
+          ${e.contact_email ? `<div class="entity-detail"><a href="mailto:${escHtml(e.contact_email)}" class="entity-email">${escHtml(e.contact_email)}</a></div>` : ''}
+          ${e.contact_phone ? `<div class="entity-detail">📞 ${escHtml(e.contact_phone)}</div>` : ''}
+          ${e.certifications.length ? `<div class="entity-certs">${e.certifications.map(c => `<span class="cert-tag">${escHtml(c)}</span>`).join('')}</div>` : ''}
+        </div>`;
+    })
+    .catch(() => {
+      panel.innerHTML = `<div class="entity-error">Network error — try again.</div>`;
+      delete panel.dataset.loaded;
+    });
 }
 
 function loadPricing(naics, state) {
@@ -597,16 +671,17 @@ function loadCompetitors(naics, state) {
             <span>Company</span><span>Wins</span><span>Avg Value</span><span>Last Win</span>
           </div>
           ${comps.map((c, i) => `
-          <div class="comp-row ${i === 0 ? 'comp-top' : ''}">
+          <div class="comp-row ${i === 0 ? 'comp-top' : ''}" data-name="${escHtml(c.name)}" data-idx="${i}" onclick="toggleEntityProfile(this)" title="Click to pull SAM.gov profile">
             <div class="comp-name">
-              ${i === 0 ? '🏆 ' : ''}<a class="comp-link" href="https://sam.gov/search/?index=entity&amp;keywords=${encodeURIComponent(c.name)}" target="_blank" rel="noopener">${escHtml(c.name)}</a>
+              ${i === 0 ? '🏆 ' : ''}${escHtml(c.name)}
               <div class="comp-agencies">${c.agencies.map(a => escHtml(a)).join(' · ')}</div>
               ${c.states.length ? `<div class="comp-states">📍 ${c.states.join(', ')}</div>` : ''}
             </div>
             <div class="comp-wins"><strong>${c.win_count}</strong></div>
             <div class="comp-value">${fmtDollar(c.avg_value)}</div>
             <div class="comp-date">${c.latest || '—'}</div>
-          </div>`).join('')}
+          </div>
+          <div id="entity-expand-${i}" class="entity-expand hidden"></div>`).join('')}
         </div>`;
     })
     .catch(e => { el.innerHTML = `<p class="error">${e}</p>`; });

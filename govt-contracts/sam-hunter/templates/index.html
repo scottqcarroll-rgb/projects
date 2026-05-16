@@ -504,7 +504,7 @@ function analysisHTML(c) {
     <div id="pricing-results"><div class="spinner-inline"></div> Loading from USASpending.gov…</div>
   </div>
   <div class="analysis-section">
-    <h4>Competitor X-Ray — Previous Winners</h4>
+    <h4>Competitor Landscape — ${escHtml(c.naics_label || c.naics)}</h4>
     <div id="competitor-results"><div class="spinner-inline"></div> Loading…</div>
   </div>`;
 }
@@ -717,7 +717,7 @@ function loadCompetitors(naics, state) {
       const comps = d.competitors || [];
       if (!comps.length) { el.innerHTML = '<p class="muted">No previous winners found.</p>'; return; }
       el.innerHTML = `
-        <div class="comp-meta">${d.total_awards} recent awards analyzed · top ${comps.length} winners shown</div>
+        <div class="comp-meta">${d.total_awards} recent awards analyzed · top ${comps.length} companies in this space</div>
         <div class="comp-table">
           <div class="comp-header">
             <span>Company</span><span>Wins</span><span>Avg Value</span><span>Last Win</span>

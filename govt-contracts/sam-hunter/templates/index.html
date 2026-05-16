@@ -599,7 +599,7 @@ function loadCompetitors(naics, state) {
           ${comps.map((c, i) => `
           <div class="comp-row ${i === 0 ? 'comp-top' : ''}">
             <div class="comp-name">
-              ${i === 0 ? '🏆 ' : ''}<a class="comp-link" href="https://sam.gov/search/?index=entity&keywords=${encodeURIComponent(c.name)}" target="_blank" rel="noopener">${escHtml(c.name)}</a>
+              ${i === 0 ? '🏆 ' : ''}<a class="comp-link" href="https://sam.gov/search/?index=entity&amp;keywords=${encodeURIComponent(c.name)}" target="_blank" rel="noopener">${escHtml(c.name)}</a>
               <div class="comp-agencies">${c.agencies.map(a => escHtml(a)).join(' · ')}</div>
               ${c.states.length ? `<div class="comp-states">📍 ${c.states.join(', ')}</div>` : ''}
             </div>

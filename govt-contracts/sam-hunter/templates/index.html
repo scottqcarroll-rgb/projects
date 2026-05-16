@@ -505,7 +505,7 @@ function analysisHTML(c) {
   </div>
   <div class="analysis-section">
     <h4 class="collapsible-header" onclick="toggleCompetitors('${c.naics}', '${c.state}', this)">
-      <span class="collapse-arrow">▶</span> Competitor Landscape — ${c.naics}
+      <span class="collapse-arrow">▶</span> Competitor — ${escHtml(c.naics_label || c.naics)}
     </h4>
     <div id="competitor-results" class="hidden"></div>
   </div>

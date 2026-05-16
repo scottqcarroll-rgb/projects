@@ -1,4 +1,4 @@
-import os, json, datetime, re
+import os, json, datetime, re, ssl, xmlrpc.client
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import requests
@@ -10,10 +10,16 @@ DATA_DIR      = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
 PROSPECT_DIR  = BASE_DIR.parent / "prospect-lists"
 
-ENV_FILE      = Path("/home/scott/projects/.env.samgov")
-PROFILE_FILE  = DATA_DIR / "profile.json"
-BIDS_FILE     = DATA_DIR / "bids.json"
-USAGE_FILE    = DATA_DIR / "api_usage.json"   # tracks daily API call count
+ENV_FILE           = Path("/home/scott/projects/.env.samgov")
+PROFILE_FILE       = DATA_DIR / "profile.json"
+BIDS_FILE          = DATA_DIR / "bids.json"
+USAGE_FILE         = DATA_DIR / "api_usage.json"
+ENTITY_CACHE_FILE  = DATA_DIR / "entity_cache.json"
+
+ODOO_URL  = "https://100.124.71.12"
+ODOO_USER = "Admin"
+ODOO_PASS = "admin123"
+_odoo_db_name = None   # auto-detected on first use
 
 UEI = "QMGQE3CJK923"
 
@@ -560,6 +566,43 @@ def api_bids_delete(bid_id):
     return jsonify({"error": "Not found"}), 404
 
 
+def _odoo_ctx():
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    return ctx
+
+def _odoo_db():
+    global _odoo_db_name
+    if _odoo_db_name:
+        return _odoo_db_name
+    try:
+        dbs = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/db", context=_odoo_ctx()).list()
+        _odoo_db_name = dbs[0] if dbs else "odoo"
+    except Exception:
+        _odoo_db_name = "odoo"
+    return _odoo_db_name
+
+def _odoo_uid():
+    common = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/common", context=_odoo_ctx())
+    return common.authenticate(_odoo_db(), ODOO_USER, ODOO_PASS, {})
+
+def _odoo_models():
+    return xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object", context=_odoo_ctx())
+
+
+def load_entity_cache():
+    if ENTITY_CACHE_FILE.exists():
+        try:
+            return json.loads(ENTITY_CACHE_FILE.read_text())
+        except Exception:
+            pass
+    return {}
+
+def save_entity_cache(cache):
+    ENTITY_CACHE_FILE.write_text(json.dumps(cache, indent=2))
+
+
 def parse_entity(e):
     """Extract useful display fields from a SAM.gov entity record."""
     reg  = e.get("coreData", {}).get("entityRegistration", {})
@@ -595,6 +638,13 @@ def api_entity_lookup():
     name = request.args.get("name", "").strip()
     if not name:
         return jsonify({"error": "name required"}), 400
+
+    # Serve from cache — no API call
+    cache = load_entity_cache()
+    cache_key = name.lower()
+    if cache_key in cache:
+        return jsonify({"found": True, "entity": cache[cache_key], "cached": True})
+
     api_key = get_api_key()
     if not api_key:
         return jsonify({"error": "No SAM.gov API key"}), 500
@@ -613,7 +663,52 @@ def api_entity_lookup():
         entities = resp.json().get("entityData") or []
         if not entities:
             return jsonify({"found": False})
-        return jsonify({"found": True, "entity": parse_entity(entities[0])})
+        entity = parse_entity(entities[0])
+        cache[cache_key] = entity
+        save_entity_cache(cache)
+        return jsonify({"found": True, "entity": entity, "cached": False})
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
+
+
+@app.route("/api/odoo/save-contact", methods=["POST"])
+def api_odoo_save_contact():
+    entity = request.get_json().get("entity", {})
+    if not entity.get("name"):
+        return jsonify({"error": "No entity name"}), 400
+    try:
+        uid = _odoo_uid()
+        if not uid:
+            return jsonify({"error": "Odoo login failed"}), 500
+        models = _odoo_models()
+        db = _odoo_db()
+
+        notes = []
+        if entity.get("cage"):          notes.append(f"CAGE Code: {entity['cage']}")
+        if entity.get("uei"):           notes.append(f"UEI (SAM): {entity['uei']}")
+        if entity.get("expires"):       notes.append(f"SAM Expires: {entity['expires']}")
+        if entity.get("certifications"):notes.append(f"Certifications: {', '.join(entity['certifications'])}")
+        notes.append("Source: Sam Hunter (SAM.gov)")
+
+        vals = {
+            "name":       entity["name"],
+            "is_company": True,
+            "comment":    "\n".join(notes),
+        }
+        for src, dst in [("website","website"),("contact_phone","phone"),("contact_email","email")]:
+            if entity.get(src):
+                vals[dst] = entity[src]
+        if entity.get("address"):
+            vals["street"] = entity["address"]
+
+        existing = models.execute_kw(db, uid, ODOO_PASS, "res.partner", "search",
+                                     [[["name", "=ilike", entity["name"]]]])
+        if existing:
+            models.execute_kw(db, uid, ODOO_PASS, "res.partner", "write", [[existing[0]], vals])
+            return jsonify({"ok": True, "action": "updated", "id": existing[0]})
+        else:
+            pid = models.execute_kw(db, uid, ODOO_PASS, "res.partner", "create", [vals])
+            return jsonify({"ok": True, "action": "created", "id": pid})
     except Exception as ex:
         return jsonify({"error": str(ex)}), 500
 

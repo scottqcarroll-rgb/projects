@@ -570,6 +570,7 @@ function loadSubs(naics, state) {
             ${e.contact_phone ? `<div class="sub-detail">📞 ${escHtml(e.contact_phone)}</div>` : ''}
             ${e.cage ? `<div class="sub-detail sub-cage">CAGE: ${escHtml(e.cage)}</div>` : ''}
             ${e.certifications.length ? `<div class="sub-certs">${e.certifications.map(c => `<span class="cert-tag">${escHtml(c)}</span>`).join('')}</div>` : ''}
+            <button class="btn-odoo btn-odoo-sm" onclick='saveToOdoo(${JSON.stringify(e)})'>💾 Save to Odoo</button>
           </div>`).join('')}
         </div>`;
     })
@@ -577,12 +578,15 @@ function loadSubs(naics, state) {
 }
 
 function toggleEntityProfile(rowEl) {
-  const name = rowEl.dataset.name;
-  const idx  = rowEl.dataset.idx;
-  const panel = document.getElementById(`entity-expand-${idx}`);
+  const name     = rowEl.dataset.name;
+  const idx      = rowEl.dataset.idx;
+  const wins     = rowEl.dataset.wins;
+  const avgVal   = rowEl.dataset.avgval;
+  const agencies = rowEl.dataset.agencies;
+  const states   = rowEl.dataset.states;
+  const panel    = document.getElementById(`entity-expand-${idx}`);
   if (!panel) return;
 
-  // Collapse other open panels
   document.querySelectorAll('.entity-expand:not(.hidden)').forEach(el => {
     if (el.id !== `entity-expand-${idx}`) el.classList.add('hidden');
   });
@@ -593,30 +597,51 @@ function toggleEntityProfile(rowEl) {
   }
 
   panel.classList.remove('hidden');
-  if (panel.dataset.loaded) return;
-  panel.dataset.loaded = '1';
 
-  panel.innerHTML = '<div class="entity-loading">🔍 Pulling SAM.gov profile… (1 API call)</div>';
+  // Always show free USASpending data immediately — no API call
+  if (!panel.dataset.baseLoaded) {
+    panel.dataset.baseLoaded = '1';
+    panel.innerHTML = `
+      <div class="entity-card">
+        <div class="entity-free-data">
+          <div class="entity-detail">🏆 <strong>${escHtml(wins)}</strong> federal awards · Avg <strong>${fmtDollar(avgVal)}</strong></div>
+          ${agencies ? `<div class="entity-detail">🏛️ ${escHtml(agencies)}</div>` : ''}
+          ${states  ? `<div class="entity-detail">📍 ${escHtml(states)}</div>` : ''}
+        </div>
+        <div id="entity-sam-${idx}">
+          <button class="btn-pull-sam" onclick="pullSamProfile('${escHtml(name)}', '${idx}')">
+            🔍 Pull SAM.gov Profile (1 API call)
+          </button>
+        </div>
+      </div>`;
+  }
+}
+
+function pullSamProfile(name, idx) {
+  const samDiv = document.getElementById(`entity-sam-${idx}`);
+  if (!samDiv) return;
+  samDiv.innerHTML = '<div class="entity-loading">Pulling SAM.gov profile…</div>';
 
   fetch(`/api/entity/lookup?name=${encodeURIComponent(name)}`)
     .then(r => r.json())
     .then(d => {
       if (d.error) {
-        panel.innerHTML = `<div class="entity-error">SAM.gov error: ${d.error}</div>`;
-        delete panel.dataset.loaded;
+        samDiv.innerHTML = `<div class="entity-error">SAM.gov error: ${d.error}</div>`;
         return;
       }
       if (!d.found) {
-        panel.innerHTML = `<div class="entity-error">Not found in SAM.gov — may be registered under a different name.</div>`;
+        samDiv.innerHTML = `<div class="entity-error">Not found in SAM.gov — may be registered under a different name.</div>`;
         return;
       }
       const e = d.entity;
-      panel.innerHTML = `
-        <div class="entity-card">
+      const cachedNote = d.cached ? '<span class="cached-badge">cached — no API call used</span>' : '';
+      samDiv.innerHTML = `
+        <div class="entity-sam-data">
           <div class="entity-row-top">
             <span class="entity-status-badge ${e.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${e.status}</span>
             ${e.expires ? `<span class="entity-expires">Expires ${e.expires}</span>` : ''}
             ${e.cage ? `<span class="entity-cage">CAGE: ${escHtml(e.cage)}</span>` : ''}
+            ${cachedNote}
           </div>
           ${e.website ? `<div><a href="${escHtml(e.website)}" target="_blank" class="entity-website">🌐 ${escHtml(e.website)}</a></div>` : ''}
           ${e.address ? `<div class="entity-detail">📍 ${escHtml(e.address)}</div>` : ''}
@@ -624,12 +649,39 @@ function toggleEntityProfile(rowEl) {
           ${e.contact_email ? `<div class="entity-detail"><a href="mailto:${escHtml(e.contact_email)}" class="entity-email">${escHtml(e.contact_email)}</a></div>` : ''}
           ${e.contact_phone ? `<div class="entity-detail">📞 ${escHtml(e.contact_phone)}</div>` : ''}
           ${e.certifications.length ? `<div class="entity-certs">${e.certifications.map(c => `<span class="cert-tag">${escHtml(c)}</span>`).join('')}</div>` : ''}
+          <button class="btn-odoo" onclick='saveToOdoo(${JSON.stringify(e)})'>💾 Save to Odoo CRM</button>
         </div>`;
     })
     .catch(() => {
-      panel.innerHTML = `<div class="entity-error">Network error — try again.</div>`;
-      delete panel.dataset.loaded;
+      samDiv.innerHTML = `<div class="entity-error">Network error — try again.</div>`;
     });
+}
+
+function saveToOdoo(entity) {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  fetch('/api/odoo/save-contact', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({entity})
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      showToast(`${d.action === 'created' ? 'Added' : 'Updated'} in Odoo CRM`, 'success');
+      btn.textContent = '✅ Saved to Odoo';
+    } else {
+      showToast('Odoo error: ' + d.error, 'error');
+      btn.disabled = false;
+      btn.textContent = '💾 Save to Odoo CRM';
+    }
+  })
+  .catch(err => {
+    showToast('Network error: ' + err, 'error');
+    btn.disabled = false;
+    btn.textContent = '💾 Save to Odoo CRM';
+  });
 }
 
 function loadPricing(naics, state) {
@@ -671,7 +723,12 @@ function loadCompetitors(naics, state) {
             <span>Company</span><span>Wins</span><span>Avg Value</span><span>Last Win</span>
           </div>
           ${comps.map((c, i) => `
-          <div class="comp-row ${i === 0 ? 'comp-top' : ''}" data-name="${escHtml(c.name)}" data-idx="${i}" onclick="toggleEntityProfile(this)" title="Click to pull SAM.gov profile">
+          <div class="comp-row ${i === 0 ? 'comp-top' : ''}"
+               data-name="${escHtml(c.name)}" data-idx="${i}"
+               data-wins="${c.win_count}" data-avgval="${c.avg_value}"
+               data-agencies="${escHtml(c.agencies.join(', '))}"
+               data-states="${escHtml(c.states.join(', '))}"
+               onclick="toggleEntityProfile(this)" title="Click to expand">
             <div class="comp-name">
               ${i === 0 ? '🏆 ' : ''}${escHtml(c.name)}
               <div class="comp-agencies">${c.agencies.map(a => escHtml(a)).join(' · ')}</div>

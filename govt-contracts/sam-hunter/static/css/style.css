@@ -270,9 +270,18 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .comp-value { font-weight: 600; color: #374151; }
 .comp-date { color: #9ca3af; font-size: 11px; }
 
-/* Entity expand panel (competitor profile pulled from SAM.gov) */
+/* Entity expand panel */
 .entity-expand { border-bottom: 1px solid #e5e7eb; background: #f8faff; }
 .entity-expand.hidden { display: none; }
+.entity-free-data { margin-bottom: 8px; }
+.entity-sam-data { border-top: 1px dashed #e5e7eb; padding-top: 8px; margin-top: 6px; }
+.cached-badge { font-size: 9px; color: #16a34a; background: #dcfce7; padding: 1px 6px; border-radius: 8px; }
+.btn-pull-sam { margin-top: 6px; background: #1e2d4f; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; }
+.btn-pull-sam:hover { background: #2d4070; }
+.btn-odoo { margin-top: 8px; background: #7c3aed; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; display: inline-block; }
+.btn-odoo:hover { background: #6d28d9; }
+.btn-odoo:disabled { background: #a78bfa; cursor: default; }
+.btn-odoo-sm { padding: 4px 10px; font-size: 11px; }
 .entity-loading { padding: 10px 14px; font-size: 12px; color: #6b7280; }
 .entity-error { padding: 10px 14px; font-size: 12px; color: #ef4444; }
 .entity-card { padding: 10px 14px; font-size: 12px; display: flex; flex-direction: column; gap: 4px; }

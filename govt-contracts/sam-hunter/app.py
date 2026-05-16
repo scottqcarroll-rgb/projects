@@ -750,6 +750,99 @@ def api_entity_subs():
         return jsonify({"error": str(ex)}), 500
 
 
+def _calc_duration(start_str, end_str):
+    """Return human-readable duration string from two ISO date strings."""
+    try:
+        start = datetime.date.fromisoformat(start_str[:10])
+        end   = datetime.date.fromisoformat(end_str[:10])
+        days  = (end - start).days
+        if days <= 0:
+            return None
+        months = round(days / 30.44)
+        if months >= 12:
+            yrs = months // 12
+            rem = months % 12
+            return f"{yrs}yr {rem}mo" if rem else f"{yrs} yr{'s' if yrs > 1 else ''}"
+        return f"{months} mo"
+    except Exception:
+        return None
+
+
+@app.route("/api/usaspending/history")
+def api_contract_history():
+    """Past awards from the same agency+NAICS+state — contract history approximation."""
+    naics   = request.args.get("naics", "").strip()
+    agency  = request.args.get("agency", "").strip()   # top-tier dept name
+    subtier = request.args.get("subtier", "").strip()  # sub-agency name
+    state   = request.args.get("state", "").strip()
+
+    if not naics:
+        return jsonify({"error": "naics required"}), 400
+
+    def _fetch(tier_name, tier_level):
+        body = {
+            "subawards": False,
+            "fields": [
+                "Award ID", "Recipient Name", "Award Amount",
+                "Awarding Agency", "Awarding Sub Agency",
+                "Start Date", "End Date",
+                "Place of Performance State Code",
+            ],
+            "filters": {
+                "award_type_codes": ["A", "B", "C", "D"],
+                "naics_codes": [naics],
+                "award_amounts": [{"lower_bound": 1, "upper_bound": 350000}],
+                "agencies": [{"type": "awarding", "tier": tier_level, "name": tier_name}],
+            },
+            "limit": 10,
+            "page": 1,
+            "sort": "Start Date",
+            "order": "desc",
+        }
+        if state:
+            body["filters"]["place_of_performance_scope"] = "domestic"
+            body["filters"]["place_of_performance_states"] = [state]
+        resp = requests.post(
+            "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+            json=body, timeout=30
+        )
+        resp.raise_for_status()
+        return resp.json().get("results") or []
+
+    try:
+        # Try subtier first (more specific), fall back to top-tier dept
+        results = []
+        if subtier:
+            results = _fetch(subtier, "subtier")
+        if not results and agency:
+            results = _fetch(agency, "toptier")
+
+        awards = []
+        for r in results:
+            start = (r.get("Start Date") or "")[:10]
+            end   = (r.get("End Date") or "")[:10]
+            awards.append({
+                "recipient":  (r.get("Recipient Name") or "Unknown").title(),
+                "amount":     float(r.get("Award Amount") or 0),
+                "agency":     r.get("Awarding Sub Agency") or r.get("Awarding Agency") or "",
+                "state":      r.get("Place of Performance State Code") or "",
+                "start":      start,
+                "end":        end,
+                "duration":   _calc_duration(start, end),
+                "award_id":   r.get("Award ID") or "",
+            })
+
+        return jsonify({
+            "naics":  naics,
+            "agency": subtier or agency,
+            "state":  state,
+            "awards": awards,
+            "count":  len(awards),
+        })
+    except Exception as ex:
+        return jsonify({"error": str(ex)}), 500
+
+
 def _usaspending_awards(naics, state="", limit=100):
     """Shared helper — fetch recent contract awards from USASpending.gov for a NAICS code.
     Max 100 per page (USASpending hard limit)."""

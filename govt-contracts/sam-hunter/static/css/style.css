@@ -300,6 +300,22 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .entity-email { color: #3b5bdb; text-decoration: underline; }
 .entity-certs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 
+/* Contract History */
+.history-note { font-size: 11px; color: #6b7280; margin: -4px 0 4px; }
+.history-meta { font-size: 11px; color: #6b7280; margin-bottom: 8px; }
+.history-list { display: flex; flex-direction: column; gap: 6px; }
+.history-card { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 12px; background: #fff; font-size: 12px; }
+.history-latest { border-color: #3b5bdb; border-width: 2px; }
+.history-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.history-recipient { font-weight: 700; color: #1e2d4f; font-size: 13px; }
+.history-amount { font-weight: 700; color: #16a34a; font-size: 13px; }
+.history-meta-row { display: flex; flex-wrap: wrap; gap: 8px; color: #6b7280; }
+.history-duration { background: #dbeafe; color: #1e40af; font-weight: 700; padding: 1px 7px; border-radius: 10px; font-size: 11px; }
+.history-dates { font-size: 11px; }
+.history-state { font-size: 11px; }
+.history-expiry { margin-top: 6px; font-size: 11px; color: #374151; }
+.expiry-soon { color: #b45309; font-weight: 600; }
+
 /* Subcontractor list */
 .sub-count { font-size: 11px; color: #6b7280; margin-bottom: 8px; }
 .sub-list { display: flex; flex-direction: column; gap: 8px; }

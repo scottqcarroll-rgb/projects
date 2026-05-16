@@ -508,6 +508,13 @@ function analysisHTML(c) {
       <span class="collapse-arrow">▶</span> Competitor Landscape — ${escHtml(c.naics_label || c.naics)}
     </h4>
     <div id="competitor-results" class="hidden"></div>
+  </div>
+  <div class="analysis-section">
+    <h4 class="collapsible-header" onclick="toggleHistory('${c.naics}', '${escHtml(c.agency)}', '${escHtml(c.subtier)}', '${c.state}', this)">
+      <span class="collapse-arrow">▶</span> Contract History — ${escHtml(c.subtier || c.agency)}
+    </h4>
+    <div class="history-note">Past awards by this agency for ${escHtml(c.naics_label || c.naics)} — who held it, what they paid, how long it ran</div>
+    <div id="history-results" class="hidden"></div>
   </div>`;
 }
 
@@ -722,6 +729,75 @@ function toggleCompetitors(naics, state, headerEl) {
   if (el.dataset.loaded) return;
   el.dataset.loaded = "1";
   loadCompetitors(naics, state);
+}
+
+function toggleHistory(naics, agency, subtier, state, headerEl) {
+  const el = document.getElementById("history-results");
+  const arrow = headerEl.querySelector(".collapse-arrow");
+  if (!el) return;
+  if (!el.classList.contains("hidden")) {
+    el.classList.add("hidden");
+    arrow.textContent = "▶";
+    return;
+  }
+  el.classList.remove("hidden");
+  arrow.textContent = "▼";
+  if (el.dataset.loaded) return;
+  el.dataset.loaded = "1";
+  loadHistory(naics, agency, subtier, state);
+}
+
+function loadHistory(naics, agency, subtier, state) {
+  const el = document.getElementById("history-results");
+  if (!el) return;
+  el.innerHTML = '<div class="spinner-inline"></div> Searching USASpending.gov…';
+  const params = new URLSearchParams({ naics, agency, subtier, state });
+  fetch(`/api/usaspending/history?${params}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { el.innerHTML = `<p class="error">Error: ${d.error}</p>`; return; }
+      if (!d.awards.length) {
+        el.innerHTML = `<p class="muted">No past awards found for ${escHtml(d.agency)} in this NAICS${d.state ? ' / ' + d.state : ''}.<br><small>Agency name from SAM.gov may differ slightly from USASpending records.</small></p>`;
+        return;
+      }
+      el.innerHTML = `
+        <div class="history-meta">${d.count} past award${d.count !== 1 ? 's' : ''} · ${escHtml(d.agency)}${d.state ? ' · ' + d.state : ''}</div>
+        <div class="history-list">
+          ${d.awards.map((a, i) => `
+          <div class="history-card ${i === 0 ? 'history-latest' : ''}">
+            <div class="history-top">
+              <div class="history-recipient">${escHtml(a.recipient)}</div>
+              <div class="history-amount">${fmtDollar(a.amount)}</div>
+            </div>
+            <div class="history-meta-row">
+              ${a.duration ? `<span class="history-duration">${escHtml(a.duration)}</span>` : ''}
+              ${a.start ? `<span class="history-dates">${a.start}${a.end ? ' → ' + a.end : ''}</span>` : ''}
+              ${a.state ? `<span class="history-state">📍 ${escHtml(a.state)}</span>` : ''}
+            </div>
+            ${i === 0 && a.end ? `<div class="history-expiry ${isExpiringSoon(a.end) ? 'expiry-soon' : ''}">${expiryLabel(a.end)}</div>` : ''}
+          </div>`).join('')}
+        </div>`;
+    })
+    .catch(e => { el.innerHTML = `<p class="error">Network error: ${e}</p>`; });
+}
+
+function isExpiringSoon(endStr) {
+  try {
+    const end = new Date(endStr);
+    const days = (end - new Date()) / 86400000;
+    return days >= 0 && days <= 180;
+  } catch { return false; }
+}
+
+function expiryLabel(endStr) {
+  try {
+    const end = new Date(endStr);
+    const days = Math.round((end - new Date()) / 86400000);
+    if (days < 0)  return `⚠️ Contract expired ${Math.abs(days)}d ago — likely re-bidding now`;
+    if (days <= 90)  return `🔥 Expires in ${days} days — re-bid likely imminent`;
+    if (days <= 180) return `⏳ Expires in ${Math.round(days/30)} months — watch for re-bid`;
+    return `📅 Expires ${endStr}`;
+  } catch { return ''; }
 }
 
 function loadCompetitors(naics, state) {

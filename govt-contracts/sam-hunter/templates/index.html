@@ -770,12 +770,16 @@ function loadHistory(naics, state) {
           <div class="history-card ${i === 0 ? 'history-latest' : ''}">
             <div class="history-top">
               <div class="history-recipient">${escHtml(a.recipient)}</div>
-              <div class="history-amount">${fmtDollar(a.amount)}</div>
+              <div class="history-right">
+                <div class="history-amount" title="Total obligated value for this contract period">${fmtDollar(a.amount)}</div>
+                ${a.award_id ? `<a class="history-usa-link" href="https://www.usaspending.gov/award/${encodeURIComponent(a.award_id)}/" target="_blank" rel="noopener">USASpending ↗</a>` : ''}
+              </div>
             </div>
             <div class="history-meta-row">
               ${a.duration ? `<span class="history-duration">${escHtml(a.duration)}</span>` : ''}
               ${a.start ? `<span class="history-dates">${a.start}${a.end ? ' → ' + a.end : ''}</span>` : ''}
               ${a.state ? `<span class="history-state">📍 ${escHtml(a.state)}</span>` : ''}
+              ${a.agency ? `<span class="history-awarding">🏛️ ${escHtml(a.agency)}</span>` : ''}
             </div>
             ${i === 0 && a.end ? `<div class="history-expiry ${isExpiringSoon(a.end) ? 'expiry-soon' : ''}">${expiryLabel(a.end)}</div>` : ''}
           </div>`).join('')}

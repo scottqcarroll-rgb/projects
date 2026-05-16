@@ -306,9 +306,13 @@ input, select, textarea, button { font-family: inherit; font-size: 14px; }
 .history-list { display: flex; flex-direction: column; gap: 6px; }
 .history-card { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 12px; background: #fff; font-size: 12px; }
 .history-latest { border-color: #3b5bdb; border-width: 2px; }
-.history-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.history-recipient { font-weight: 700; color: #1e2d4f; font-size: 13px; }
+.history-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.history-recipient { font-weight: 700; color: #1e2d4f; font-size: 13px; flex: 1; }
+.history-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .history-amount { font-weight: 700; color: #16a34a; font-size: 13px; }
+.history-usa-link { font-size: 10px; color: #3b5bdb; text-decoration: underline; white-space: nowrap; }
+.history-usa-link:hover { color: #1e40af; }
+.history-awarding { font-size: 10px; color: #6b7280; }
 .history-meta-row { display: flex; flex-wrap: wrap; gap: 8px; color: #6b7280; }
 .history-duration { background: #dbeafe; color: #1e40af; font-weight: 700; padding: 1px 7px; border-radius: 10px; font-size: 11px; }
 .history-dates { font-size: 11px; }

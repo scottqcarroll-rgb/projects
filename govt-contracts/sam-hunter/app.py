@@ -171,11 +171,16 @@ def enrich(opportunities):
         if not co and pocs:
             co = pocs[0]
 
+        # Parse agency from fullParentPathName (e.g. "DEPT OF DEFENSE.DEPT OF THE NAVY.USMC...")
+        path_parts = [p.strip().title() for p in (c.get("fullParentPathName") or "").split(".") if p.strip()]
+        agency_name  = path_parts[0] if path_parts else (c.get("departmentName") or "")
+        subtier_name = path_parts[1] if len(path_parts) > 1 else (c.get("subtierName") or "")
+
         enriched.append({
             "id": notice_id,
             "title": c.get("title") or "Untitled",
-            "agency": c.get("departmentName") or c.get("organizationHierarchy", [{}])[0].get("name", "") if c.get("organizationHierarchy") else c.get("departmentName") or "",
-            "subtier": c.get("subtierName") or "",
+            "agency":  agency_name,
+            "subtier": subtier_name,
             "naics": naics,
             "naics_label": NAICS_LABELS.get(naics, naics),
             "setaside": c.get("typeOfSetAside") or "",
@@ -779,7 +784,7 @@ def api_contract_history():
     if not naics:
         return jsonify({"error": "naics required"}), 400
 
-    def _fetch(tier_name, tier_level):
+    try:
         body = {
             "subawards": False,
             "fields": [
@@ -792,7 +797,6 @@ def api_contract_history():
                 "award_type_codes": ["A", "B", "C", "D"],
                 "naics_codes": [naics],
                 "award_amounts": [{"lower_bound": 1, "upper_bound": 350000}],
-                "agencies": [{"type": "awarding", "tier": tier_level, "name": tier_name}],
             },
             "limit": 10,
             "page": 1,
@@ -802,20 +806,13 @@ def api_contract_history():
         if state:
             body["filters"]["place_of_performance_scope"] = "domestic"
             body["filters"]["place_of_performance_states"] = [state]
+
         resp = requests.post(
             "https://api.usaspending.gov/api/v2/search/spending_by_award/",
             json=body, timeout=30
         )
         resp.raise_for_status()
-        return resp.json().get("results") or []
-
-    try:
-        # Try subtier first (more specific), fall back to top-tier dept
-        results = []
-        if subtier:
-            results = _fetch(subtier, "subtier")
-        if not results and agency:
-            results = _fetch(agency, "toptier")
+        results = resp.json().get("results") or []
 
         awards = []
         for r in results:

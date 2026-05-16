@@ -510,10 +510,13 @@ function analysisHTML(c) {
     <div id="competitor-results" class="hidden"></div>
   </div>
   <div class="analysis-section">
-    <h4 class="collapsible-header" onclick="toggleHistory('${c.naics}', '${escHtml(c.agency)}', '${escHtml(c.subtier)}', '${c.state}', this)">
-      <span class="collapse-arrow">▶</span> Contract History — ${escHtml(c.subtier || c.agency)}
+    <h4 class="collapsible-header"
+        data-naics="${c.naics}" data-state="${c.state}"
+        data-agency="${escHtml(c.subtier || c.agency)}"
+        onclick="toggleHistory(this)">
+      <span class="collapse-arrow">▶</span> Contract History — ${escHtml(c.subtier || c.agency || c.naics_label)}
     </h4>
-    <div class="history-note">Past awards by this agency for ${escHtml(c.naics_label || c.naics)} — who held it, what they paid, how long it ran</div>
+    <div class="history-note">Recent ${escHtml(c.naics_label || c.naics)} awards in ${c.state || 'this area'} — who held it, what they paid, how long it ran</div>
     <div id="history-results" class="hidden"></div>
   </div>`;
 }
@@ -731,7 +734,7 @@ function toggleCompetitors(naics, state, headerEl) {
   loadCompetitors(naics, state);
 }
 
-function toggleHistory(naics, agency, subtier, state, headerEl) {
+function toggleHistory(headerEl) {
   const el = document.getElementById("history-results");
   const arrow = headerEl.querySelector(".collapse-arrow");
   if (!el) return;
@@ -744,24 +747,24 @@ function toggleHistory(naics, agency, subtier, state, headerEl) {
   arrow.textContent = "▼";
   if (el.dataset.loaded) return;
   el.dataset.loaded = "1";
-  loadHistory(naics, agency, subtier, state);
+  loadHistory(headerEl.dataset.naics, headerEl.dataset.state);
 }
 
-function loadHistory(naics, agency, subtier, state) {
+function loadHistory(naics, state) {
   const el = document.getElementById("history-results");
   if (!el) return;
   el.innerHTML = '<div class="spinner-inline"></div> Searching USASpending.gov…';
-  const params = new URLSearchParams({ naics, agency, subtier, state });
+  const params = new URLSearchParams({ naics, state: state || '' });
   fetch(`/api/usaspending/history?${params}`)
     .then(r => r.json())
     .then(d => {
       if (d.error) { el.innerHTML = `<p class="error">Error: ${d.error}</p>`; return; }
       if (!d.awards.length) {
-        el.innerHTML = `<p class="muted">No past awards found for ${escHtml(d.agency)} in this NAICS${d.state ? ' / ' + d.state : ''}.<br><small>Agency name from SAM.gov may differ slightly from USASpending records.</small></p>`;
+        el.innerHTML = `<p class="muted">No past awards found for NAICS ${naics}${d.state ? ' in ' + d.state : ''}.</p>`;
         return;
       }
       el.innerHTML = `
-        <div class="history-meta">${d.count} past award${d.count !== 1 ? 's' : ''} · ${escHtml(d.agency)}${d.state ? ' · ' + d.state : ''}</div>
+        <div class="history-meta">${d.count} recent awards · NAICS ${d.naics}${d.state ? ' · ' + d.state : ''}</div>
         <div class="history-list">
           ${d.awards.map((a, i) => `
           <div class="history-card ${i === 0 ? 'history-latest' : ''}">

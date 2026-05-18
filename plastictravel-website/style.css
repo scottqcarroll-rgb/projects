@@ -70,7 +70,7 @@ nav {
   text-align: center;
   padding: 120px 40px 80px;
   background:
-    linear-gradient(160deg, rgba(13,27,42,0.78) 0%, rgba(10,20,35,0.72) 100%),
+    linear-gradient(160deg, rgba(13,27,42,0.48) 0%, rgba(10,20,35,0.42) 100%),
     url('images/santorini.jpg') center/cover no-repeat fixed;
   position: relative;
   overflow: hidden;
@@ -100,6 +100,7 @@ nav {
   line-height: 1.05;
   color: #fff;
   margin-bottom: 28px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
 }
 
 .hero h1 em { font-style: italic; color: var(--gold); }
@@ -167,6 +168,7 @@ section { padding: 100px 48px; }
   color: #fff;
   line-height: 1.15;
   margin-bottom: 24px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.5);
 }
 
 .section-body {
@@ -246,6 +248,7 @@ section { padding: 100px 48px; }
   font-weight: 800;
   color: #fff;
   margin-bottom: 20px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
 }
 
 .page-hero p {

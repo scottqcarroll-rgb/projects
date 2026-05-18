@@ -1,11 +1,11 @@
 :root {
-  --navy: #0d1b2a;
-  --navy-mid: #1a2f45;
+  --navy: #152638;
+  --navy-mid: #1e3a52;
   --gold: #c9a84c;
   --gold-light: #e2c47a;
   --cream: #f5f0e8;
   --text: #e8e0d0;
-  --muted: #8a9bb0;
+  --muted: #9db0c4;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,8 +70,8 @@ nav {
   text-align: center;
   padding: 120px 40px 80px;
   background:
-    linear-gradient(160deg, rgba(13,27,42,0.48) 0%, rgba(10,20,35,0.42) 100%),
-    url('images/santorini.jpg') center/cover no-repeat fixed;
+    linear-gradient(160deg, rgba(21,38,56,0.42) 0%, rgba(21,38,56,0.35) 100%),
+    url('images/santorini.jpg') center/cover no-repeat;
   position: relative;
   overflow: hidden;
 }

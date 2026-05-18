@@ -20,3 +20,14 @@
      Textile & Linen Services: 1
 [OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-17-categorized.md
 [OK] Email sent to scottqcarroll@gmail.com
+[08:00:02] Starting contract report — May 18, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15135 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-18-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 7
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-18-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com

@@ -69,7 +69,9 @@ nav {
   justify-content: center;
   text-align: center;
   padding: 120px 40px 80px;
-  background: linear-gradient(160deg, #0d1b2a 0%, #0f2a42 50%, #0d1b2a 100%);
+  background:
+    linear-gradient(160deg, rgba(13,27,42,0.78) 0%, rgba(10,20,35,0.72) 100%),
+    url('images/santorini.jpg') center/cover no-repeat fixed;
   position: relative;
   overflow: hidden;
 }
@@ -78,7 +80,7 @@ nav {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 65% 35%, rgba(201,168,76,0.1) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 65% 35%, rgba(201,168,76,0.08) 0%, transparent 65%);
 }
 
 .hero-content { position: relative; max-width: 820px; }

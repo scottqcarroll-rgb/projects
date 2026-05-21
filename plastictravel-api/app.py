@@ -19,7 +19,7 @@ SMTP_HOST = os.getenv('SMTP_HOST', 'smtp.turbify.net')
 SMTP_PORT = int(os.getenv('SMTP_PORT', '465'))
 SMTP_USER = os.getenv('SMTP_USER', '')
 SMTP_PASS = os.getenv('SMTP_PASS', '')
-NOTIFY_TO = os.getenv('NOTIFY_TO', 'scottqcarroll@gmail.com')
+NOTIFY_TO = os.getenv('NOTIFY_TO', 'scott@plastictravel.com')
 
 
 def create_odoo_lead(first_name, last_name, email, notes):

@@ -97,7 +97,7 @@ Most clients are leaving 3–5x points on the table every month. We fix that.
 SERVICES & INVESTMENT
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Strategy Deep Dive (75 min)         $875
+Strategy Deep Dive                   $875
   A full audit of your cards, spend categories, and travel goals.
   You walk away with a complete, custom points strategy.
 
@@ -105,7 +105,7 @@ Trip Research Deposit                 $50
   We research real award availability for your specific trip.
   Credited toward the success fee when you book.
 
-Trip Planning Success Fee       $250–$450
+Trip Planning Success Fee             $450
   Paid only after we find the trip and you decide to book.
   Based on complexity and savings delivered.
 
@@ -150,7 +150,7 @@ plastictravel.com
             <p style="margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;">Services &amp; Investment</p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;border-collapse:collapse;">
               <tr style="border-bottom:1px solid #eee;">
-                <td style="padding:14px 0;font-size:15px;color:#152638;font-weight:600;">Strategy Deep Dive <span style="font-size:13px;color:#888;font-weight:400;">(75 min)</span></td>
+                <td style="padding:14px 0;font-size:15px;color:#152638;font-weight:600;">Strategy Deep Dive</td>
                 <td style="padding:14px 0;font-size:15px;color:#c9a84c;font-weight:700;text-align:right;">$875</td>
               </tr>
               <tr style="border-bottom:1px solid #eee;">
@@ -159,7 +159,7 @@ plastictravel.com
               </tr>
               <tr>
                 <td style="padding:14px 0;font-size:15px;color:#152638;font-weight:600;">Trip Planning Success Fee</td>
-                <td style="padding:14px 0;font-size:15px;color:#c9a84c;font-weight:700;text-align:right;">$250&ndash;$450</td>
+                <td style="padding:14px 0;font-size:15px;color:#c9a84c;font-weight:700;text-align:right;">$450</td>
               </tr>
             </table>
 
@@ -249,22 +249,26 @@ def create_odoo_lead(first_name, last_name, email, notes):
     return lead_id
 
 
-def send_notification(first_name, last_name, email, notes):
+def send_notification(first_name, last_name, email, notes, lead_id=None):
     if not SMTP_USER or not SMTP_PASS:
         return
 
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f'New Plastic Travel Lead: {first_name} {last_name}'
+    msg['Subject'] = f'New Plastic Travel Lead #{lead_id}: {first_name} {last_name}'
     msg['From']    = SMTP_USER
     msg['To']      = NOTIFY_TO
 
     body = f"""New contact form submission on plastictravel.com
 
+Lead #: {lead_id}
 Name:   {first_name} {last_name}
 Email:  {email}
 
 Notes:
 {notes or '(none)'}
+
+To send the follow-up email, tell Claude:
+send plastic travel followup {lead_id}
 
 This lead has been added to your Odoo CRM.
 """
@@ -366,7 +370,7 @@ def contact():
         return jsonify({'error': 'Could not save to CRM'}), 500
 
     try:
-        send_notification(first_name, last_name, email, notes)
+        send_notification(first_name, last_name, email, notes, lead_id)
     except Exception as e:
         app.logger.warning(f'Email notification failed: {e}')
 

@@ -352,6 +352,66 @@ section { padding: 100px 48px; }
 
 .form-error { color: #e07070; font-size: 13px; margin-top: 16px; display: none; }
 
+/* TOOLS SECTION */
+.tools-section {
+  background: var(--navy-mid);
+  border-top: 1px solid rgba(201,168,76,0.12);
+  border-bottom: 1px solid rgba(201,168,76,0.12);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.tool-card {
+  background: var(--navy);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 4px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s;
+}
+
+.tool-card:hover { border-color: rgba(201,168,76,0.4); }
+
+.tool-category {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.tool-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.tool-card p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  flex: 1;
+}
+
+.tool-link {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.tool-link:hover { color: var(--gold-light); }
+
 /* CTA BAND */
 .cta-band {
   background: linear-gradient(135deg, var(--navy-mid) 0%, #0f2236 100%);
@@ -379,7 +439,7 @@ footer a { color: var(--gold); text-decoration: none; }
   nav { padding: 0 20px; }
   .nav-links { gap: 20px; }
   section { padding: 64px 24px; }
-  .steps-grid, .two-col, .stats-grid, .form-row { grid-template-columns: 1fr; gap: 24px; }
+  .steps-grid, .two-col, .stats-grid, .form-row, .tools-grid { grid-template-columns: 1fr; gap: 24px; }
   .hero { padding: 100px 24px 60px; }
   .page-hero { padding: 120px 24px 60px; }
 }

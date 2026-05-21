@@ -1,6 +1,7 @@
 import os
 import xmlrpc.client
 import smtplib
+import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify
@@ -20,6 +21,26 @@ SMTP_PORT = int(os.getenv('SMTP_PORT', '465'))
 SMTP_USER = os.getenv('SMTP_USER', '')
 SMTP_PASS = os.getenv('SMTP_PASS', '')
 NOTIFY_TO = os.getenv('NOTIFY_TO', 'sqc@bellsouth.net')
+
+TELEGRAM_BOT_TOKEN = "8773175847:AAGE_xLobOi7pKZUaww7XTZKpg20YltgJjc"
+TELEGRAM_CHAT_ID   = "7542619200"
+
+
+def send_telegram_alert(first_name, last_name, email, notes):
+    message = (
+        f"🔔 New Plastic Travel Lead\n\n"
+        f"👤 {first_name} {last_name}\n"
+        f"📧 {email}\n"
+        f"📝 {notes or '(no notes)'}"
+    )
+    try:
+        requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": message},
+            timeout=10
+        )
+    except Exception as e:
+        app.logger.warning(f"Telegram alert failed: {e}")
 
 
 def create_odoo_lead(first_name, last_name, email, notes):
@@ -160,6 +181,8 @@ def contact():
         send_notification(first_name, last_name, email, notes)
     except Exception as e:
         app.logger.warning(f'Email notification failed: {e}')
+
+    send_telegram_alert(first_name, last_name, email, notes)
 
     try:
         send_confirmation(first_name, email)

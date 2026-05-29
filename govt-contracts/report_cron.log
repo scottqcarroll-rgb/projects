@@ -283,3 +283,31 @@ Traceback (most recent call last):
   File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
     raise exceptions.RefreshError(
 google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 28, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15869 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-28-raw.json
+[OK] Matched 36 contracts across 4 categories
+     Facility & Grounds Services: 25
+     Security & Pest Control: 7
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-28-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})

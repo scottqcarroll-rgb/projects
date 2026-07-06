@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sam Hunter{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="logo">
+      <span class="logo-icon">🎯</span>
+      <div>
+        <div class="logo-title">Sam Hunter</div>
+        <div class="logo-sub">Federal Procurement Platform</div>
+      </div>
+    </div>
+  </div>
+  <nav class="site-nav">
+    <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+      <span>🔍</span> Search
+    </a>
+    <a href="/bid-tracker" class="nav-link {% if request.path == '/bid-tracker' %}active{% endif %}">
+      <span>📋</span> Bid Tracker
+      {% if bid_count is defined and bid_count > 0 %}
+        <span class="badge">{{ bid_count }}</span>
+      {% endif %}
+    </a>
+    <a href="/proposal-wizard" class="nav-link {% if request.path == '/proposal-wizard' %}active{% endif %}">
+      <span>📝</span> Proposals
+    </a>
+  </nav>
+  <div class="header-right">
+    {% if profile is defined %}
+    <div class="profile-badge">
+      <div class="profile-dot {{ 'active' if profile.status == 'Active' else 'inactive' }}"></div>
+      <div>
+        <div class="profile-name">{{ profile.legal_name }}</div>
+        <div class="profile-uei">UEI: {{ profile.uei }}</div>
+      </div>
+      <button class="btn-sync" onclick="syncProfile()" title="Sync from SAM.gov">↻</button>
+    </div>
+    {% endif %}
+  </div>
+</header>
+
+<main class="site-main">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Toast notification -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="/static/js/main.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

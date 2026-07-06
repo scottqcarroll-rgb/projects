@@ -1,0 +1,26 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Secrets & credentials
+.env
+.env.apify
+.env.samgov
+credentials.json
+token.json
+
+# Generated / runtime outputs
+daily_summary.html
+last_run.json
+cron.log
+
+# OS
+.DS_Store
+Thumbs.db

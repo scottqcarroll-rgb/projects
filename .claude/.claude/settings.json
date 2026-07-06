@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"$env:LOCALAPPDATA\\\\GitHubDesktop\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "Bash(ssh dev-linux *)",
+      "Read(//c/Users/scarroll/Desktop/Claude_Code/**)",
+      "Bash(grep -E '\\\\.\\(py|env|json\\)$')"
+    ]
+  }
+}

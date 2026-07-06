@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}Sam Hunter — Bid Tracker{% endblock %}
+
+{% block content %}
+<div class="tracker-layout">
+  <div class="tracker-header">
+    <h2>Bid Tracker</h2>
+    <div class="tracker-meta">
+      {% set total = bids.TRACKING|length + bids.PREPARING|length + bids.SUBMITTED|length + bids.AWARDED|length + bids.LOST|length %}
+      {{ total }} active bids
+    </div>
+  </div>
+
+  <div class="kanban-board" id="kanban">
+    {% for stage, label, color in [
+        ('TRACKING',   'Tracking',   '#6366f1'),
+        ('PREPARING',  'Preparing',  '#f59e0b'),
+        ('SUBMITTED',  'Submitted',  '#3b82f6'),
+        ('AWARDED',    'Awarded',    '#22c55e'),
+        ('LOST',       'Lost',       '#ef4444'),
+    ] %}
+    <div class="kanban-col" data-stage="{{ stage }}">
+      <div class="kanban-col-header" style="border-top-color: {{ color }}">
+        <span class="col-label">{{ label }}</span>
+        <span class="col-count badge" id="count-{{ stage }}">{{ bids[stage]|length }}</span>
+      </div>
+      <div class="kanban-cards" id="col-{{ stage }}" ondragover="event.preventDefault()" ondrop="onDrop(event, '{{ stage }}')">
+        {% for card in bids[stage] %}
+        <div class="kanban-card" draggable="true" id="card-{{ card.id }}"
+             ondragstart="onDragStart(event, '{{ card.id }}')">
+          <div class="kcard-top">
+            <span class="score-badge {{ 'score-high' if card.score >= 8 else 'score-med' if card.score >= 5 else 'score-low' }}">{{ card.score }}</span>
+            {% if card.deadline %}
+              {% set days = ((card.deadline[:10] | string | replace('-', '') | int) - (now[:8] | string | replace('-', '') | int)) %}
+            {% endif %}
+          </div>
+          <div class="kcard-title" onclick="openCard('{{ card.id }}')">{{ card.title }}</div>
+          <div class="kcard-agency">{{ card.agency }}</div>
+          <div class="kcard-meta">
+            <span>💰 {{ card.value or 'TBD' }}</span>
+            {% if card.deadline %}<span>📅 {{ card.deadline[:10] }}</span>{% endif %}
+          </div>
+          {% if card.location %}<div class="kcard-location">📍 {{ card.location }}</div>{% endif %}
+          {% if card.notes %}<div class="kcard-notes">{{ card.notes }}</div>{% endif %}
+          <div class="kcard-actions">
+            {% if card.sam_url %}
+            <a href="{{ card.sam_url }}" target="_blank" class="btn-link btn-sm">SAM ↗</a>
+            {% endif %}
+            <button class="btn-link btn-sm" onclick="editCard('{{ card.id }}')">Edit</button>
+            <button class="btn-link btn-sm danger" onclick="deleteCard('{{ card.id }}')">Remove</button>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-empty">No bids yet</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Edit Card Modal -->
+<div id="modal" class="modal hidden" onclick="if(event.target===this) closeModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-title">Edit Bid</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <label>Notes</label>
+      <textarea id="edit-notes" rows="3" class="filter-input" style="width:100%"></textarea>
+      <label>Sub Quote</label>
+      <input type="text" id="edit-sub-quote" class="filter-input" style="width:100%" placeholder="e.g. $18,500">
+      <label>Move to Stage</label>
+      <select id="edit-stage" class="filter-select" style="width:100%">
+        <option value="TRACKING">Tracking</option>
+        <option value="PREPARING">Preparing</option>
+        <option value="SUBMITTED">Submitted</option>
+        <option value="AWARDED">Awarded</option>
+        <option value="LOST">Lost</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveCard()">Save Changes</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Store card data for edit modal
+const allCards = {};
+{% for stage, cards in bids.items() %}
+{% for card in cards %}
+allCards["{{ card.id }}"] = {{ card | tojson }};
+{% endfor %}
+{% endfor %}
+
+const now = "{{ now }}";
+
+let draggingId = null;
+
+function onDragStart(event, id) {
+  draggingId = id;
+  event.dataTransfer.effectAllowed = "move";
+}
+
+function onDrop(event, toStage) {
+  event.preventDefault();
+  if (!draggingId) return;
+  fetch("/api/bids/move", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ id: draggingId, to: toStage })
+  }).then(r => r.json()).then(d => {
+    if (d.ok) location.reload();
+    else showToast("Move failed: " + d.error, "error");
+  });
+  draggingId = null;
+}
+
+function openCard(id) {
+  editCard(id);
+}
+
+function editCard(id) {
+  const card = allCards[id];
+  if (!card) return;
+  document.getElementById("edit-id").value = id;
+  document.getElementById("edit-notes").value = card.notes || "";
+  document.getElementById("edit-sub-quote").value = card.sub_quote || "";
+  document.getElementById("modal-title").textContent = card.title;
+  // Figure out current stage
+  const col = document.getElementById("card-" + id)?.closest(".kanban-col");
+  if (col) document.getElementById("edit-stage").value = col.dataset.stage;
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+function saveCard() {
+  const id    = document.getElementById("edit-id").value;
+  const notes = document.getElementById("edit-notes").value;
+  const sub   = document.getElementById("edit-sub-quote").value;
+  const stage = document.getElementById("edit-stage").value;
+
+  const col = document.getElementById("card-" + id)?.closest(".kanban-col");
+  const currentStage = col?.dataset.stage;
+
+  const reqs = [];
+  reqs.push(fetch(`/api/bids/${id}`, {
+    method: "PATCH",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ notes, sub_quote: sub })
+  }));
+  if (stage !== currentStage) {
+    reqs.push(fetch("/api/bids/move", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ id, to: stage })
+    }));
+  }
+  Promise.all(reqs).then(() => location.reload());
+}
+
+function deleteCard(id) {
+  if (!confirm("Remove this bid from tracker?")) return;
+  fetch(`/api/bids/${id}`, { method: "DELETE" })
+    .then(r => r.json())
+    .then(d => { if (d.ok) location.reload(); });
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
+}
+</script>
+{% endblock %}

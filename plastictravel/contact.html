@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Plastic Travel</title>
+  <meta name="description" content="Book a free discovery call with Plastic Travel. Tell us about your business and we'll show you what you're leaving on the table.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Plastic Travel</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero" style="background: linear-gradient(rgba(21,38,56,0.35), rgba(21,38,56,0.35)), url('images/venice.jpg') center/cover no-repeat;">
+  <div style="background: rgba(10,20,35,0.55); backdrop-filter: blur(3px); border-radius: 10px; padding: 40px 52px; display: inline-block; max-width: 700px; width: 100%;">
+    <span class="section-label" style="display:block; margin-bottom:16px;">Get in Touch</span>
+    <h1>Book a Discovery Call</h1>
+    <p style="color: #fff;">Tell us a little about yourself. We'll reach out to schedule a free call and take a look at your current setup.</p>
+  </div>
+</div>
+
+<section style="background: var(--navy);">
+  <div class="section-inner">
+    <div class="form-wrap">
+
+      <form id="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Smith" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="john@yourbusiness.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">What's on Your Mind?</label>
+          <textarea id="notes" name="notes" placeholder="Tell us about your business, how much you're spending on cards each month, where you'd like to travel — anything that helps us prepare for your call."></textarea>
+        </div>
+
+        <div class="form-submit">
+          <button type="submit" class="btn" id="submit-btn">Send My Information</button>
+        </div>
+
+        <p class="form-error" id="form-error">Something went wrong. Please try again or email us directly.</p>
+      </form>
+
+      <div id="form-success">
+        <h3>You're on the List</h3>
+        <p>Thanks for reaching out. We'll be in touch within one business day to schedule your discovery call.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 <a href="index.html">Plastic Travel</a> &nbsp;·&nbsp; <a href="about.html">About</a> &nbsp;·&nbsp; <a href="resources.html">Resources</a> &nbsp;·&nbsp; <a href="contact.html">Contact</a></p>
+</footer>
+
+<script>
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('submit-btn');
+  const errorEl = document.getElementById('form-error');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  errorEl.style.display = 'none';
+
+  const payload = {
+    first_name: document.getElementById('first_name').value.trim(),
+    last_name:  document.getElementById('last_name').value.trim(),
+    email:      document.getElementById('email').value.trim(),
+    notes:      document.getElementById('notes').value.trim()
+  };
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      document.getElementById('contact-form').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    } else {
+      throw new Error('Server error');
+    }
+  } catch (err) {
+    errorEl.style.display = 'block';
+    btn.textContent = 'Send My Information';
+    btn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>

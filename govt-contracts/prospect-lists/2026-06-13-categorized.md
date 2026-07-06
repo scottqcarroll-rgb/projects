@@ -1,0 +1,460 @@
+# Brisar Contract Report — June 13, 2026
+
+
+## Facility & Grounds Services (36 contracts)
+
+### #1 — Score 9/10 — IDIQ Boundary Maintenance, Mountain Home Project Office
+- Agency: Dept Of Defense
+- Location: Mountain Home, AR
+- Value: Not listed
+- Deadline: 07/10/2026 (27 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/ed30afd58ec74f22917aad0b1124aebd/view
+
+### #2 — Score 9/10 — DLA Disposition Services Anchorage Snow Removal Services
+- Agency: Dept Of Defense
+- Location: Anchorage, AK
+- Value: Not listed
+- Deadline: 07/10/2026 (27 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/9c9c6c6951374cb485ea532113c36f6a/view
+
+### #3 — Score 9/10 — Grounds Maintenance Service Contract
+- Agency: Dept Of Defense
+- Location: Tobyhanna, PA
+- Value: Not listed
+- Deadline: 07/07/2026 (24 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/f67327a422f449578e3d3eedc674cd7c/view
+
+### #4 — Score 9/10 — Grounds Maintenance Services for the Hells Canyon National Recreation Area, Riggins ID
+- Agency: Agriculture, Department Of
+- Location: Riggins, ID
+- Value: Not listed
+- Deadline: 07/09/2026 (26 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/d1f44e9fb67c4e6a8e0ad0c410c40d80/view
+
+### #5 — Score 7/10 — FY26 USCG Air Station San Francisco Artificial Turf Installation
+- Agency: Homeland Security, Department Of
+- Location: San Francisco, CA
+- Value: Not listed
+- Deadline: 07/01/2026 (18 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/061f130442a441efbab74087731ae206/view
+
+### #6 — Score 6/10 — 36C78626R50138 -- S208
+- Agency: Veterans Affairs, Department Of
+- Location: San Diego, CA
+- Value: Not listed
+- Deadline: 07/13/2026 (30 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/f3928891487d4c63b6d4569b16b96e33/view
+
+### #7 — Score 6/10 — GAOA High Sierra Ranger Station Demolition, Sierra National Forest
+- Agency: Agriculture, Department Of
+- Location: Prather, CA
+- Value: Not listed
+- Deadline: 07/08/2026 (25 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 238910
+- Link: https://sam.gov/opp/d7a189d9f6c544a199092647f927b02d/view
+
+### #8 — Score 6/10 — Base Operating Support Services for U.S. Marine Corps Air Station Iwakuni, Japan
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/16/2026 (33 days away)
+- Set-Aside: None
+- NAICS: 561210
+- Link: https://sam.gov/opp/93405bfc84b14a90a1cb3461aff5cb8d/view
+
+### #9 — Score 4/10 — LRAFB Tree and Stump Removal
+- Agency: Dept Of Defense
+- Location: Little Rock Air Force Base, AR
+- Value: Not listed
+- Deadline: 07/01/2026 (18 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/904b53f7dcb14656a54dfb92b159e263/view
+
+### #10 — Score 4/10 — Mowing Services for Fort Gibson Lake, Chouteau, and Newt Graham Areas, OK
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/29/2026 (16 days away)
+- Set-Aside: HUBZone Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/7656dbec5d8b403dae7e7299f77d8c5c/view
+
+### #11 — Score 4/10 — Tree Removal and Pruning Services
+- Agency: Agriculture, Department Of
+- Location: Washington, DC
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/46d58cf81a104e1e942e1d23fbb42287/view
+
+### #12 — Score 4/10 — Natchez National Cemetery Tree Maintanence
+- Agency: Veterans Affairs, Department Of
+- Location: Natchez, MS
+- Value: Not listed
+- Deadline: 06/29/2026 (16 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/429a836930f145e48844335b95ed730e/view
+
+### #13 — Score 4/10 — Facility Investment Services
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/29/2026 (16 days away)
+- Set-Aside: 8a Competed
+- NAICS: 561210
+- Link: https://sam.gov/opp/2ae62c41c6ee4524b781859f447772d5/view
+
+### #14 — Score 4/10 — Janitorial Services for the Indian Health Service, Lockport Service Unit
+- Agency: Health And Human Services, Department Of
+- Location: Lockport, NY
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: Indian Small Business Economic Enterprise (ISBEE) Set-Aside (specific to Department of Interior and Indian Health Services)
+- NAICS: 561720
+- Link: https://sam.gov/opp/900c7c526c4f42179539a329d8e7ef73/view
+
+### #15 — Score 3/10 — S--CUSTODIAL SERVICES AT CEDAR CREEK & BELLE GROVE NA
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/22/2026 (9 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561720
+- Link: https://sam.gov/opp/eafd30df24d242a5b92a8ec40f5d432f/view
+
+### #16 — Score 3/10 — S--New Melones Lake Pest & Weed Management
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/7a9db67a8e29439299d861264db890fe/view
+
+### #17 — Score 3/10 — S--GROUNDSKEEPING SERVICES AT NWS IN UPTON, NY
+- Agency: Commerce, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/24/2026 (11 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/6a64eec7f09144e1b35a262f53008ce2/view
+
+### #18 — Score 3/10 —  Base Operations Support (BOS) Services at Naval Air Station (NAS) Whiting Field and Outlying Areas
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/25/2026 (12 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561210
+- Link: https://sam.gov/opp/dfd4d3bb762442419922173eba2ba345/view
+
+### #19 — Score 3/10 — S--NIFC LANDSCAPE SERVICE
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/22/2026 (9 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/b3f2549b4b83471189459b6c6b88bee2/view
+
+### #20 — Score 2/10 — JSCG-P Cristobal Colon Base Life Support
+- Agency: Dept Of Defense
+- Location: Cristobal Colon, PA-3
+- Value: Not listed
+- Deadline: 06/24/2026 (11 days away)
+- Set-Aside: None
+- NAICS: 561210
+- Link: https://sam.gov/opp/05d3ef3056de46ba909e3f572ce01901/view
+
+### #21 — Score 1/10 — Amendment 0002 - Combined Synopsis Solicitation - 36C78626Q50190 - Tree Removal, Stump Grinding, & Tree Pruning at Raleigh & Wilmington National Cemeteries -- S208
+- Agency: Veterans Affairs, Department Of
+- Location: Raleigh, NC
+- Value: Not listed
+- Deadline: 06/21/2026 (8 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/ed42f8240f87462d8e9ae218a8973889/view
+
+### #22 — Score 1/10 — S--LANDSCAPING SERVICES AT NWS IN SANTA TERESA, NM
+- Agency: Commerce, Department Of
+- Location: Santa Teresa, NM
+- Value: Not listed
+- Deadline: 06/18/2026 (5 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/7ce689476ee241daaed2a1c70c73391f/view
+
+### #23 — Score 1/10 — Landscaping Project
+- Agency: Agriculture, Department Of
+- Location: Madison, WI
+- Value: Not listed
+- Deadline: 06/22/2026 (9 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/7b0695147f7e47219a20e671e32b5bcc/view
+
+### #24 — Score 1/10 — Janitorial Services for Nashville National Cemetery -- S201
+- Agency: Veterans Affairs, Department Of
+- Location: MADISON, TN
+- Value: Not listed
+- Deadline: 06/15/2026 (2 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561720
+- Link: https://sam.gov/opp/70cf1f3ba8944972b1782c787f89aea8/view
+
+### #25 — Score 1/10 — N6247826R2431 FACILITIES AND LIGHTING MAINTENANCE SERVICES at Joint Base Pearl Harbor Hickam, Oahu, Hawaii
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: 8a Competed
+- NAICS: 561210
+- Link: https://sam.gov/opp/f6e58386786c44408dd8013170e27c50/view
+
+### #26 — Score 1/10 — Remove Walk-in Cooler located in B1, SB46 (Athens, GA)
+- Agency: Agriculture, Department Of
+- Location: Athens, GA
+- Value: Not listed
+- Deadline: 06/24/2026 (11 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 238910
+- Link: https://sam.gov/opp/f1e1ef2cf27343febe83d975c347da1c/view
+
+### #27 — Score 0/10 — BLUESTONE LAKE - HERBICIDE SPRAYING
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/22/2026 (9 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/407db95743234c92a69b9dcbea75024a/view
+
+### #28 — Score 0/10 — NIFC RFIMS INFRASTRUCTURE DEMO
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 238910
+- Link: https://sam.gov/opp/3336c39a8d4e43c4957372dd175cafc4/view
+
+### #29 — Score 0/10 — S--LAKE260053 REMOVE/TRIM HAZARD TREES BB - LAKE
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/25/2026 (12 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/1116144a360f4a79ad957ae352bbed86/view
+
+### #30 — Score 0/10 — Grounds Maintenance Services for multiple Army Reserve facilities in Region 5, Southern California (CA002,10,16,23,65,88,92,93,95,165,197,202)
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/19/2026 (6 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/86da1594be87443e9c450b813d076954/view
+
+### #31 — Score 0/10 — Dorm Carpet Cleaning
+- Agency: Dept Of Defense
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/18/2026 (5 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561740
+- Link: https://sam.gov/opp/767f852c3c244708949018be72886495/view
+
+### #32 — Score -2/10 — Demolition, Remediation and Restoration
+- Agency: Transportation, Department Of
+- Location: Clovis, CA
+- Value: Not listed
+- Deadline: 06/17/2026 (4 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 238910
+- Link: https://sam.gov/opp/d42287d7fd2e48dca156c2c65f2dc675/view
+
+### #33 — Score -2/10 — Camp Butler National Cemetery – National Shrine Project 806-NSP25-004
+- Agency: Veterans Affairs, Department Of
+- Location: Springfield, IL
+- Value: Not listed
+- Deadline: 06/15/2026 (2 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/d0e554e8459e419984b48b57887ea8a3/view
+
+### #34 — Score -2/10 — VBSA BRUSH CLEARNING JUNE 2026
+- Agency: Dept Of Defense
+- Location: Glen Jean, WV
+- Value: Not listed
+- Deadline: 06/15/2026 (2 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561730
+- Link: https://sam.gov/opp/c0b4ef4f50b74ec2aad9462aa659a28b/view
+
+### #35 — Score -2/10 — S208--Landscape and Decomposed Granite Project  POP: 06/20/2026 - 06/19/2027
+- Agency: Veterans Affairs, Department Of
+- Location: Loma Linda
+- Value: Not listed
+- Deadline: 06/15/2026 (2 days away)
+- Set-Aside: Service-Disabled Veteran-Owned Small Business Set Aside
+- NAICS: 561730
+- Link: https://sam.gov/opp/e1e0c0bba35b4d37a4fb83d4a7dde928/view
+
+### #36 — Score -2/10 — WVARNG VBSA EXCAVATING AND GRAVEL WORK
+- Agency: Dept Of Defense
+- Location: Glen Jean, WV
+- Value: Not listed
+- Deadline: 06/11/2026 (-2 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 238910
+- Link: https://sam.gov/opp/76b4c8804b3044bb8d3052f9b5612216/view
+
+## Security & Pest Control (4 contracts)
+
+### #1 — Score 5/10 — PEST CONTROL TREATMENT AT PARK HOUSING UNITS LOCAT
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/17/2026 (34 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561710
+- Link: https://sam.gov/opp/3d98d64486ab49948bf85593704524b4/view
+
+### #2 — Score 4/10 — USAG Italy Security Guards
+- Agency: Dept Of Defense
+- Location: Vicenza, IT-34
+- Value: Not listed
+- Deadline: 07/08/2026 (25 days away)
+- Set-Aside: None
+- NAICS: 561612
+- Link: https://sam.gov/opp/c6b77b797016429894c94039ea761db2/view
+
+### #3 — Score 2/10 — USMS Court Security Officer Services for Federal Judicial Circuits 1, 3, 4, 5 & 8
+- Agency: Justice, Department Of
+- Location: Arlington, VA
+- Value: Not listed
+- Deadline: 06/22/2026 (9 days away)
+- Set-Aside: None
+- NAICS: 561612
+- Link: https://sam.gov/opp/023f8f67f49045ccb13a8c5c81a7b62b/view
+
+### #4 — Score 1/10 — Construction Security Services NIWDC
+- Agency: Dept Of Defense
+- Location: Virginia Beach, VA
+- Value: Not listed
+- Deadline: 06/18/2026 (5 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 561612
+- Link: https://sam.gov/opp/9a9f3ec709d048138c126120fc113eda/view
+
+## Waste & Environmental Services (8 contracts)
+
+### #1 — Score 9/10 — DAFB Integrated Solid Waste Management
+- Agency: Dept Of Defense
+- Location: Dover AFB, DE
+- Value: Not listed
+- Deadline: 07/13/2026 (30 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 562111
+- Link: https://sam.gov/opp/37a89c7277a746539a298d98ce6d3ed8/view
+
+### #2 — Score 6/10 — S205--Waste and Recycle Disposal CWS LEEDS  08/01/2026-01/31/2027
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/09/2026 (26 days away)
+- Set-Aside: None
+- NAICS: 562111
+- Link: https://sam.gov/opp/a318891fcb5e40a1a8e2e46f2a441086/view
+
+### #3 — Score 6/10 — S205--Waste Disposal and Recycle contract Bedford  08/01/2026-01/31/2027
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/09/2026 (26 days away)
+- Set-Aside: None
+- NAICS: 562111
+- Link: https://sam.gov/opp/8a01b185af624103884279b957c036ba/view
+
+### #4 — Score 6/10 — 4540--Waste Disposal and Recycle MA 04/01/26-03/31/27
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/09/2026 (26 days away)
+- Set-Aside: None
+- NAICS: 562111
+- Link: https://sam.gov/opp/8839659234d24ee28e299add09cade92/view
+
+### #5 — Score 6/10 — S205--Waste Disposal and Recycle contract Togus Maine
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 07/09/2026 (26 days away)
+- Set-Aside: None
+- NAICS: 562111
+- Link: https://sam.gov/opp/801e33ad6b824806afa42a9c4eb39af0/view
+
+### #6 — Score 4/10 — Tank & Bilge Cleaning Services
+- Agency: Homeland Security, Department Of
+- Location: Detroit, MI
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: Total Small Business Set-Aside (FAR 19.5)
+- NAICS: 562998
+- Link: https://sam.gov/opp/84d8e50dac764533b4051dd79c75259f/view
+
+### #7 — Score -2/10 — Q517--ON-SITE DESTRUCTION OF DAMAGED CONTROLLED SUBSTANCES
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/26/2026 (13 days away)
+- Set-Aside: None
+- NAICS: 562112
+- Link: https://sam.gov/opp/5c385113f8914fd59ee8106bd4c963a5/view
+
+### #8 — Score -5/10 — S--MT - CF GARBAGE COLLECTION
+- Agency: Interior, Department Of The
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/17/2026 (4 days away)
+- Set-Aside: None
+- NAICS: 562111
+- Link: https://sam.gov/opp/f8963bf0aa5646dcb9836453d50c0614/view
+
+## Textile & Linen Services (2 contracts)
+
+### #1 — Score 5/10 — Uniform Rental/Repair/Laundering - Wilkes Barre VA Medical Center
+- Agency: Veterans Affairs, Department Of
+- Location: Wilkes Barre, PA
+- Value: Not listed
+- Deadline: 06/30/2026 (17 days away)
+- Set-Aside: None
+- NAICS: 812332
+- Link: https://sam.gov/opp/db14dad64a374ea6a47ba0fe09a9c86a/view
+
+### #2 — Score -2/10 — S209--Fisher House Linen Services
+- Agency: Veterans Affairs, Department Of
+- Location: Not listed
+- Value: Not listed
+- Deadline: 06/19/2026 (6 days away)
+- Set-Aside: None
+- NAICS: 812332
+- Link: https://sam.gov/opp/7a18559e15324757bcec528ac010042e/view

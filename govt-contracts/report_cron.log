@@ -1,0 +1,1375 @@
+[08:00:01] Starting contract report — May 16, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15625 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-16-raw.json
+[OK] Matched 41 contracts across 4 categories
+     Facility & Grounds Services: 28
+     Security & Pest Control: 9
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-16-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:02] Starting contract report — May 17, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15164 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-17-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 6
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-17-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:02] Starting contract report — May 18, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15135 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-18-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 7
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-18-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — May 19, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16119 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-19-raw.json
+[OK] Matched 28 contracts across 4 categories
+     Facility & Grounds Services: 20
+     Security & Pest Control: 1
+     Waste & Environmental Services: 7
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-19-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:01] Starting contract report — May 20, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16411 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-20-raw.json
+[OK] Matched 34 contracts across 4 categories
+     Facility & Grounds Services: 26
+     Security & Pest Control: 2
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-20-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 21, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16900 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-21-raw.json
+[OK] Matched 26 contracts across 4 categories
+     Facility & Grounds Services: 19
+     Security & Pest Control: 2
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-21-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 22, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16769 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-22-raw.json
+[OK] Matched 27 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 2
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-22-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 23, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16233 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-23-raw.json
+[OK] Matched 32 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 5
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-23-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 24, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15302 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-24-raw.json
+[OK] Matched 32 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 5
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-24-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:03] Starting contract report — May 25, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15210 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-25-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 5
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-25-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:03] Starting contract report — May 26, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15431 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-26-raw.json
+[OK] Matched 31 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 5
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-26-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:01] Starting contract report — May 27, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15676 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-27-raw.json
+[OK] Matched 32 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 2
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-27-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 28, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15869 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-28-raw.json
+[OK] Matched 36 contracts across 4 categories
+     Facility & Grounds Services: 25
+     Security & Pest Control: 7
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-28-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:01] Starting contract report — May 29, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15937 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-29-raw.json
+[OK] Matched 34 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 2
+     Waste & Environmental Services: 9
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-29-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 30, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15443 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-30-raw.json
+[OK] Matched 45 contracts across 4 categories
+     Facility & Grounds Services: 25
+     Security & Pest Control: 4
+     Waste & Environmental Services: 13
+     Textile & Linen Services: 3
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-30-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:02] Starting contract report — May 31, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15032 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-31-raw.json
+[OK] Matched 38 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 3
+     Waste & Environmental Services: 11
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-05-31-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:03] Starting contract report — June 01, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14986 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-01-raw.json
+[OK] Matched 39 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 3
+     Waste & Environmental Services: 12
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-01-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 02, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15657 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-02-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 17
+     Security & Pest Control: 4
+     Waste & Environmental Services: 11
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-02-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 03, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15809 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-03-raw.json
+[OK] Matched 42 contracts across 4 categories
+     Facility & Grounds Services: 26
+     Security & Pest Control: 4
+     Waste & Environmental Services: 12
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-03-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 04, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 16199 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-04-raw.json
+[OK] Matched 22 contracts across 4 categories
+     Facility & Grounds Services: 18
+     Security & Pest Control: 1
+     Waste & Environmental Services: 1
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-04-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 05, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15645 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-05-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 23
+     Security & Pest Control: 2
+     Waste & Environmental Services: 8
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-05-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 06, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15327 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-06-raw.json
+[OK] Matched 47 contracts across 4 categories
+     Facility & Grounds Services: 29
+     Security & Pest Control: 5
+     Waste & Environmental Services: 11
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-06-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 07, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14491 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-07-raw.json
+[OK] Matched 40 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 5
+     Waste & Environmental Services: 9
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-07-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 08, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14421 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-08-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 20
+     Security & Pest Control: 5
+     Waste & Environmental Services: 8
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-08-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 09, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15363 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-09-raw.json
+[OK] Matched 19 contracts across 4 categories
+     Facility & Grounds Services: 14
+     Security & Pest Control: 3
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-09-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 10, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15507 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-10-raw.json
+[OK] Matched 37 contracts across 4 categories
+     Facility & Grounds Services: 28
+     Security & Pest Control: 5
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-10-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 11, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15696 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-11-raw.json
+[OK] Matched 49 contracts across 4 categories
+     Facility & Grounds Services: 35
+     Security & Pest Control: 6
+     Waste & Environmental Services: 8
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-11-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 12, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15223 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-12-raw.json
+[OK] Matched 45 contracts across 4 categories
+     Facility & Grounds Services: 29
+     Security & Pest Control: 3
+     Waste & Environmental Services: 13
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-12-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 13, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14741 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-13-raw.json
+[OK] Matched 50 contracts across 4 categories
+     Facility & Grounds Services: 36
+     Security & Pest Control: 4
+     Waste & Environmental Services: 8
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-13-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 14, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14500 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-14-raw.json
+[OK] Matched 28 contracts across 4 categories
+     Facility & Grounds Services: 21
+     Security & Pest Control: 3
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-14-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 15, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14413 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-15-raw.json
+[OK] Matched 28 contracts across 4 categories
+     Facility & Grounds Services: 21
+     Security & Pest Control: 4
+     Waste & Environmental Services: 1
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-15-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 16, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15065 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-16-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 20
+     Security & Pest Control: 5
+     Waste & Environmental Services: 7
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-16-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:02] Starting contract report — June 17, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15250 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-17-raw.json
+[OK] Matched 24 contracts across 4 categories
+     Facility & Grounds Services: 18
+     Security & Pest Control: 2
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-17-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 18, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 15523 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-18-raw.json
+[OK] Matched 36 contracts across 4 categories
+     Facility & Grounds Services: 21
+     Security & Pest Control: 5
+     Waste & Environmental Services: 9
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-18-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:03] Starting contract report — June 19, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:02] Starting contract report — June 20, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 502: Bad Gateway
+[08:00:01] Starting contract report — June 21, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 13284 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-21-raw.json
+[OK] Matched 53 contracts across 4 categories
+     Facility & Grounds Services: 34
+     Security & Pest Control: 6
+     Waste & Environmental Services: 11
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-21-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 22, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:01] Starting contract report — June 23, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1392, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1448, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 707, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1252, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1104, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+[08:00:01] Starting contract report — June 24, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14581 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-24-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 26
+     Security & Pest Control: 3
+     Waste & Environmental Services: 2
+     Textile & Linen Services: 2
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-24-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'invalid_grant', 'error_description': 'Bad Request'})
+[08:00:01] Starting contract report — June 25, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:01] Starting contract report — June 26, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:01] Starting contract report — June 27, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14314 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-27-raw.json
+[OK] Matched 33 contracts across 4 categories
+     Facility & Grounds Services: 20
+     Security & Pest Control: 2
+     Waste & Environmental Services: 11
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-27-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — June 28, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 13835 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-28-raw.json
+[OK] Matched 23 contracts across 4 categories
+     Facility & Grounds Services: 13
+     Security & Pest Control: 1
+     Waste & Environmental Services: 9
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-28-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — June 29, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:01] Starting contract report — June 30, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14489 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-30-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 22
+     Security & Pest Control: 6
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-06-30-categorized.md
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — July 01, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — July 02, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out
+[08:00:01] Starting contract report — July 03, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 14137 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-03-raw.json
+[OK] Matched 34 contracts across 4 categories
+     Facility & Grounds Services: 24
+     Security & Pest Control: 3
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-03-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:01] Starting contract report — July 04, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 13338 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-04-raw.json
+[OK] Matched 35 contracts across 4 categories
+     Facility & Grounds Services: 26
+     Security & Pest Control: 2
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-04-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 24, in get_authenticated_service
+    creds.refresh(Request())
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/auth/credentials.py", line 474, in refresh
+    self._perform_refresh_token(request)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 435, in _perform_refresh_token
+    ) = reauth.refresh_grant(
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})
+[08:00:01] Starting contract report — July 05, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 13021 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-05-raw.json
+[OK] Matched 21 contracts across 4 categories
+     Facility & Grounds Services: 15
+     Security & Pest Control: 2
+     Waste & Environmental Services: 4
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-05-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 20, in get_authenticated_service
+    creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 543, in from_authorized_user_file
+    return cls.from_authorized_user_info(data, scopes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 490, in from_authorized_user_info
+    raise ValueError(
+ValueError: Authorized user info was not in the expected format, missing fields client_secret, client_id.
+[08:00:02] Starting contract report — July 06, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 12921 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-06-raw.json
+[OK] Matched 21 contracts across 4 categories
+     Facility & Grounds Services: 15
+     Security & Pest Control: 1
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-06-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 20, in get_authenticated_service
+    creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 543, in from_authorized_user_file
+    return cls.from_authorized_user_info(data, scopes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 490, in from_authorized_user_info
+    raise ValueError(
+ValueError: Authorized user info was not in the expected format, missing fields client_id, client_secret.

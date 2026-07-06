@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Metrics Dashboard</title>
+    <style>
+        /* --- Global Styles & Variables --- */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #007bff;
+            --accent-hover: #0056b3;
+            --border-color: #333;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* --- Layout --- */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.2em;
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        /* --- Metric Display --- */
+        .metric-item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #333;
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #aaa;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* --- Charts Placeholder --- */
+        .chart-area {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        /* --- Footer/Status --- */
+        .status-bar {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-indicator {
+            font-weight: bold;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .indicator-online { background-color: var(--success-color); }
+        .indicator-degraded { background-color: var(--warning-color); }
+        .indicator-offline { background-color: var(--danger-color); }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>🚀 System Health Overview</h1>
+
+        <!-- Core Metrics Grid -->
+        <div class="metrics-grid" id="metricGrid">
+            <div class="card">
+                <h2>CPU Load</h2>
+                <div class="metric-item">
+                    <span class="metric-label">Current Utilization</span>
+                    <div class="metric-value" id="cpu_load">78%</div>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Average Usage (7d)</span>
+                    <div class="metric-value" id="cpu_avg">52%</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Memory Status</h2>
+                <div class="metric-item">
+                    <span class="metric-label">Used RAM</span>
+                    <div class="metric-value" id="memory_used">8.4 GB / 16 GB</div>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Swap Usage</span>
+                    <div class="metric-value" id="swap_usage">1.2 GB (Low)</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Disk Health</h2>
+                <div class="metric-item">
+                    <span class="metric-label">Root Partition</span>
+                    <div class="metric-value" id="disk_root">65% Free</div>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Total Capacity</span>
+                    <div class="metric-value" id="disk_total">500 GB</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Network Activity</h2>
+                <div class="metric-item">
+                    <span class="metric-label">Inbound Traffic (24h)</span>
+                    <div class="metric-value" id="net_in">1.2 GB</div>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">Outbound Traffic (24h)</span>
+                    <div class="metric-value" id="net_out">3.5 GB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts/Logs Placeholder -->
+        <div class="card">
+            <h2>Live Activity Stream / Graphs</h2>
+            <div class="chart-area">
+                <!-- This area would host dynamic charts (e.g., using Chart.js) -->
+                <p>Metrics graphs and logs would be rendered here.</p>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>System Status: <span id="systemStatus" class="status-indicator indicator-online"></span> Operational</span>
+            <span>Last Updated: <span id="timestamp">Loading...</span></span>
+        </div>
+    </div>
+
+    <script>
+        // Simple JS for demonstration: updating the timestamp and status color
+        document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
+
+        // Simulate a metric update every 5 seconds
+        setInterval(() => {
+            const statusIndicator = document.getElementById('systemStatus');
+            const timestampElement = document.getElementById('timestamp');
+
+            // Simulate status change based on random chance
+            const rand = Math.random();
+            if (rand < 0.05) {
+                statusIndicator.className = 'status-indicator indicator-offline';
+                document.querySelector('.status-bar span:last-child').textContent = 'System Status: 🔴 Offline (Simulated)';
+            } else if (rand < 0.15) {
+                statusIndicator.className = 'status-indicator indicator-degraded';
+                document.querySelector('.status-bar span:last-child').textContent = 'System Status: 🟠 Degraded';
+            } else {
+                statusIndicator.className = 'status-indicator indicator-online';
+                document.querySelector('.status-bar span:last-child').textContent = 'System Status: 🟢 Operational';
+            }
+
+            // Update timestamp
+            timestampElement.textContent = new Date().toLocaleTimeString();
+
+        }, 5000);
+    </script>
+</body>
+</html>

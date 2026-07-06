@@ -22,7 +22,7 @@ def api_weather():
 def api_links():
     return jsonify({
         'status': 'ok',
-        'sam_url': 'http://192.168.1.222:5002',
+        'sam_url': 'http://100.124.71.12:5002',
         'sam_name': 'Sam Hunter'
     })
 

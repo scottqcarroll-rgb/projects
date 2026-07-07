@@ -943,3 +943,17 @@ WARNING: This is a development server. Do not use it in a production deployment.
 Press CTRL+C to quit
 [OK] Telegram notification sent (71 chars)
 [OK] Done!
+[*] Email Agent starting...
+[*] Authenticating with Gmail...
+[WARN] Gmail fetch failed: Authorized user info was not in the expected format, missing fields client_secret, client_id.
+[OK] No emails to classify. Generating empty dashboard...
+[*] Dashboard written to /home/scott/projects/email-agent/daily_summary.html
+[*] Starting email API server...
+[*] Email API server started on http://localhost:5050
+ * Serving Flask app 'email_api'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://localhost:5050
+Press CTRL+C to quit
+[OK] Telegram notification sent (71 chars)
+[OK] Done!

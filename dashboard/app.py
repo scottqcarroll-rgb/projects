@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from flask import Flask, render_template, jsonify
-from data_fetcher import get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter, get_gmail_summary, get_gemma_status, get_linux_server_status, get_mac_studio_status, get_camera_snapshots
+from data_fetcher import get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter, get_gmail_summary, get_gemma_status, get_linux_server_status, get_mac_studio_status, get_camera_snapshots, get_openrouter_usage
 import pytz
 from datetime import datetime
 
@@ -77,6 +77,11 @@ def api_server_time():
         'datetime': now.strftime('%A, %B %d • %I:%M %p'),
         'timestamp': now.isoformat()
     })
+
+
+@app.route('/api/usage')
+def api_usage():
+    return jsonify(get_openrouter_usage())
 
 
 if __name__ == '__main__':

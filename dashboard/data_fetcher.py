@@ -304,6 +304,58 @@ def get_camera_snapshots():
     }
 
 
+# --- 9. OpenRouter Usage ---
+def get_openrouter_usage():
+    try:
+        import urllib.request
+        import json
+        api_key = os.environ.get('OPENROUTER_API_KEY', '')
+        if not api_key:
+            return {'status': 'error', 'message': 'OPENROUTER_API_KEY not set'}
+        
+        # OpenRouter key endpoint - returns usage and rate limit info
+        url = 'https://openrouter.ai/api/v1/key'
+        
+        req = urllib.request.Request(
+            url,
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'User-Agent': 'Mozilla/5.0'
+            }
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+        
+        # Extract usage metrics from key data
+        key_data = data.get('data', {})
+        if key_data:
+            usage = key_data.get('usage', 0)
+            usage_daily = key_data.get('usage_daily', 0)
+            usage_weekly = key_data.get('usage_weekly', 0)
+            usage_monthly = key_data.get('usage_monthly', 0)
+            limit = key_data.get('limit')
+            limit_remaining = key_data.get('limit_remaining')
+            is_free_tier = key_data.get('is_free_tier', True)
+            
+            return {
+                'status': 'ok',
+                'usage_total': usage,
+                'usage_daily': usage_daily,
+                'usage_weekly': usage_weekly,
+                'usage_monthly': usage_monthly,
+                'limit': limit,
+                'limit_remaining': limit_remaining,
+                'is_free_tier': is_free_tier,
+                'label': key_data.get('label', 'N/A')
+            }
+        else:
+            return {'status': 'error', 'message': 'No key data available'}
+    except urllib.error.HTTPError as e:
+        return {'status': 'error', 'message': f'HTTP {e.code}: {e.reason}'}
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
 if __name__ == '__main__':
     print("Weather:", json.dumps(get_weather(), indent=2))
     print("Sam Hunter:", json.dumps(get_sam_hunter(), indent=2))
@@ -311,3 +363,4 @@ if __name__ == '__main__':
     print("Gemma:", json.dumps(get_gemma_status(), indent=2))
     print("Linux Server:", json.dumps(get_linux_server_status(), indent=2))
     print("Mac Studio:", json.dumps(get_mac_studio_status(), indent=2))
+    print("OpenRouter:", json.dumps(get_openrouter_usage(), indent=2))

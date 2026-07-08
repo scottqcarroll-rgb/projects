@@ -5,327 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scott's Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #e8f5e9;
-            color: #2e7d32;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
             min-height: 100vh;
             padding: 20px;
         }
+        
         .header {
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
         }
+        
         .header h1 {
             font-size: 2rem;
-            font-weight: 700;
-            color: #1b5e20;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .header .subtitle {
-            color: #558b2f;
-            margin-top: 5px;
-            font-size: 0.95rem;
+        
+        .subtitle {
+            color: #888;
+            font-size: 0.9rem;
         }
+        
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
+        
         .card {
-            background: #c8e6c9;
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid #81c784;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
+        
         .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #81c784;
         }
+        
         .card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+            background: var(--clay);
         }
+        
+        .clay { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .drive-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .weather-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .gmail-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .openroute-icon { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .gemma-icon { background: linear-gradient(135deg, #e17055, #fdcb6e); }
+        .linux-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
+        .camera-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .link-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: #1b5e20;
         }
-        .card-body { line-height: 1.6; }
         
-        /* Drive Card */
-        .drive-icon { background: #81c784; }
-        .route-primary {
-            background: #a5d6a7;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 12px;
-            border-left: 4px solid #4caf50;
+        .card-body {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
-        .route-alt {
-            background: #bbdefb;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-left: 3px solid #64748b;
-        }
-        .route-name { font-weight: 600; color: #2e7d32; font-size: 0.95rem; }
-        .route-stats { display: flex; gap: 16px; margin-top: 6px; font-size: 0.85rem; color: #558b2f; }
-        .route-stats span { display: flex; align-items: center; gap: 4px; }
-        .traffic-delay { color: #c62828; font-weight: 600; font-size: 0.85rem; margin-top: 6px; }
-        .traffic-ok { color: #2e7d32; font-weight: 600; font-size: 0.85rem; margin-top: 6px; }
         
-        /* Weather Card */
-        .weather-icon { background: #ffb74d; }
-        .weather-main {
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .metric-row {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
+            justify-content: space-between;
+            margin: 4px 0;
         }
-        .weather-temp {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #ef6c00;
-        }
-        .weather-condition { font-size: 1.1rem; color: #558b2f; }
-        .weather-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .weather-detail {
-            background: #a5d6a7;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-        .weather-detail-label { font-size: 0.75rem; color: #388e3c; text-transform: uppercase; letter-spacing: 0.5px; }
-        .weather-detail-value { font-size: 1.05rem; font-weight: 600; color: #1b5e20; margin-top: 2px; }
         
-        /* Sam Hunter Card */
-        .link-icon { background: #9575cd; }
-        .link-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #7e57c2;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            text-decoration: none;
+        .metric-value {
             font-weight: 600;
-            font-size: 1rem;
-            transition: background 0.2s;
+            color: #fff;
         }
-        .link-btn:hover { background: #673ab7; }
         
-        /* Gmail Card */
-        .gmail-icon { background: #ef4444; }
-        .gmail-count {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #c62828;
-        }
-        .gmail-note { color: #558b2f; font-size: 0.9rem; margin-top: 8px; }
-        
-        /* Gemma Model Card */
-        .gemma-icon { background: #06b6d4; }
-        .gemma-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .gemma-field {
-            background: #a5d6a7;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        .gemma-field-label {
-            font-size: 0.7rem;
-            color: #388e3c;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .gemma-field-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1b5e20;
-            margin-top: 2px;
-        }
-        .gemma-status-ok { color: #2e7d32; }
-        .gemma-status-error { color: #c62828; }
-        
-        /* Linux Server Card */
-        .linux-icon { background: #4caf50; }
-        .card.linux-server-card {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-        }
-        .card.linux-server-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url("/static/images/linux-bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.2;
-            filter: grayscale(0.5) contrast(1.1);
-            pointer-events: none;
-            z-index: 0;
-            border-radius: 16px;
-        }
-        .card.linux-server-card .card-header {
-            position: relative;
-            z-index: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .card.linux-server-card .card-body {
-            position: relative;
-            z-index: 1;
-        }
-        .card.linux-server-card .server-field {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-        }
-        .server-field-label {
-            font-size: 0.7rem;
-            color: #c8e6c9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .server-field-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: white;
-            margin-top: 2px;
-        }
-        .server-field-full { grid-column: span 2; }
-        
-        /* Mac Studio Card */
-        .mac-icon { background: #a855f7; }
-        .mac-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            position: relative;
-        }
-        .mac-info::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a855f7' fill-opacity='0.03'%3E%3Cpath d='M25 15h70a15 15 0 0 1 15 15v55a15 15 0 0 1-15 15H25a15 15 0 0 1-15-15V30a15 15 0 0 1 15-15zm0 10a5 5 0 0 0-5 5v55a5 5 0 0 0 5 5h70a5 5 0 0 0 5-5V30a5 5 0 0 0-5-5H25zm15 15h40a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H40a3 3 0 0 1-3-3V43a3 3 0 0 1 3-3zm10 10h20v2H50v-2zm0 10h20v2H50v-2zm0 10h20v2H50v-2zM45 35h30v6H45v-6zm0 16h30v6H45v-6zm0 16h30v6H45v-6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            background-size: 200px;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.6;
-            pointer-events: none;
-            border-radius: 8px;
-        }
-        .mac-field {
-            background: #a5d6a7;
-            border-radius: 8px;
-            padding: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        .mac-field-label {
-            font-size: 0.7rem;
-            color: #388e3c;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .mac-field-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1b5e20;
-            margin-top: 2px;
-        }
-        .mac-field-full { grid-column: span 2; }
-
-        /* Camera Card */
-        .camera-icon { background: #ec4899; }
-        .camera-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 12px;
-        }
-        .camera-tile {
-            background: #a5d6a7;
-            border-radius: 10px;
-            padding: 12px;
-            border: 1px solid #81c784;
-        }
-        .camera-name {
-            font-weight: 600;
-            color: #1b5e20;
-            margin-bottom: 4px;
-        }
-        .camera-ip {
-            font-size: 0.75rem;
-            color: #388e3c;
-            margin-bottom: 8px;
-        }
-        .camera-snapshot {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #81c784;
-            display: block;
-        }
-        .camera-error {
-            color: #c62828;
-            font-size: 0.85rem;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Loading & Error */
-        .loading { color: #388e3c; font-style: italic; }
-        .error { color: #c62828; font-size: 0.9rem; }
-        
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 30px;
             padding: 16px;
-            color: #558b2f;
-            font-size: 0.8rem;
+            color: #666;
+            font-size: 0.85rem;
         }
         
-        /* Responsive */
-        @media (max-width: 700px) {
-            .grid { grid-template-columns: 1fr; }
-            body { padding: 12px; }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -346,11 +148,11 @@
                 <span class="loading">Loading drive times...</span>
             </div>
         </div>
-
+        
         <!-- PM Drive Report -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon drive-icon">🏠</div>
+                <div class="card-icon drive-icon">🐍</div>
                 <div class="card-title">PM Drive Report</div>
             </div>
             <div class="card-body" id="pm-drive-data">
@@ -361,7 +163,7 @@
         <!-- Weather -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon weather-icon">🌤️</div>
+                <div class="card-icon weather-icon">🌮</div>
                 <div class="card-title">Weather — Temple, GA</div>
             </div>
             <div class="card-body" id="weather-data">
@@ -372,7 +174,7 @@
         <!-- Sam Hunter -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon link-icon">🔗</div>
+                <div class="card-icon link-icon">🔬</div>
                 <div class="card-title">Quick Links</div>
             </div>
             <div class="card-body" id="links-data">
@@ -391,10 +193,21 @@
             </div>
         </div>
         
+        <!-- OpenRoute Usage -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon openroute-icon">🗾</div>
+                <div class="card-title">OpenRoute Usage</div>
+            </div>
+            <div class="card-body" id="openroute-data">
+                <span class="loading">Loading usage...</span>
+            </div>
+        </div>
+        
         <!-- Local Gemma Model Status -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon gemma-icon">🤖</div>
+                <div class="card-icon gemma-icon">🕾</div>
                 <div class="card-title">Local AI Model</div>
             </div>
             <div class="card-body" id="gemma-data">
@@ -405,7 +218,7 @@
         <!-- Linux Server (clawz840) Status -->
         <div class="card linux-server-card">
             <div class="card-header">
-                <div class="card-icon linux-icon">🐧</div>
+                <div class="card-icon linux-icon">🐾</div>
                 <div class="card-title">Linux Server (clawz840)</div>
             </div>
             <div class="card-body" id="linux-server-data">
@@ -416,18 +229,18 @@
         <!-- Mac Studio Status -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon mac-icon">🖥️</div>
+                <div class="card-icon mac-icon">🖼️</div>
                 <div class="card-title">Mac Studio (192.168.1.174)</div>
             </div>
             <div class="card-body" id="mac-studio-data">
                 <span class="loading">Loading Mac Studio status...</span>
             </div>
         </div>
-
+        
         <!-- Camera Snapshots -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon camera-icon">📷</div>
+                <div class="card-icon camera-icon">🌟</div>
                 <div class="card-title">Cameras</div>
             </div>
             <div class="card-body" id="cameras-data">
@@ -437,380 +250,276 @@
     </div>
     
     <div class="footer">
-        Last updated: <span id="last-updated">—</span> • Auto-refreshes every 30 minutes
+        Last updated: <span id="last-updated">--</span> • Auto-refreshes every 30 minutes
     </div>
     
     <script>
-        // Set datetime - fetch from server
-        async function fetchServerTime() {
-            const el = document.getElementById('datetime');
+        // Utility function to format numbers
+        function formatNum(n, decimals = 2) {
+            if (n === null || n === undefined) return 'N/A';
+            if (typeof n === 'number') return n.toLocaleString(undefined, { maximumFractionDigits: decimals });
+            return n;
+        }
+        
+        // Load server time
+        async function loadServerTime() {
             try {
                 const res = await fetch('/api/server-time');
                 const data = await res.json();
-                if (data.status === 'ok') {
-                    el.textContent = data.datetime;
-                } else {
-                    el.textContent = 'Server error';
-                }
+                document.getElementById('datetime').textContent = data.datetime;
+                document.getElementById('last-updated').textContent = data.datetime;
             } catch (e) {
-                el.textContent = 'Connection error';
+                console.error('Failed to load server time:', e);
             }
         }
-        fetchServerTime();
-        // Update server time every minute
-        setInterval(fetchServerTime, 60000);
-
-        // Fetch drive data
-        async function fetchDrive() {
-            const el = document.getElementById('drive-data');
+        
+        // Load AM Drive Report
+        async function loadDriveReport() {
             try {
                 const res = await fetch('/api/drive');
                 const data = await res.json();
+                const el = document.getElementById('drive-data');
                 if (data.status === 'ok') {
-                    let html = '';
-                    data.routes.forEach((route, i) => {
-                        const cls = i === 0 ? 'route-primary' : 'route-alt';
-                        const label = i === 0 ? route.summary : 'Alt: ' + route.summary;
-                        const trafficHtml = route.delay
-                            ? `<div class="traffic-delay">⚠️ ${route.delay}</div>`
-                            : `<div class="traffic-ok">✅ No delays</div>`;
-                        html += `
-                            <div class="${cls}">
-                                <div class="route-name">${label}</div>
-                                <div class="route-stats">
-                                    <span>📏 ${route.distance}</span>
-                                    <span>⏱️ ${route.duration}</span>
-                                    <span>🚦 ${route.traffic}</span>
-                                </div>
-                                ${i === 0 ? trafficHtml : ''}
-                            </div>
-                        `;
-                    });
-                    el.innerHTML = html;
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>
+                        <div class="metric-row"><span>Duration</span><span class="metric-value">${data.duration_minutes} min</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: ${data.status === 'ok' ? '#00b894' : '#e17055'}">${data.status.toUpperCase()}</span></div>
+                    `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load: ${e.message}</div>`;
+                document.getElementById('drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch PM drive data
-        async function fetchPMDrive() {
-            const el = document.getElementById('pm-drive-data');
+        
+        // Load PM Drive Report
+        async function loadPMDriveReport() {
             try {
                 const res = await fetch('/api/pm-drive');
                 const data = await res.json();
+                const el = document.getElementById('pm-drive-data');
                 if (data.status === 'ok') {
-                    let html = '';
-                    data.routes.forEach((route, i) => {
-                        const cls = i === 0 ? 'route-primary' : 'route-alt';
-                        const label = i === 0 ? route.summary : 'Alt: ' + route.summary;
-                        const trafficHtml = route.delay
-                            ? `<div class="traffic-delay">⚠️ ${route.delay}</div>`
-                            : `<div class="traffic-ok">✅ No delays</div>`;
-                        html += `
-                            <div class="${cls}">
-                                <div class="route-name">${label}</div>
-                                <div class="route-stats">
-                                    <span>📏 ${route.distance}</span>
-                                    <span>⏱️ ${route.duration}</span>
-                                    <span>🚦 ${route.traffic}</span>
-                                </div>
-                                ${i === 0 ? trafficHtml : ''}
-                            </div>
-                        `;
-                    });
-                    el.innerHTML = html;
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>
+                        <div class="metric-row"><span>Duration</span><span class="metric-value">${data.duration_minutes} min</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: ${data.status === 'ok' ? '#00b894' : '#e17055'}">${data.status.toUpperCase()}</span></div>
+                    `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load: ${e.message}</div>`;
+                document.getElementById('pm-drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch weather data with condition icon
-        async function fetchWeather() {
-            const el = document.getElementById('weather-data');
+        
+        // Load Weather
+        async function loadWeather() {
             try {
                 const res = await fetch('/api/weather');
                 const data = await res.json();
+                const el = document.getElementById('weather-data');
                 if (data.status === 'ok') {
-                    const iconMap = {
-                        'Clear': '☀️',
-                        'Mostly Clear': '🌤️',
-                        'Partly Cloudy': '⛅',
-                        'Overcast': '☁️',
-                        'Foggy': '🌫️',
-                        'Light Drizzle': '🌦️',
-                        'Drizzle': '🌧️',
-                        'Heavy Drizzle': '🌧️',
-                        'Light Rain': '🌦️',
-                        'Rain': '🌧️',
-                        'Heavy Rain': '🌧️',
-                        'Light Snow': '🌨️',
-                        'Snow': '❄️',
-                        'Heavy Snow': '❄️',
-                        'Snow Grains': '🌨️',
-                        'Light Showers': '🌦️',
-                        'Showers': '🌧️',
-                        'Heavy Showers': '🌧️',
-                        'Snow Showers': '🌨️',
-                        'Heavy Snow Showers': '🌨️',
-                        'Thunderstorm': '⛈️',
-                        'Thunderstorm + Hail': '⛈️',
-                        'Thunderstorm + Heavy Hail': '⛈️',
-                        'Unknown': '🌡️'
-                    };
-                    const weatherIcon = iconMap[data.condition] || '🌡️';
                     el.innerHTML = `
-                        <div class="weather-main">
-                            <div class="weather-temp">${data.temp}°F</div>
-                            <div class="weather-condition">${weatherIcon} ${data.condition}</div>
-                        </div>
-                        <div class="weather-details">
-                            <div class="weather-detail">
-                                <div class="weather-detail-label">Feels Like</div>
-                                <div class="weather-detail-value">${data.feels_like}°F</div>
-                            </div>
-                            <div class="weather-detail">
-                                <div class="weather-detail-label">Humidity</div>
-                                <div class="weather-detail-value">${data.humidity}%</div>
-                            </div>
-                            <div class="weather-detail">
-                                <div class="weather-detail-label">Wind</div>
-                                <div class="weather-detail-value">${data.wind} mph</div>
-                            </div>
-                            <div class="weather-detail">
-                                <div class="weather-detail-label">Pressure</div>
-                                <div class="weather-detail-value">${data.pressure} mb</div>
-                            </div>
-                        </div>
+                        <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temperature}°F</span></div>
+                        <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
+                        <div class="metric-row"><span>Humidity</span><span class="metric-value">${data.humidity}%</span></div>
+                        <div class="metric-row"><span>Wind</span><span class="metric-value">${data.wind_speed} mph</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load weather: ${e.message}</div>`;
+                document.getElementById('weather-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch links
-        async function fetchLinks() {
-            const el = document.getElementById('links-data');
+        
+        // Load Links
+        async function loadLinks() {
             try {
                 const res = await fetch('/api/links');
                 const data = await res.json();
+                const el = document.getElementById('links-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <a href="${data.sam_url}" class="link-btn" target="_blank">🔗 Sam Hunter</a>
+                        <a href="${data.sam_url}" target="_blank" style="color: #74b9ff; text-decoration: none;">🔬 ${data.sam_name}</a>
                     `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load links</div>`;
+                document.getElementById('links-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch Gmail
-        async function fetchGmail() {
-            const el = document.getElementById('gmail-data');
+        
+        // Load Gmail Summary
+        async function loadGmail() {
             try {
                 const res = await fetch('/api/gmail');
                 const data = await res.json();
+                const el = document.getElementById('gmail-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="gmail-count">${data.unread_count}</div>
-                        <div class="gmail-note">unread emails</div>
+                        <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count}</span></div>
+                        <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count}</span></div>
+                        <div class="metric-row"><span>Starred</span><span class="metric-value">${data.starred_count}</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load email</div>`;
+                document.getElementById('gmail-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch Gemma
-        async function fetchGemma() {
-            const el = document.getElementById('gemma-data');
+        
+        // Load OpenRoute Usage
+        async function loadOpenRoute() {
+            try {
+                const res = await fetch('/api/usage');
+                const data = await res.json();
+                const el = document.getElementById('openroute-data');
+                if (data.status === 'ok') {
+                    const usageTotal = formatNum(data.usage_total);
+                    const usageDaily = formatNum(data.usage_daily);
+                    const usageWeekly = formatNum(data.usage_weekly);
+                    const usageMonthly = formatNum(data.usage_monthly);
+                    const limit = data.limit !== null ? formatNum(data.limit) : 'Unlimited';
+                    const remaining = data.limit_remaining !== null ? formatNum(data.limit_remaining) : 'N/A';
+                    const freeTier = data.is_free_tier ? 'Free Tier' : 'Paid';
+                    
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Account</span><span class="metric-value">${data.label || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Plan</span><span class="metric-value">${freeTier}</span></div>
+                        <div class="metric-row"><span>Usage (Total)</span><span class="metric-value">${usageTotal}</span></div>
+                        <div class="metric-row"><span>Usage (Today)</span><span class="metric-value">${usageDaily}</span></div>
+                        <div class="metric-row"><span>Usage (Week)</span><span class="metric-value">${usageWeekly}</span></div>
+                        <div class="metric-row"><span>Usage (Month)</span><span class="metric-value">${usageMonthly}</span></div>
+                        <div class="metric-row"><span>Limit</span><span class="metric-value">${limit}</span></div>
+                        <div class="metric-row"><span>Remaining</span><span class="metric-value">${remaining}</span></div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('openroute-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
+        
+        // Load Gemma Status
+        async function loadGemma() {
             try {
                 const res = await fetch('/api/gemma');
                 const data = await res.json();
+                const el = document.getElementById('gemma-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="gemma-info">
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Model</div>
-                                <div class="gemma-field-value">${data.model}</div>
-                            </div>
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Params</div>
-                                <div class="gemma-field-value">${data.params}</div>
-                            </div>
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Context</div>
-                                <div class="gemma-field-value">${data.context}</div>
-                            </div>
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Size</div>
-                                <div class="gemma-field-value">${data.size_gb} GB</div>
-                            </div>
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Host</div>
-                                <div class="gemma-field-value">${data.host}</div>
-                            </div>
-                            <div class="gemma-field">
-                                <div class="gemma-field-label">Status</div>
-                                <div class="gemma-field-value gemma-status-ok">✅ Online</div>
-                            </div>
-                        </div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">${data.status}</span></div>
+                        <div class="metric-row"><span>Model</span><span class="metric-value">${data.model || 'Gemma 4'}</span></div>
+                        <div class="metric-row"><span>Port</span><span class="metric-value">${data.port || 'N/A'}</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<div class="gemma-status-error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="gemma-status-error">Failed to load model status</div>`;
+                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch Linux server
-        async function fetchLinuxServer() {
-            const el = document.getElementById('linux-server-data');
+        
+        // Load Linux Server Status
+        async function loadLinuxServer() {
             try {
                 const res = await fetch('/api/linux-server');
                 const data = await res.json();
+                const el = document.getElementById('linux-server-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div style="display: grid; gap: 8px;">
-                            <div class="server-field">
-                                <div class="server-field-label">HOSTNAME</div>
-                                <div class="server-field-value">${data.hostname}</div>
-                            </div>
-                            <div class="server-field">
-                                <div class="server-field-label">LOAD</div>
-                                <div class="server-field-value">${data.load[0]}, ${data.load[1]}, ${data.load[2]}</div>
-                            </div>
-                            <div class="server-field">
-                                <div class="server-field-label">MEMORY</div>
-                                <div class="server-field-value">${data.memory}</div>
-                            </div>
-                            <div class="server-field">
-                                <div class="server-field-label">DISK</div>
-                                <div class="server-field-value">${data.disk}</div>
-                            </div>
-                            <div class="server-field server-field-full">
-                                <div class="server-field-label">UPTIME</div>
-                                <div class="server-field-value">${data.uptime}</div>
-                            </div>
-                        </div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">${data.status}</span></div>
+                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Load</span><span class="metric-value">${data.load_avg || 'N/A'}</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${formatNum(data.cpu_percent)}%</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${formatNum(data.memory_percent)}%</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load server status</div>`;
+                document.getElementById('linux-server-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch Mac Studio
-        async function fetchMacStudio() {
-            const el = document.getElementById('mac-studio-data');
+        
+        // Load Mac Studio Status
+        async function loadMacStudio() {
             try {
                 const res = await fetch('/api/mac-studio');
                 const data = await res.json();
+                const el = document.getElementById('mac-studio-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="mac-info">
-                            <div class="mac-field">
-                                <div class="mac-field-label">OS</div>
-                                <div class="mac-field-value">${data.os}</div>
-                            </div>
-                            <div class="mac-field">
-                                <div class="mac-field-label">CHIP</div>
-                                <div class="mac-field-value">${data.chip}</div>
-                            </div>
-                            <div class="mac-field">
-                                <div class="mac-field-label">MEMORY</div>
-                                <div class="mac-field-value">${data.ram}</div>
-                            </div>
-                            <div class="mac-field-label">CHIP</div>
-                            <div class="mac-field-value">${data.chip}</div>
-                            <div class="mac-field-label">MEMORY</div>
-                            <div class="mac-field-value">${data.ram}</div>
-                            <div class="mac-field">
-                            <div class="mac-field-label">MODEL</div>
-                            <div class="mac-field-value">${data.model}</div>
-                            </div>
-                            <div class="mac-field mac-field-full">
-                            <div class="mac-field-label">STATUS</div>
-                            <div class="mac-field-value mac-status-ok">✅ ${data.status}</div>
-                            </div>
-                        </div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">${data.status}</span></div>
+                        <div class="metric-row"><span>Model</span><span class="metric-value">${data.model || 'N/A'}</span></div>
+                        <div class="metric-row"><span>OS</span><span class="metric-value">${data.os || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Chip</span><span class="metric-value">${data.chip || 'N/A'}</span></div>
+                        <div class="metric-row"><span>RAM</span><span class="metric-value">${data.ram || 'N/A'}</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="error">Failed to load Mac Studio status</div>`;
+                document.getElementById('mac-studio-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Fetch cameras
-        async function fetchCameras() {
-            const el = document.getElementById('cameras-data');
+        
+        // Load Cameras
+        async function loadCameras() {
             try {
                 const res = await fetch('/api/cameras');
                 const data = await res.json();
+                const el = document.getElementById('cameras-data');
                 if (data.status === 'ok') {
-                    let html = '<div class="camera-grid">';
-                    Object.values(data.cameras).forEach(cam => {
-                        const proxyUrl = `/api/camera-image?url=${encodeURIComponent(cam.url)}`;
-                        html += `
-                            <div class="camera-tile">
-                                <div class="camera-name">${cam.name}</div>
-                                <div class="camera-ip">${cam.ip}</div>
-                                <img src="${proxyUrl}" alt="${cam.name}" class="camera-snapshot" onerror="this.nextElementSibling.style.display='block'">
-                                <div class="camera-error" style="display:none">Image not available</div>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                    el.innerHTML = html;
+                    const cameras = data.cameras || [];
+                    if (cameras.length === 0) {
+                        el.innerHTML = '<span class="loading">No cameras found</span>';
+                        return;
+                    }
+                    el.innerHTML = cameras.map(cam => `
+                        <div class="metric-row">
+                            <span>${cam.name || cam.id}</span>
+                        </div>
+                    `).join('');
                 } else {
-                    el.innerHTML = `<div class="camera-error">Error: ${data.message}</div>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                el.innerHTML = `<div class="camera-error">Failed to load cameras</div>`;
+                document.getElementById('cameras-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-
-        // Initial fetch
-        fetchDrive();
-        fetchPMDrive();
-        fetchWeather();
-        fetchLinks();
-        fetchGmail();
-        fetchGemma();
-        fetchLinuxServer();
-        fetchMacStudio();
-        fetchCameras();
-
-        // Auto-refresh every 30 minutes
-        setInterval(() => {
-            fetchDrive();
-            fetchPMDrive();
-            fetchWeather();
-            fetchLinks();
-            fetchGmail();
-            fetchGemma();
-            fetchLinuxServer();
-            fetchMacStudio();
-            fetchCameras();
-            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }, 1800000);
+        
+        // Initialize all loaders
+        async function init() {
+            await Promise.all([
+                loadServerTime(),
+                loadDriveReport(),
+                loadPMDriveReport(),
+                loadWeather(),
+                loadLinks(),
+                loadGmail(),
+                loadOpenRoute(),
+                loadGemma(),
+                loadLinuxServer(),
+                loadMacStudio(),
+                loadCameras()
+            ]);
+        }
+        
+        // Run on page load
+        init();
+        
+        // Refresh every 30 minutes
+        setInterval(init, 30 * 60 * 1000);
     </script>
 </body>
 </html>

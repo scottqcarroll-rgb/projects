@@ -61,6 +61,7 @@ def get_authenticated_service():
         )
 
     if creds and creds.refresh_token:
+        # Remove forced past expiry that causes invalid_grant errors
         creds.refresh(Request())
         with open(TOKEN_FILE, 'w') as token:
             token.write(creds.to_json())

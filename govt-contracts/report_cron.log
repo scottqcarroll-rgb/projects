@@ -1373,3 +1373,28 @@ Traceback (most recent call last):
   File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 490, in from_authorized_user_info
     raise ValueError(
 ValueError: Authorized user info was not in the expected format, missing fields client_id, client_secret.
+[08:00:02] Starting contract report — July 07, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[OK] SAM.gov: 13558 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-07-raw.json
+[OK] Matched 30 contracts across 4 categories
+     Facility & Grounds Services: 18
+     Security & Pest Control: 7
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-07-07-categorized.md
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 429, in main
+    gmail        = get_authenticated_service()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/gmail_client.py", line 20, in get_authenticated_service
+    creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 543, in from_authorized_user_file
+    return cls.from_authorized_user_info(data, scopes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 490, in from_authorized_user_info
+    raise ValueError(
+ValueError: Authorized user info was not in the expected format, missing fields client_id, client_secret.

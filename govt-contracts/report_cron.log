@@ -1398,3 +1398,32 @@ Traceback (most recent call last):
   File "/home/scott/projects/email-agent/venv/lib/python3.12/site-packages/google/oauth2/credentials.py", line 490, in from_authorized_user_info
     raise ValueError(
 ValueError: Authorized user info was not in the expected format, missing fields client_id, client_secret.
+[08:00:02] Starting contract report — July 08, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 436, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 410, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 90, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=60) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 504: Gateway Time-out

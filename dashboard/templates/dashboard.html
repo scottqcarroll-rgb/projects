@@ -79,6 +79,7 @@
         }
         
         .clay { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .llm-icon { background: linear-gradient(135deg, #00d4ff, #7b2cbf); }
         .drive-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .weather-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
         .gmail-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
@@ -194,17 +195,28 @@
         </div>
         
         <!-- OpenRoute Usage -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon openroute-icon">🗾</div>
-                <div class="card-title">OpenRoute Usage</div>
-            </div>
-            <div class="card-body" id="openroute-data">
-                <span class="loading">Loading usage...</span>
-            </div>
-        </div>
-        
-        <!-- Local Gemma Model Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon openroute-icon">🗾</div>
+                        <div class="card-title">OpenRoute Usage</div>
+                    </div>
+                    <div class="card-body" id="openroute-data">
+                        <span class="loading">Loading usage...</span>
+                    </div>
+                </div>
+
+                <!-- LLM Call Metrics -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon llm-icon">🤖</div>
+                        <div class="card-title">Local LLM Metrics</div>
+                    </div>
+                    <div class="card-body" id="llm-metrics-data">
+                        <span class="loading">Loading LLM metrics...</span>
+                    </div>
+                </div>
+
+                <!-- Local Gemma Model Status -->
         <div class="card">
             <div class="card-header">
                 <div class="card-icon gemma-icon">🕾</div>
@@ -497,6 +509,32 @@
                 document.getElementById('cameras-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
+
+        // Load LLM Metrics
+        async function loadLLMMetrics() {
+            try {
+                const res = await fetch('/api/llm-metrics');
+                const data = await res.json();
+                const el = document.getElementById('llm-metrics-data');
+                if (data.status === 'ok') {
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Total Calls</span><span class="metric-value">${formatNum(data.total_calls)}</span></div>
+                        <div class="metric-row"><span>Today's Calls</span><span class="metric-value">${formatNum(data.today_calls)}</span></div>
+                        <div class="metric-row"><span>Today's Share</span><span class="metric-value">${data.share_of_total}%</span></div>
+                        <div class="metric-row"><span>30-Day Avg</span><span class="metric-value">${formatNum(data.avg_30_day)}</span></div>
+                        <div class="metric-row"><span>Hourly Rate</span><span class="metric-value">${formatNum(data.hourly_rate)}</span></div>
+                        ${data.calls_today.length > 0 ? `
+                            <div class="metric-row"><span>Calls Today</span></div>
+                            ${data.calls_today.map(ts => `<div class="metric-row" style="margin-left: 12px;"><span>• ${ts}</span></div>`).join('')}
+                        ` : '<div class="metric-row"><span>Calls Today</span><span class="metric-value">No calls today</span></div>'}
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('llm-metrics-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
         
         // Initialize all loaders
         async function init() {
@@ -511,7 +549,8 @@
                 loadGemma(),
                 loadLinuxServer(),
                 loadMacStudio(),
-                loadCameras()
+                loadCameras(),
+                loadLLMMetrics()
             ]);
         }
         

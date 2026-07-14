@@ -3,7 +3,7 @@ import urllib.request
 import json
 import re
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # --- Google Maps API Key ---
 import glob
@@ -57,12 +57,18 @@ def get_drive_report():
     if result.get('status') == 'ok' and result.get('routes'):
         # Use first route as primary
         route = result['routes'][0]
+        # Calculate departure/arrival times from duration
+        duration_minutes = parse_duration_to_minutes(route.get('duration', '0'))
+        departure_time = datetime.now().strftime('%-I:%M %p')
+        arrival_time = (datetime.now() + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
         return {
             'status': 'ok',
-            'departure_time': 'N/A',
-            'arrival_time': 'N/A',
+            'origin': ORIGIN.split(',')[0],  # "616 Huntwood Cir"
+            'destination': DESTINATION.split(',')[0],  # "5303 New Peachtree Rd"
+            'departure_time': departure_time,
+            'arrival_time': arrival_time,
             'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
-            'duration_minutes': parse_duration_to_minutes(route.get('duration', '0')),
+            'duration_minutes': duration_minutes,
             'routes': result['routes']
         }
     return result
@@ -74,12 +80,17 @@ def get_pm_drive_report():
     result = get_drive_routes(ORIGIN, DESTINATION)
     if result.get('status') == 'ok' and result.get('routes'):
         route = result['routes'][0]
+        duration_minutes = parse_duration_to_minutes(route.get('duration', '0'))
+        departure_time = datetime.now().strftime('%-I:%M %p')
+        arrival_time = (datetime.now() + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
         return {
             'status': 'ok',
-            'departure_time': 'N/A',
-            'arrival_time': 'N/A',
+            'origin': ORIGIN.split(',')[0],
+            'destination': DESTINATION.split(',')[0],
+            'departure_time': departure_time,
+            'arrival_time': arrival_time,
             'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
-            'duration_minutes': parse_duration_to_minutes(route.get('duration', '0')),
+            'duration_minutes': duration_minutes,
             'routes': result['routes']
         }
     return result

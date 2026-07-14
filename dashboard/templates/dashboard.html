@@ -296,6 +296,8 @@
                 const el = document.getElementById('drive-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
+                        <div class="metric-row"><span>From</span><span class="metric-value">${data.origin || 'N/A'}</span></div>
+                        <div class="metric-row"><span>To</span><span class="metric-value">${data.destination || 'N/A'}</span></div>
                         <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>
@@ -318,6 +320,8 @@
                 const el = document.getElementById('pm-drive-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
+                        <div class="metric-row"><span>From</span><span class="metric-value">${data.origin || 'N/A'}</span></div>
+                        <div class="metric-row"><span>To</span><span class="metric-value">${data.destination || 'N/A'}</span></div>
                         <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>

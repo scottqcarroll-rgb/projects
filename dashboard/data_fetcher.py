@@ -219,31 +219,42 @@ def get_linux_server_status():
     try:
         import subprocess
         import os
-        
+
         # Get CPU load
         with open('/proc/loadavg', 'r') as f:
             load = f.read().split()[:3]
-        
+
         # Get memory
         with open('/proc/meminfo', 'r') as f:
             meminfo = f.read()
         mem_total = int([l for l in meminfo.split('\n') if l.startswith('MemTotal')][0].split()[1]) / 1024  # MB
         mem_avail = int([l for l in meminfo.split('\n') if l.startswith('MemAvailable')][0].split()[1]) / 1024
         mem_used_pct = round((mem_total - mem_avail) / mem_total * 100, 1)
-        
+        mem_total_gb = round(mem_total / 1024, 1)
+        mem_avail_gb = round(mem_avail / 1024, 1)
+
+        # Get CPU info
+        with open('/proc/cpuinfo', 'r') as f:
+            cpuinfo = f.read()
+        cpu_model = 'Unknown'
+        for line in cpuinfo.split('\n'):
+            if line.startswith('model name'):
+                cpu_model = line.split(':')[-1].strip()
+                break
+
         # Get disk usage for root
         disk = subprocess.check_output(['df', '-h', '/'], text=True).split('\n')[1].split()
         disk_used = disk[2]
         disk_total = disk[1]
         disk_pct = disk[4]
-        
+
         # Get uptime
         with open('/proc/uptime', 'r') as f:
             uptime_sec = float(f.read().split()[0])
         uptime_days = int(uptime_sec // 86400)
         uptime_hours = int((uptime_sec % 86400) // 3600)
         uptime_str = f'{uptime_days}d {uptime_hours}h' if uptime_days else f'{uptime_hours}h'
-        
+
         # Get CPU temp if available
         cpu_temp = 'N/A'
         try:
@@ -254,13 +265,20 @@ def get_linux_server_status():
                         break
         except:
             pass
-        
+
         return {
             'status': 'ok',
             'hostname': 'clawz840',
-            'load': load,
-            'memory': f'{mem_used_pct}% used ({round(mem_avail/1024,1)} GB free of {round(mem_total/1024,1)} GB)',
-            'disk': f'{disk_pct} used ({disk_used} / {disk_total})',
+            'cpu_model': cpu_model,
+            'load_1m': load[0],
+            'load_5m': load[1],
+            'load_15m': load[2],
+            'memory_total_gb': mem_total_gb,
+            'memory_used_pct': mem_used_pct,
+            'memory_avail_gb': mem_avail_gb,
+            'disk_used': disk_used,
+            'disk_total': disk_total,
+            'disk_pct': disk_pct,
             'uptime': uptime_str,
             'cpu_temp': cpu_temp,
             'ip': '100.124.71.12 (Tailscale) / 192.168.1.222 (LAN)'

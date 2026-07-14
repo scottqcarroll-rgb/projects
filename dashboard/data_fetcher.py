@@ -53,13 +53,50 @@ def get_drive_routes(origin, destination):
 def get_drive_report():
     ORIGIN = '616 Huntwood Cir, Temple GA 30179'
     DESTINATION = '5303 New Peachtree Rd, Chamblee GA 30341'
-    return get_drive_routes(ORIGIN, DESTINATION)
+    result = get_drive_routes(ORIGIN, DESTINATION)
+    if result.get('status') == 'ok' and result.get('routes'):
+        # Use first route as primary
+        route = result['routes'][0]
+        return {
+            'status': 'ok',
+            'departure_time': 'N/A',
+            'arrival_time': 'N/A',
+            'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
+            'duration_minutes': parse_duration_to_minutes(route.get('duration', '0')),
+            'routes': result['routes']
+        }
+    return result
 
 # --- PM Drive Report (Work → Home) ---
 def get_pm_drive_report():
     ORIGIN = '5303 New Peachtree Rd, Chamblee GA 30341'
     DESTINATION = '616 Huntwood Cir, Temple GA 30179'
-    return get_drive_routes(ORIGIN, DESTINATION)
+    result = get_drive_routes(ORIGIN, DESTINATION)
+    if result.get('status') == 'ok' and result.get('routes'):
+        route = result['routes'][0]
+        return {
+            'status': 'ok',
+            'departure_time': 'N/A',
+            'arrival_time': 'N/A',
+            'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
+            'duration_minutes': parse_duration_to_minutes(route.get('duration', '0')),
+            'routes': result['routes']
+        }
+    return result
+
+def parse_duration_to_minutes(duration_str):
+    """Convert '1 hour 15 mins' or '45 mins' to minutes integer"""
+    try:
+        if 'hour' in duration_str:
+            parts = duration_str.split()
+            hours = int(parts[0])
+            mins = int(parts[2]) if len(parts) > 2 else 0
+            return hours * 60 + mins
+        elif 'min' in duration_str:
+            return int(duration_str.split()[0])
+    except:
+        pass
+    return 0
 
 # --- 2. Weather Report ---
 def get_weather():
@@ -99,12 +136,11 @@ def get_weather():
 
         return {
             'status': 'ok',
-            'temp': c_to_f(temp_c),
-            'feels_like': c_to_f(feels_c),
-            'humidity': current.get('relative_humidity_2m', 'N/A'),
-            'wind': current.get('wind_speed_10m', 'N/A'),
-            'pressure': current.get('pressure_msl', 'N/A'),
+            'temperature': c_to_f(temp_c),
             'condition': wmo.get(code, f'Unknown ({code})'),
+            'humidity': current.get('relative_humidity_2m', 'N/A'),
+            'wind_speed': round(current.get('wind_speed_10m', 0) * 2.237, 1) if current.get('wind_speed_10m') else 'N/A',  # m/s to mph
+            'feels_like': c_to_f(feels_c),
             'high': c_to_f(high_c),
             'low': c_to_f(low_c),
             'precip': daily.get('precipitation_sum', ['N/A'])[0]
@@ -287,20 +323,22 @@ def get_camera_snapshots():
     # Only works when accessing dashboard from LAN (not via Tailscale only)
     return {
         'status': 'ok',
-        'cameras': {
-            'flir_158': {
+        'cameras': [
+            {
                 'status': 'ok',
+                'id': 'flir_158',
                 'name': 'Gun Room (158)',
                 'ip': '192.168.1.158',
                 'url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0'
             },
-            'flir_163': {
+            {
                 'status': 'ok',
+                'id': 'flir_163',
                 'name': 'Office (163)',
                 'ip': '192.168.1.163',
                 'url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0'
             }
-        }
+        ]
     }
 
 

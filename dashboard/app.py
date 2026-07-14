@@ -113,6 +113,56 @@ def api_server_time():
 def api_usage():
     return jsonify(get_openrouter_usage())
 
+import requests
+
+OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://192.168.1.174:11434')
+
+@app.route('/api/ollama-chat', methods=['POST'])
+def api_ollama_chat():
+    """Proxy chat requests to Mac Studio Ollama API."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No JSON data provided'}), 400
+        
+        model = data.get('model', 'hermes-4-14b')
+        messages = data.get('messages', [])
+        stream = data.get('stream', False)
+        
+        # Forward to Ollama API
+        resp = requests.post(
+            f'{OLLAMA_BASE_URL}/api/chat',
+            json={'model': model, 'messages': messages, 'stream': stream},
+            timeout=120,
+            stream=stream
+        )
+        
+        if stream:
+            def generate():
+                for line in resp.iter_lines():
+                    if line:
+                        yield line.decode('utf-8') + '\n'
+            return Response(generate(), mimetype='application/x-ndjson')
+        else:
+            return jsonify(resp.json())
+    except requests.exceptions.ConnectionError:
+        return jsonify({'error': 'Cannot connect to Ollama at ' + OLLAMA_BASE_URL}), 503
+    except requests.exceptions.Timeout:
+        return jsonify({'error': 'Ollama request timed out'}), 504
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ollama-models')
+def api_ollama_models():
+    """Get available models from Ollama."""
+    try:
+        resp = requests.get(f'{OLLAMA_BASE_URL}/api/tags', timeout=10)
+        return jsonify(resp.json())
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/llm-metrics')
 def api_llm_metrics():
     """API endpoint for LLM call metrics - reads from log files."""

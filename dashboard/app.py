@@ -24,6 +24,14 @@ import subprocess
 
 app = Flask(__name__)
 
+@app.after_request
+def add_cache_control(response):
+    """Add cache control headers to prevent iPad Safari aggressive caching"""
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 @app.route('/')
 def dashboard():
     return render_template('dashboard.html')

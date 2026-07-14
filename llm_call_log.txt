@@ -1,0 +1,6 @@
+[2026-07-14T15:15:03] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0
+[2026-07-14T15:15:10] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0
+[2026-07-14T15:15:10] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0
+[2026-07-14T15:15:10] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0
+[2026-07-14T15:15:10] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0
+[2026-07-14T15:15:10] model=gemma-4-E4B-it-Q4_K_M.gguf prompt_tokens=0 completion_tokens=0

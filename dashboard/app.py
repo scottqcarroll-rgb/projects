@@ -16,7 +16,8 @@ from datetime import datetime, timedelta
 from data_fetcher import (
     get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
     get_gmail_summary, get_gemma_status, get_linux_server_status,
-    get_mac_studio_status, get_camera_snapshots, get_openrouter_usage
+    get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
+    get_mac_studio_ollama_status
 )
 import os
 import json
@@ -75,6 +76,12 @@ def api_linux_server():
 @app.route('/api/mac-studio')
 def api_mac_studio():
     return jsonify(get_mac_studio_status())
+
+
+@app.route('/api/mac-studio/ollama')
+def api_mac_studio_ollama():
+    return jsonify(get_mac_studio_ollama_status())
+
 
 @app.route('/api/cameras')
 def api_cameras():

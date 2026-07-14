@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scott's Dashboard</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -498,8 +501,10 @@
                         return;
                     }
                     el.innerHTML = cameras.map(cam => `
-                        <div class="metric-row">
-                            <span>${cam.name || cam.id}</span>
+                        <div class="metric-row" style="display: flex; flex-direction: column; gap: 8px; margin: 8px 0;">
+                            <span style="font-weight: 600;">${cam.name || cam.id}</span>
+                            <img src="${cam.url}" alt="${cam.name || cam.id}" style="width: 100%; max-width: 320px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span style="display: none; color: #888; font-size: 0.8rem;">Failed to load snapshot</span>
                         </div>
                     `).join('');
                 } else {

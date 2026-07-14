@@ -290,10 +290,12 @@ def get_linux_server_status():
 def get_mac_studio_status():
     try:
         import subprocess
-        # Use SSH to get Mac Studio stats
+        import json
+        
+        # Get hardware/software info
         result = subprocess.run(
-            ['ssh', 'macstudio', 'system_profiler', 'SPHardwareDataType', 'SPMemoryDataType', 'SPSoftwareDataType'],
-            capture_output=True, text=True, timeout=10
+            ['ssh', 'macstudio', 'system_profiler', 'SPHardwareDataType', 'SPMemoryDataType', 'SPSoftwareDataType', 'SPStorageDataType'],
+            capture_output=True, text=True, timeout=15
         )
         
         if result.returncode != 0:
@@ -306,6 +308,7 @@ def get_mac_studio_status():
         chip = 'M2 Max'
         ram = '32 GB'
         os_version = 'macOS 26.5.0'
+        storage = 'N/A'
         
         for line in output.split('\n'):
             if 'Model Name' in line:
@@ -316,20 +319,52 @@ def get_mac_studio_status():
                 ram = line.split(':')[-1].strip()
             elif 'System Version' in line:
                 os_version = line.split(':')[-1].strip()
+            elif 'Capacity' in line and ('TB' in line or 'GB' in line) and 'Available' not in line and 'File System' not in line:
+                # Get the main APFS drive capacity (first one usually)
+                if 'APFS' in output[max(0, output.find(line)-200):output.find(line)] or storage == 'N/A':
+                    storage = line.split(':')[-1].strip()
+            elif 'Available' in line and ('TB' in line or 'GB' in line):
+                # This is available space, format storage nicely
+                avail = line.split(':')[-1].strip()
+                if storage != 'N/A':
+                    storage = f"{storage} ({avail} free)"
         
-        # Get load/memory via SSH
+        # Get load/memory/disk via SSH
         result2 = subprocess.run(
-            ['ssh', 'macstudio', 'top', '-l', '1', '-n', '0', '|', 'head', '-20'],
-            capture_output=True, text=True, timeout=10, shell=True
+            ['ssh', 'macstudio', 'bash -c "top -l 1 -n 0 2>/dev/null | grep -E \'Load Avg|PhysMem\'; df -h / 2>/dev/null | tail -1"'],
+            capture_output=True, text=True, timeout=15
         )
         
-        load_1m = 'N/A'
-        mem_used = 'N/A'
+        load_1m = load_5m = load_15m = 'N/A'
+        mem_total_gb = mem_used_gb = mem_free_gb = 0
+        mem_used_pct = 'N/A'
+        disk_used = disk_total = disk_pct = 'N/A'
+        
         for line in result2.stdout.split('\n'):
             if 'Load Avg' in line:
-                load_1m = line.split(':')[-1].strip().split()[0]
+                parts = line.split(':')[-1].strip().split(',')
+                load_1m = parts[0].strip() if len(parts) > 0 else 'N/A'
+                load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
+                load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
             elif 'PhysMem' in line:
-                mem_used = line.strip()
+                # Parse: "PhysMem: 31G used (1606M wired, 2136M compressor), 452M unused."
+                import re
+                used_match = re.search(r'(\d+)[GM]i? used', line)
+                unused_match = re.search(r'(\d+)M unused', line)
+                if used_match:
+                    mem_used_gb = int(used_match.group(1))
+                if unused_match:
+                    mem_free_gb = round(int(unused_match.group(1)) / 1024, 1)
+                mem_total_gb = round(mem_used_gb + mem_free_gb, 1)
+                if mem_total_gb > 0:
+                    mem_used_pct = round(mem_used_gb / mem_total_gb * 100, 1)
+            elif line.startswith('/dev/') or line.startswith('Filesystem'):
+                # df output: "/dev/disk3s1s1   460Gi    12Gi   302Gi     4%    459k  3.2G    0%   /"
+                parts = line.split()
+                if len(parts) >= 5:
+                    disk_total = parts[1]
+                    disk_used = parts[2]
+                    disk_pct = parts[4]
         
         return {
             'status': 'ok',
@@ -338,8 +373,17 @@ def get_mac_studio_status():
             'chip': chip,
             'ram': ram,
             'os': os_version,
-            'load': load_1m,
-            'memory': mem_used,
+            'storage': storage,
+            'load_1m': load_1m,
+            'load_5m': load_5m,
+            'load_15m': load_15m,
+            'memory_total_gb': mem_total_gb,
+            'memory_used_gb': mem_used_gb,
+            'memory_free_gb': mem_free_gb,
+            'memory_used_pct': mem_used_pct,
+            'disk_used': disk_used,
+            'disk_total': disk_total,
+            'disk_pct': disk_pct,
             'ip': '192.168.1.174 (LAN)'
         }
     except Exception as e:

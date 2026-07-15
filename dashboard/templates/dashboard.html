@@ -597,6 +597,18 @@
                 loadLLMMetrics(),
                 loadChat()
             ]);
+            
+            // Auto-refresh drive reports every 30 minutes (matches footer claim)
+            setInterval(() => {
+                loadDriveReport();
+                loadPMDriveReport();
+            }, 30 * 60 * 1000); // 30 minutes
+            
+            // Also refresh weather and server time every 30 minutes
+            setInterval(() => {
+                loadWeather();
+                loadServerTime();
+            }, 30 * 60 * 1000);
         }
         
         // Chat functionality
@@ -717,7 +729,4 @@
         
         // Run on page load
         init();
-        
-        // Refresh every 30 minutes
-        setInterval(init, 30 * 60 * 1000);
 </script>

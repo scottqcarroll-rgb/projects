@@ -178,41 +178,44 @@ def get_gmail_summary():
         'message': 'Gmail integration pending'
     }
 
-# --- 5. Gemma 4 Local Model Status ---
-def get_gemma_status():
+# --- 5. Ollama Model Status (Mac Studio) ---
+def get_ollama_status():
     try:
         import urllib.request
         import json
-        # Check Mac Studio llama.cpp server on port 8081
-        url = 'http://192.168.1.174:8081/v1/models'
+        # Check Mac Studio Ollama API (port 11434) - more reliable than dynamic llama.cpp port
+        url = 'http://192.168.1.174:11434/api/ps'
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
             data = json.loads(response.read().decode('utf-8'))
         
-        models = data.get('data', [])
+        models = data.get('models', [])
         if models:
             model = models[0]
-            meta = model.get('meta', {})
-            n_params = meta.get('n_params', 0)
-            n_ctx = meta.get('n_ctx', 0)
-            size_gb = round(meta.get('size', 0) / (1024**3), 1) if meta.get('size') else 'N/A'
+            details = model.get('details', {})
+            n_params = model.get('size', 0)  # Ollama returns size in bytes
+            n_ctx = model.get('context_length', 0)
+            size_gb = round(n_params / (1024**3), 1) if n_params else 'N/A'
             
-            # Determine model name from params and vocab size
-            vocab = meta.get('n_vocab', 0)
-            if n_params >= 9_000_000_000:
-                model_name = 'Gemma 2 9B'
-            elif n_params >= 4_000_000_000 or vocab == 262144:
-                model_name = 'Gemma 4 E4B'
-            else:
-                model_name = f'{n_params/1e9:.1f}B'
+            # Determine model name from details
+            family = details.get('family', '')
+            param_size = details.get('parameter_size', '')
+            model_name = model.get('name', 'Unknown')
+            
+            if 'hermes' in model_name.lower():
+                model_name = 'Hermes 4 14B'
+            elif 'gemma' in model_name.lower():
+                model_name = 'Gemma'
+            elif 'qwen' in family.lower():
+                model_name = f'Qwen {param_size}' if param_size else 'Qwen'
             
             return {
                 'status': 'ok',
                 'model': model_name,
-                'params': f'{n_params/1e9:.1f}B',
+                'params': param_size if param_size else f'{n_params/1e9:.1f}B',
                 'context': f'{n_ctx//1000}K',
                 'size_gb': size_gb,
-                'host': 'Mac Studio (192.168.1.174:8081)'
+                'host': 'Mac Studio (192.168.1.174:11434)'
             }
         return {'status': 'error', 'message': 'No model loaded'}
     except Exception as e:
@@ -659,7 +662,7 @@ if __name__ == '__main__':
     print("Weather:", json.dumps(get_weather(), indent=2))
     print("Sam Hunter:", json.dumps(get_sam_hunter(), indent=2))
     print("Gmail:", json.dumps(get_gmail_summary(), indent=2))
-    print("Gemma:", json.dumps(get_gemma_status(), indent=2))
+    print("Ollama:", json.dumps(get_ollama_status(), indent=2))
     print("Linux Server:", json.dumps(get_linux_server_status(), indent=2))
     print("Mac Studio:", json.dumps(get_mac_studio_status(), indent=2))
     print("OpenRouter:", json.dumps(get_openrouter_usage(), indent=2))

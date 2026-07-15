@@ -15,7 +15,7 @@ import pytz
 from datetime import datetime, timedelta
 from data_fetcher import (
     get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
-    get_gmail_summary, get_gemma_status, get_linux_server_status,
+    get_gmail_summary, get_ollama_status, get_linux_server_status,
     get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
     get_mac_studio_ollama_status
 )
@@ -65,9 +65,9 @@ def api_samhunter():
 def api_gmail():
     return jsonify(get_gmail_summary())
 
-@app.route('/api/gemma')
-def api_gemma():
-    return jsonify(get_gemma_status())
+@app.route('/api/ollama')
+def api_ollama():
+    return jsonify(get_ollama_status())
 
 @app.route('/api/linux-server')
 def api_linux_server():

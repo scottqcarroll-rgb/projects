@@ -49,7 +49,6 @@ def get_drive_routes(origin, destination):
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 
-# --- 1. AM Drive Report (Home → Work) ---
 def get_drive_report():
     ORIGIN = '616 Huntwood Cir, Temple GA 30179'
     DESTINATION = '5303 New Peachtree Rd, Chamblee GA 30341'
@@ -57,8 +56,9 @@ def get_drive_report():
     if result.get('status') == 'ok' and result.get('routes'):
         # Use first route as primary
         route = result['routes'][0]
-        # Calculate departure/arrival times from duration
-        duration_minutes = parse_duration_to_minutes(route.get('duration', '0'))
+        # Use TRAFFIC duration (with traffic) for arrival time calculation
+        traffic_duration = route.get('traffic', route.get('duration', '0'))
+        duration_minutes = parse_duration_to_minutes(traffic_duration)
         departure_time = datetime.now().strftime('%-I:%M %p')
         arrival_time = (datetime.now() + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
         return {
@@ -80,7 +80,9 @@ def get_pm_drive_report():
     result = get_drive_routes(ORIGIN, DESTINATION)
     if result.get('status') == 'ok' and result.get('routes'):
         route = result['routes'][0]
-        duration_minutes = parse_duration_to_minutes(route.get('duration', '0'))
+        # Use TRAFFIC duration (with traffic) for arrival time calculation
+        traffic_duration = route.get('traffic', route.get('duration', '0'))
+        duration_minutes = parse_duration_to_minutes(traffic_duration)
         # Use fixed PM departure time (5:00 PM) instead of current time
         departure_time = '5:00 PM'
         departure_dt = datetime.now().replace(hour=17, minute=0, second=0, microsecond=0)

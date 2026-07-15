@@ -452,25 +452,28 @@
             }
         }
         
-        // Load Gemma Status
-        async function loadGemma() {
-            try {
-                const res = await fetch('/api/gemma');
-                const data = await res.json();
-                const el = document.getElementById('gemma-data');
-                if (data.status === 'ok') {
-                    el.innerHTML = `
-                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">${data.status}</span></div>
-                        <div class="metric-row"><span>Model</span><span class="metric-value">${data.model || 'Gemma 4'}</span></div>
-                        <div class="metric-row"><span>Port</span><span class="metric-value">${data.port || 'N/A'}</span></div>
-                    `;
-                } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+        // Load Ollama Model Status on Mac Studio
+        async function loadOllamaModelStatus() {
+                    try {
+                        const res = await fetch('/api/mac-studio/ollama');
+                        const data = await res.json();
+                        const el = document.getElementById('gemma-data');
+                        if (data.status === 'ok' && data.models && data.models.length > 0) {
+                            const model = data.models[0];
+                            el.innerHTML = `
+                                <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">Ollama Running</span></div>
+                                <div class="metric-row"><span>Model</span><span class="metric-value">${model.name}</span></div>
+                                <div class="metric-row"><span>Size</span><span class="metric-value">${model.size}</span></div>
+                                <div class="metric-row"><span>Modified</span><span class="metric-value">${model.modified}</span></div>
+                                <div class="metric-row"><span>Running</span><span class="metric-value" style="color: ${model.running ? '#00b894' : '#fdcb6e'}">${model.running ? 'Yes' : 'No'}</span></div>
+                            `;
+                        } else {
+                            el.innerHTML = `<span class="loading">No models installed</span>`;
+                        }
+                    } catch (e) {
+                        document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                    }
                 }
-            } catch (e) {
-                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
-            }
-        }
         
         // Load Linux Server Status
         async function loadLinuxServer() {
@@ -587,12 +590,12 @@
                 loadLinks(),
                 loadGmail(),
                 loadOpenRoute(),
-                loadGemma(),
+                loadOllamaModelStatus(),
                 loadLinuxServer(),
                 loadMacStudio(),
                 loadCameras(),
                 loadLLMMetrics(),
-                loadOllamaModels()
+                loadChat()
             ]);
         }
         
@@ -686,10 +689,17 @@
         // Auto-resize textarea
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send');
+            
             if (input) {
                 input.addEventListener('input', () => {
                     input.style.height = 'auto';
                     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+                    
+                    // Enable/disable send button based on input content
+                    if (sendBtn) {
+                        sendBtn.disabled = !input.value.trim();
+                    }
                 });
                 
                 input.addEventListener('keydown', (e) => {
@@ -700,7 +710,6 @@
                 });
             }
             
-            const sendBtn = document.getElementById('chat-send');
             if (sendBtn) {
                 sendBtn.addEventListener('click', sendChatMessage);
             }

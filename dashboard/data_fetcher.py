@@ -81,8 +81,10 @@ def get_pm_drive_report():
     if result.get('status') == 'ok' and result.get('routes'):
         route = result['routes'][0]
         duration_minutes = parse_duration_to_minutes(route.get('duration', '0'))
-        departure_time = datetime.now().strftime('%-I:%M %p')
-        arrival_time = (datetime.now() + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
+        # Use fixed PM departure time (5:00 PM) instead of current time
+        departure_time = '5:00 PM'
+        departure_dt = datetime.now().replace(hour=17, minute=0, second=0, microsecond=0)
+        arrival_time = (departure_dt + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
         return {
             'status': 'ok',
             'origin': ORIGIN.split(',')[0],

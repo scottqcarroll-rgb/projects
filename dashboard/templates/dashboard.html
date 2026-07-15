@@ -114,12 +114,22 @@
             justify-content: space-between;
             margin: 4px 0;
         }
-        
+
         .metric-value {
             font-weight: 600;
             color: #fff;
         }
-        
+
+        .weather-icon-row {
+            justify-content: center !important;
+            margin: 8px 0 12px !important;
+        }
+
+        .weather-icon-large {
+            font-size: 3rem;
+            line-height: 1;
+        }
+
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -367,7 +377,9 @@
                 const data = await res.json();
                 const el = document.getElementById('weather-data');
                 if (data.status === 'ok') {
+                    const icon = getWeatherIcon(data.condition);
                     el.innerHTML = `
+                        <div class="metric-row weather-icon-row"><span></span><span class="metric-value weather-icon-large">${icon}</span></div>
                         <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temperature}°F</span></div>
                         <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
                         <div class="metric-row"><span>Humidity</span><span class="metric-value">${data.humidity}%</span></div>
@@ -379,6 +391,18 @@
             } catch (e) {
                 document.getElementById('weather-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
+        }
+
+        function getWeatherIcon(condition) {
+            const c = condition.toLowerCase();
+            if (c.includes('clear') || c.includes('sunny')) return '☀️';
+            if (c.includes('cloud') || c.includes('overcast')) return '☁️';
+            if (c.includes('rain') || c.includes('drizzle') || c.includes('shower')) return '🌧️';
+            if (c.includes('storm') || c.includes('thunder')) return '⛈️';
+            if (c.includes('snow') || c.includes('sleet') || c.includes('ice')) return '❄️';
+            if (c.includes('fog') || c.includes('mist') || c.includes('haze')) return '🌫️';
+            if (c.includes('wind')) return '💨';
+            return '🌤️';
         }
         
         // Load Links

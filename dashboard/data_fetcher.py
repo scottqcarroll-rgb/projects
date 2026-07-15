@@ -354,14 +354,19 @@ def get_mac_studio_status():
                 load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
                 load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
             elif 'PhysMem' in line:
-                # Parse: "PhysMem: 31G used (1606M wired, 2136M compressor), 452M unused."
+                # Parse: "PhysMem: 17G used (1693M wired, 982M compressor), 14G unused."
                 import re
                 used_match = re.search(r'(\d+)[GM]i? used', line)
-                unused_match = re.search(r'(\d+)M unused', line)
+                # unused can be in M or G (megabytes or gigabytes)
+                unused_match = re.search(r'(\d+)[GM]i? unused', line)
                 if used_match:
                     mem_used_gb = int(used_match.group(1))
                 if unused_match:
-                    mem_free_gb = round(int(unused_match.group(1)) / 1024, 1)
+                    # Check if it's M or G to convert properly
+                    if 'M unused' in line or 'Mi unused' in line:
+                        mem_free_gb = round(int(unused_match.group(1)) / 1024, 1)
+                    else:
+                        mem_free_gb = float(unused_match.group(1))
                 mem_total_gb = round(mem_used_gb + mem_free_gb, 1)
                 if mem_total_gb > 0:
                     mem_used_pct = round(mem_used_gb / mem_total_gb * 100, 1)

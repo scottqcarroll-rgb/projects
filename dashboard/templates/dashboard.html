@@ -655,19 +655,20 @@
             }
         }
         
-        // === Load Ollama Model Status ===
+        // === Load Ollama Model Status (Mac Studio) ===
         async function loadOllamaModelStatus() {
             try {
-                const res = await fetch('/api/ollama');
+                const res = await fetch('/api/mac-studio/ollama');
                 const data = await res.json();
                 const el = document.getElementById('gemma-data');
                 if (data.status === 'ok') {
+                    const runningModel = data.running_models && data.running_models.length > 0 
+                        ? data.running_models[0].name 
+                        : 'None (idle)';
                     el.innerHTML = `
-                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.status === 'ok' ? 'Ollama Running' : 'Error'}</span></div>
-                        <div class="metric-row"><span>Model</span><span class="metric-value">${data.model}</span></div>
-                        <div class="metric-row"><span>Size</span><span class="metric-value">${data.size_gb} GB</span></div>
-                        <div class="metric-row"><span>Modified</span><span class="metric-value">${data.modified}</span></div>
-                        <div class="metric-row"><span>Running</span><span class="metric-value ${data.running ? 'status-ok' : 'status-warn'}">${data.running ? 'Yes' : 'No'}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Ollama Running' : 'Ollama Stopped'}</span></div>
+                        <div class="metric-row"><span>Running Model</span><span class="metric-value">${runningModel}</span></div>
+                        <div class="metric-row"><span>Models Installed</span><span class="metric-value">${data.models_installed}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

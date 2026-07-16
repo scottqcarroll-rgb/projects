@@ -559,10 +559,10 @@
                     const icon = getWeatherIcon(data.condition);
                     el.innerHTML = `
                         <div class="metric-row weather-icon-row"><span></span><span class="metric-value weather-icon-large">${icon}</span></div>
-                        <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temp}°F</span></div>
+                        <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temperature}°F</span></div>
                         <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
                         <div class="metric-row"><span>Humidity</span><span class="metric-value">${data.humidity}%</span></div>
-                        <div class="metric-row"><span>Wind</span><span class="metric-value">${data.wind} mph</span></div>
+                        <div class="metric-row"><span>Wind</span><span class="metric-value">${data.wind_speed} mph</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -676,12 +676,15 @@
                 const data = await res.json();
                 const el = document.getElementById('linux-server-data');
                 if (data.status === 'ok') {
+                    const diskFreeGb = data.disk_total && data.disk_used ? 
+                        (parseFloat(data.disk_total.replace('T', '')) * 1024 - parseFloat(data.disk_used.replace('G', ''))).toFixed(1) + ' GB' :
+                        'N/A';
                     el.innerHTML = `
-                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.host}</span></div>
+                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
                         <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_model}</span></div>
                         <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_free_gb} GB free of ${data.memory_total_gb} GB)</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_used_pct}% used (${data.disk_free_gb} GB / ${data.disk_total_gb} GB)</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_avail_gb} GB free of ${data.memory_total_gb} GB)</span></div>
+                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
                         <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
                         <div class="metric-row"><span>CPU Temp</span><span class="metric-value">${data.cpu_temp}</span></div>
                         <div class="metric-row"><span>IP</span><span class="metric-value">${data.ip}</span></div>
@@ -702,15 +705,15 @@
                 const el = document.getElementById('mac-studio-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.host}</span></div>
+                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
                         <div class="metric-row"><span>Model</span><span class="metric-value">${data.model}</span></div>
                         <div class="metric-row"><span>Chip</span><span class="metric-value">${data.chip}</span></div>
                         <div class="metric-row"><span>OS</span><span class="metric-value">${data.os}</span></div>
-                        <div class="metric-row"><span>RAM</span><span class="metric-value">${data.ram_gb} GB</span></div>
-                        <div class="metric-row"><span>Storage</span><span class="metric-value">${data.storage_gb} GB</span></div>
+                        <div class="metric-row"><span>RAM</span><span class="metric-value">${data.ram}</span></div>
+                        <div class="metric-row"><span>Storage</span><span class="metric-value">${data.storage}</span></div>
                         <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
                         <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_used_gb} GB / ${data.memory_total_gb} GB)</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_used_pct}% used (${data.disk_used_gb} GiB / ${data.disk_total_gb} GiB)</span></div>
+                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

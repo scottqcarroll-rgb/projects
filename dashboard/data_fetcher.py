@@ -83,9 +83,9 @@ def get_pm_drive_report():
         # Use TRAFFIC duration (with traffic) for arrival time calculation
         traffic_duration = route.get('traffic', route.get('duration', '0'))
         duration_minutes = parse_duration_to_minutes(traffic_duration)
-        # Use fixed PM departure time (5:00 PM) instead of current time
-        departure_time = '5:00 PM'
-        departure_dt = datetime.now().replace(hour=17, minute=0, second=0, microsecond=0)
+        # Use current time (synced with dashboard) like AM report
+        departure_time = datetime.now().strftime('%-I:%M %p')
+        departure_dt = datetime.now()
         arrival_time = (departure_dt + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
         return {
             'status': 'ok',

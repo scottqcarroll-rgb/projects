@@ -612,6 +612,7 @@
                 const el = document.getElementById('gmail-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
+                        <div class="metric-row"><span>Account</span><span class="metric-value">${data.email_address}</span></div>
                         <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count}</span></div>
                         <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count}</span></div>
                         <div class="metric-row"><span>Starred</span><span class="metric-value">${data.starred_count}</span></div>

@@ -178,6 +178,11 @@ def get_gmail_summary():
         from gmail_client import get_authenticated_service, fetch_recent_emails
         
         service = get_authenticated_service()
+        
+        # Get profile to include email address
+        profile = service.users().getProfile(userId='me').execute()
+        email_address = profile.get('emailAddress', 'Unknown')
+        
         emails = fetch_recent_emails(service, hours=24, max_results=50)
         
         unread = sum(1 for e in emails if e.get('is_unread'))
@@ -186,6 +191,7 @@ def get_gmail_summary():
         
         return {
             'status': 'ok',
+            'email_address': email_address,
             'unread_count': unread,
             'total_count': total,
             'starred_count': starred,
@@ -194,6 +200,7 @@ def get_gmail_summary():
     except Exception as e:
         return {
             'status': 'ok',
+            'email_address': 'Unknown',
             'unread_count': 0,
             'total_count': 0,
             'starred_count': 0,

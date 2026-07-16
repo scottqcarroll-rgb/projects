@@ -436,11 +436,12 @@ def get_mac_studio_ollama_status():
     try:
         import subprocess
         import json
+        import re
         
-        # Get Ollama models and running status
+        # Get Ollama models (text output, no --json flag on this version)
         result = subprocess.run(
             ['ssh', 'macstudio', '/Applications/Ollama.app/Contents/Resources/ollama list'],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=15
         )
         
         models = []
@@ -449,32 +450,70 @@ def get_mac_studio_ollama_status():
             for line in lines[1:]:  # Skip header
                 parts = line.split()
                 if len(parts) >= 3:
+                    # Parse: NAME ID SIZE MODIFIED
+                    name = parts[0]
+                    model_id = parts[1]
+                    size_str = ' '.join(parts[2:4]) if len(parts) >= 4 else parts[2]
+                    modified = ' '.join(parts[4:]) if len(parts) > 4 else 'N/A'
+                    
+                    # Parse size to GB
+                    size_gb = 0
+                    if 'GB' in size_str:
+                        m = re.search(r'([\d.]+)\s*GB', size_str)
+                        if m:
+                            size_gb = float(m.group(1))
+                    elif 'MB' in size_str:
+                        m = re.search(r'([\d.]+)\s*MB', size_str)
+                        if m:
+                            size_gb = float(m.group(1)) / 1024
+                    
                     models.append({
-                        'name': parts[0],
-                        'id': parts[1],
-                        'size': ' '.join(parts[2:4]) if len(parts) >= 4 else parts[2],
-                        'modified': ' '.join(parts[4:]) if len(parts) > 4 else 'N/A'
+                        'name': name,
+                        'id': model_id,
+                        'size': size_str,
+                        'size_gb': round(size_gb, 1),
+                        'modified': modified
                     })
         
-        # Check if Ollama is running and what's loaded
+        # Also check if Ollama is running and what's loaded (use /api/ps for running models)
+        # Use shell string (not list) with shell=True for proper redirection
         result2 = subprocess.run(
-            ['ssh', 'macstudio', 'curl -s http://localhost:11434/api/ps 2>/dev/null'],
+            'ssh macstudio "curl -s http://localhost:11434/api/ps 2>/dev/null"',
             capture_output=True, text=True, timeout=10, shell=True
         )
         
         running_models = []
-        if result2.returncode == 0:
+        if result2.returncode == 0 and result2.stdout.strip():
             try:
                 data = json.loads(result2.stdout)
                 running_models = data.get('models', [])
             except:
                 pass
         
+        running = len(running_models) > 0
+        
         return {
             'status': 'ok',
-            'models': models,
-            'running_models': running_models,
-            'ollama_running': len(running_models) > 0 or len(models) > 0
+            'ollama_running': running,
+            'models_installed': len(models),
+            'models': [
+                {
+                    'name': m['name'],
+                    'size': m['size'],
+                    'size_gb': m['size_gb'],
+                    'modified': m['modified'],
+                    'running': any(r.get('name', '') == m['name'] for r in running_models)
+                }
+                for m in models
+            ],
+            'running_models': [
+                {
+                    'name': m.get('name', ''),
+                    'size': m.get('size', 0),
+                    'size_gb': round(m.get('size', 0) / (1024**3), 1),
+                }
+                for m in running_models
+            ]
         }
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
@@ -550,144 +589,6 @@ def get_openrouter_usage():
                 'label': key_data.get('label', 'N/A')
             }
         return {'status': 'error', 'message': 'No key data returned'}
-    except Exception as e:
-        return {'status': 'error', 'message': str(e)}
-
-
-# --- 10. Mac Studio Ollama Status ---
-def get_mac_studio_ollama_status():
-    try:
-        import subprocess
-        import json
-        import re
-        
-        # Get Ollama models (text output, no --json flag on this version)
-        result = subprocess.run(
-            ['ssh', 'macstudio', '/Applications/Ollama.app/Contents/Resources/ollama list'],
-            capture_output=True, text=True, timeout=15
-        )
-        
-        models = []
-        if result.returncode == 0:
-            lines = result.stdout.strip().split('\n')
-            for line in lines[1:]:  # Skip header
-                parts = line.split()
-                if len(parts) >= 3:
-                    # Parse: NAME ID SIZE MODIFIED
-                    name = parts[0]
-                    model_id = parts[1]
-                    size_str = ' '.join(parts[2:4]) if len(parts) >= 4 else parts[2]
-                    modified = ' '.join(parts[4:]) if len(parts) > 4 else 'N/A'
-                    
-                    # Parse size to GB
-                    size_gb = 0
-                    if 'GB' in size_str:
-                        m = re.search(r'([\d.]+)\s*GB', size_str)
-                        if m:
-                            size_gb = float(m.group(1))
-                    elif 'MB' in size_str:
-                        m = re.search(r'([\d.]+)\s*MB', size_str)
-                        if m:
-                            size_gb = float(m.group(1)) / 1024
-                    
-                    models.append({
-                        'name': name,
-                        'id': model_id,
-                        'size': size_str,
-                        'size_gb': round(size_gb, 1),
-                        'modified': modified
-                    })
-        
-        # Also check if Ollama is running and what's loaded (use /api/ps for running models)
-        result2 = subprocess.run(
-            ['ssh', 'macstudio', 'curl -s http://localhost:11434/api/ps 2>/dev/null || echo "not running"'],
-            capture_output=True, text=True, timeout=10, shell=True
-        )
-        
-        running = result2.stdout.strip() != 'not running'
-        running_models = []
-        if running:
-            try:
-                data = json.loads(result2.stdout)
-                running_models = data.get('models', [])
-            except:
-                pass
-        
-        return {
-            'status': 'ok',
-            'ollama_running': running,
-            'models_installed': len(models),
-            'models': [
-                {
-                    'name': m['name'],
-                    'size': m['size'],
-                    'size_gb': m['size_gb'],
-                    'modified': m['modified'],
-                    'running': any(r.get('name', '') == m['name'] for r in running_models)
-                }
-                for m in models
-            ],
-            'running_models': [
-                {
-                    'name': m.get('name', ''),
-                    'size': m.get('size', 0),
-                    'size_gb': round(m.get('size', 0) / (1024**3), 1),
-                }
-                for m in running_models
-            ]
-        }
-    except Exception as e:
-        return {'status': 'error', 'message': str(e)}
-
-
-# --- 9. OpenRouter Usage ---
-def get_openrouter_usage():
-    try:
-        import urllib.request
-        import json
-        api_key = os.environ.get('OPENROUTER_API_KEY', '')
-        if not api_key:
-            return {'status': 'error', 'message': 'OPENROUTER_API_KEY not set'}
-        
-        # OpenRouter key endpoint - returns usage and rate limit info
-        url = 'https://openrouter.ai/api/v1/key'
-        
-        req = urllib.request.Request(
-            url,
-            headers={
-                'Authorization': f'Bearer {api_key}',
-                'User-Agent': 'Mozilla/5.0'
-            }
-        )
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode('utf-8'))
-        
-        # Extract usage metrics from key data
-        key_data = data.get('data', {})
-        if key_data:
-            usage = key_data.get('usage', 0)
-            usage_daily = key_data.get('usage_daily', 0)
-            usage_weekly = key_data.get('usage_weekly', 0)
-            usage_monthly = key_data.get('usage_monthly', 0)
-            limit = key_data.get('limit')
-            limit_remaining = key_data.get('limit_remaining')
-            is_free_tier = key_data.get('is_free_tier', True)
-            
-            return {
-                'status': 'ok',
-                'usage_total': usage,
-                'usage_daily': usage_daily,
-                'usage_weekly': usage_weekly,
-                'usage_monthly': usage_monthly,
-                'limit': limit,
-                'limit_remaining': limit_remaining,
-                'is_free_tier': is_free_tier,
-                'label': key_data.get('label', 'N/A')
-            }
-        else:
-            return {'status': 'error', 'message': 'No key data available'}
-    except urllib.error.HTTPError as e:
-        return {'status': 'error', 'message': f'HTTP {e.code}: {e.reason}'}
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 

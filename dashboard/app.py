@@ -151,7 +151,15 @@ def api_ollama_chat():
                         yield line.decode('utf-8') + '\n'
             return Response(generate(), mimetype='application/x-ndjson')
         else:
-            return jsonify(resp.json())
+            result = resp.json()
+            # Log the call for metrics
+            try:
+                log_file = '/home/scott/projects/llm_call_log.txt'
+                with open(log_file, 'a') as f:
+                    f.write(f'[{datetime.now().isoformat()}] ollama-chat model={model} status=ok\n')
+            except Exception as log_err:
+                print(f"Failed to log LLM call: {log_err}")
+            return jsonify(result)
     except requests.exceptions.ConnectionError:
         return jsonify({'error': 'Cannot connect to Ollama at ' + OLLAMA_BASE_URL}), 503
     except requests.exceptions.Timeout:

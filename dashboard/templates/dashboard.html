@@ -165,8 +165,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            display: flex;
+            display: none;
             align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.8rem;
+            padding: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
             justify-content: center;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 8px;
@@ -735,8 +742,8 @@
                         <div class="camera-grid">
                             ${data.cameras.map(cam => `
                                 <div class="camera-item">
-                                    <img src="${cam.snapshot_url}" alt="${cam.name} (${cam.ip})" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <span style="display: none; color: #888; font-size: 0.8rem; padding: 40px; display: flex; align-items: center; justify-content: center;">Failed to load snapshot</span>
+                                    <img src="/api/camera-image?url=${encodeURIComponent(cam.snapshot_url)}" alt="${cam.name} (${cam.ip})" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <span style="display: none; color: #888; font-size: 0.8rem; padding: 40px; align-items: center; justify-content: center;">Failed to load snapshot</span>
                                 </div>
                             `).join('')}
                         </div>

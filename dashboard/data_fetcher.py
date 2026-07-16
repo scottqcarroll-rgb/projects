@@ -492,14 +492,14 @@ def get_camera_snapshots():
                 'id': 'flir_158',
                 'name': 'Gun Room (158)',
                 'ip': '192.168.1.158',
-                'url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0'
+                'snapshot_url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0'
             },
             {
                 'status': 'ok',
                 'id': 'flir_163',
                 'name': 'Office (163)',
                 'ip': '192.168.1.163',
-                'url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0'
+                'snapshot_url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0'
             }
         ]
     }

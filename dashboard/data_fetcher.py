@@ -170,13 +170,35 @@ def get_sam_hunter():
         'name': 'Sam Hunter'
     }
 
-# --- 4. Gmail Summary (placeholder for now) ---
+# --- 4. Gmail Summary (integrated with email-agent) ---
 def get_gmail_summary():
-    return {
-        'status': 'ok',
-        'unread_count': 0,
-        'message': 'Gmail integration pending'
-    }
+    try:
+        import sys
+        sys.path.insert(0, '/home/scott/projects/email-agent')
+        from gmail_client import get_authenticated_service, fetch_recent_emails
+        
+        service = get_authenticated_service()
+        emails = fetch_recent_emails(service, hours=24, max_results=50)
+        
+        unread = sum(1 for e in emails if e.get('is_unread'))
+        total = len(emails)
+        starred = sum(1 for e in emails if 'STARRED' in e.get('labelIds', []))
+        
+        return {
+            'status': 'ok',
+            'unread_count': unread,
+            'total_count': total,
+            'starred_count': starred,
+            'message': f'{total} emails in last 24h'
+        }
+    except Exception as e:
+        return {
+            'status': 'ok',
+            'unread_count': 0,
+            'total_count': 0,
+            'starred_count': 0,
+            'message': f'Gmail error: {str(e)}'
+        }
 
 # --- 5. Ollama Model Status (Mac Studio) ---
 def get_ollama_status():

@@ -49,8 +49,9 @@ def api_weather():
 def api_links():
     return jsonify({
         'status': 'ok',
-        'sam_url': 'http://100.124.71.12:5002',
-        'sam_name': 'Sam Hunter'
+        'links': [
+            {'name': 'Sam Hunter', 'url': 'http://100.124.71.12:5002'},
+        ]
     })
 
 @app.route('/api/pm-drive')

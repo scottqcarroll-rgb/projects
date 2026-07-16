@@ -122,7 +122,7 @@ DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
 def api_ollama_chat():
     """Proxy chat requests to Mac Studio Ollama API."""
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         if not data:
             return jsonify({'error': 'No JSON data provided'}), 400
         
@@ -156,6 +156,8 @@ def api_ollama_chat():
     except requests.exceptions.Timeout:
         return jsonify({'error': 'Ollama request timed out'}), 504
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 

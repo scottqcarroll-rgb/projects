@@ -403,6 +403,17 @@ el.innerHTML = `
    - AM icon 🚗 (left), PM icon 🚗 flipped (right)
    - Both departure times match dashboard clock
    - Weather shows 🌤️
-   - Ollama tile shows "Running Model: None (idle)" + "Models Installed: 2"
+   - Ollama tile shows "Running Model: None (idle)" + "Models Installed: hermes-4-14b:latest, qwen3:14b"
    - Cameras load via proxy
    - LLM Metrics shows call counts
+
+---
+
+## Current Ollama Status (as of 2026-07-16)
+
+- **Service**: Running on Mac Studio (port 11434)
+- **Loaded Model**: None (idle) — `/api/ps` returns empty (models only load into VRAM when actively used)
+- **Models Installed**: 2
+  - `hermes-4-14b:latest` (9.0 GB)
+  - `qwen3:14b` (9.3 GB)
+- **Dashboard Tile**: Shows "Ollama Running", "Running Model: None (idle)", "Models Installed: hermes-4-14b:latest, qwen3:14b" (lists names when idle)

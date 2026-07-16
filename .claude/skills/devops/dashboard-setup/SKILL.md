@@ -171,7 +171,15 @@ def api_ollama_chat():
                         yield line.decode('utf-8') + '\n'
             return Response(generate(), mimetype='application/x-ndjson')
         else:
-            return jsonify(resp.json())
+            result = resp.json()
+            # Log the call for LLM Metrics
+            try:
+                log_file = '/home/scott/projects/llm_call_log.txt'
+                with open(log_file, 'a') as f:
+                    f.write(f'[{datetime.now().isoformat()}] ollama-chat model={model} status=ok\n')
+            except Exception as log_err:
+                print(f"Failed to log LLM call: {log_err}")
+            return jsonify(result)
     except requests.exceptions.ConnectionError:
         return jsonify({'error': 'Cannot connect to Ollama at ' + OLLAMA_BASE_URL}), 503
     except requests.exceptions.Timeout:
@@ -324,12 +332,16 @@ Browser fetches via proxy (`/api/camera-image`) to bypass LAN/CORS restrictions.
 const runningModel = data.running_models && data.running_models.length > 0
     ? data.running_models[0].name
     : 'None (idle)';
+const installedModels = data.models && data.models.length > 0
+    ? data.models.map(m => m.name).join(', ')
+    : `${data.models_installed} installed`;
 el.innerHTML = `
     <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Ollama Running' : 'Ollama Stopped'}</span></div>
     <div class="metric-row"><span>Running Model</span><span class="metric-value">${runningModel}</span></div>
-    <div class="metric-row"><span>Models Installed</span><span class="metric-value">${data.models_installed}</span></div>
+    <div class="metric-row"><span>Models Installed</span><span class="metric-value">${installedModels}</span></div>
 `;
 ```
+Shows installed model **names** (not just count) when idle.
 
 ---
 
@@ -409,11 +421,88 @@ el.innerHTML = `
 
 ---
 
+## References
+- `references/troubleshooting-notes.md` — Operational notes: iPad cache fix, Ollama loading behavior, PM drive icon/time rules, git workflow, verification checklist
+
+---
+
 ## Current Ollama Status (as of 2026-07-16)
 
 - **Service**: Running on Mac Studio (port 11434)
-- **Loaded Model**: None (idle) — `/api/ps` returns empty (models only load into VRAM when actively used)
+- **Loaded Model**: `hermes-4-14b:latest` (loaded into VRAM after `ollama run` command, stays ~5 min idle timeout)
 - **Models Installed**: 2
-  - `hermes-4-14b:latest` (9.0 GB)
+  - `hermes-4-14b:latest` (9.0 GB / ~13.7 GB in VRAM when loaded)
   - `qwen3:14b` (9.3 GB)
-- **Dashboard Tile**: Shows "Ollama Running", "Running Model: None (idle)", "Models Installed: hermes-4-14b:latest, qwen3:14b" (lists names when idle)
+- **Dashboard Tile**: Shows "Ollama Running", "Running Model: hermes-4-14b:latest", "Models Installed: hermes-4-14b:latest, qwen3:14b"
+- **API**: `/api/mac-studio/ollama` queries Mac Studio's `/api/ps` (running models) + `ollama list` (installed models)
+- **Keep-alive**: Model stays in VRAM for ~5 minutes after last inference (see `expires_at` in `/api/ps`)
+
+---
+
+## Recent Fixes (2026-07-16)
+
+### 1. Ollama Tile — Fixed Running Model Detection
+**Problem:** Dashboard showed "None (idle)" even when model was loaded on Mac Studio.
+**Root cause:** `get_mac_studio_ollama_status()` had duplicate function; second version used broken `shell=True` with list arg for SSH `curl /api/ps`.
+**Fix:** Removed duplicate, fixed SSH command to properly query `/api/ps`:
+```python
+result2 = subprocess.run(
+    'ssh macstudio "curl -s http://localhost:11434/api/ps 2>/dev/null"',
+    capture_output=True, text=True, timeout=10, shell=True
+)
+```
+**Result:** Dashboard now correctly shows running model when loaded (e.g., "hermes-4-14b:latest" with 13.7 GB VRAM).
+
+### 2. LLM Metrics — Added Call Logging
+**Problem:** `/api/ollama-chat` didn't increment metrics.
+**Fix:** Added logging to `/home/scott/projects/llm_call_log.txt` in `api_ollama_chat()`:
+```python
+try:
+    log_file = '/home/scott/projects/llm_call_log.txt'
+    with open(log_file, 'a') as f:
+        f.write(f'[{datetime.now().isoformat()}] ollama-chat model={model} status=ok\n')
+except Exception as log_err:
+    print(f"Failed to log LLM call: {log_err}")
+```
+**Result:** Metrics now increment on every chat call. Dashboard shows Total Calls, Today's Calls, hourly timeline.
+
+### 3. PM Drive Icon — Flipped Right (Returning Home)
+```html
+<div class="card-icon drive-icon" style="transform: scaleX(-1);">🚗</div>
+```
+Same 🚗 emoji as AM, CSS-flipped to face RIGHT. DO NOT CHANGE to 🚙 — user wants consistent emoji.
+
+### 4. PM Drive Departure Time — Synced with Dashboard Clock
+**Backend (`data_fetcher.py` `get_pm_drive_report()`):**
+```python
+departure_time = datetime.now().strftime('%-I:%M %p')  # Current time like AM
+```
+Both AM and PM now show current dashboard time (not fixed "5:00 PM").
+
+---
+
+## Test Execution: USS Alabama Battleship Report
+
+**Command run:**
+```bash
+ssh macstudio '/Applications/Ollama.app/Contents/Resources/ollama run hermes-4-14b:latest "Give a report on the history of the USS Alabama battleship"'
+```
+
+**Result:** Model loaded into VRAM (~13.7 GB), generated full historical report, dashboard API `/api/mac-studio/ollama` returned `running_models: [{"name": "hermes-4-14b:latest", "size_gb": 13.7}]`, tile updated to show "Running Model: hermes-4-14b:latest".
+
+**Model keep-alive:** ~5 minutes after request (expires_at in `/api/ps`). Dashboard refreshes every 5 min.
+
+---
+
+## Verification Checklist (Updated)
+
+1. `sudo systemctl restart dashboard && sleep 3`
+2. Browser snapshot at `http://100.124.71.12:5001`
+3. Verify:
+   - AM icon 🚗 (left), PM icon 🚗 flipped (right)
+   - Both departure times match dashboard clock
+   - Weather shows 🌤️
+   - Ollama tile shows running model when loaded, "None (idle)" + model names when idle
+   - Cameras load via proxy
+   - LLM Metrics shows call counts and timeline
+   - Test: `curl -X POST /api/ollama-chat` → metrics increment

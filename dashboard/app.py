@@ -116,6 +116,7 @@ def api_usage():
 import requests
 
 OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://192.168.1.174:11434')
+DEFAULT_OLLAMA_MODEL = 'qwen3:14b'
 
 @app.route('/api/ollama-chat', methods=['POST'])
 def api_ollama_chat():
@@ -125,7 +126,7 @@ def api_ollama_chat():
         if not data:
             return jsonify({'error': 'No JSON data provided'}), 400
         
-        model = data.get('model', 'hermes-4-14b')
+        model = data.get('model', DEFAULT_OLLAMA_MODEL)
         messages = data.get('messages', [])
         stream = data.get('stream', False)
         

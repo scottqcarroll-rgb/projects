@@ -3,325 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scott's Dashboard</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <title>Dashboard</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #eee;
+            background: #0d1117;
+            color: #e6edf3;
             min-height: 100vh;
             padding: 20px;
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 8px;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
             background: linear-gradient(90deg, #00d4ff, #7b2cbf);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .subtitle {
-            color: #888;
+        .server-time {
+            font-family: 'SF Mono', Monaco, monospace;
             font-size: 0.9rem;
+            color: #8b949e;
         }
-        
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-        
         .card {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 12px;
             padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
-        
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            background: var(--clay);
-        }
-        
-        .clay { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .llm-icon { background: linear-gradient(135deg, #00d4ff, #7b2cbf); }
-        .drive-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
-        .weather-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
-        .gmail-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
-        .openroute-icon { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .gemma-icon { background: linear-gradient(135deg, #e17055, #fdcb6e); }
-        .linux-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
-        .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
-        .camera-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
-        .link-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
-        
-        .card-title {
-            font-size: 1rem;
+        .card h2 {
+            font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .card-body {
-            color: #aaa;
-            font-size: 0.9rem;
-            line-height: 1.5;
+        .card h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+            border-radius: 2px;
         }
-        
-        .loading {
-            color: #666;
-            font-style: italic;
-        }
-        
         .metric-row {
             display: flex;
             justify-content: space-between;
-            margin: 4px 0;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        .metric-row span:first-child {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
         .metric-value {
-            font-weight: 600;
-            color: #fff;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
-
+        .loading {
+            color: #8b949e;
+            font-style: italic;
+        }
         .weather-icon-row {
-            justify-content: center !important;
-            margin: 8px 0 12px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
         .weather-icon-large {
             font-size: 3rem;
-            line-height: 1;
         }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 16px;
-            color: #666;
+        .status-ok {
+            color: #00b894 !important;
+        }
+        .status-warn {
+            color: #fdcb6e !important;
+        }
+        .status-error {
+            color: #e17055 !important;
+        }
+        
+        /* Chat styles */
+        .chat-container {
+            grid-column: 1 / -1;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 16px;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+        }
+        .chat-input-area textarea {
+            flex: 1;
+            background: #161b22;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            color: #e6edf3;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            min-height: 50px;
+            max-height: 120px;
+        }
+        .chat-input-area textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        .chat-input-area button {
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            align-self: flex-end;
+        }
+        .chat-input-area button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+        .chat-input-area button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .chat-message {
+            margin: 12px 0;
+            padding: 12px;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-message.user {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .chat-message.assistant {
+            background: rgba(123, 44, 191, 0.1);
+            border: 1px solid rgba(123, 44, 191, 0.3);
+        }
+        .chat-message .role {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .chat-message.user .role { color: #00d4ff; }
+        .chat-message.assistant .role { color: #7b2cbf; }
+        .chat-message .content {
+            white-space: pre-wrap;
+            color: #e6edf3;
+            line-height: 1.5;
+        }
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .camera-item {
+            background: #161b22;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .camera-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .camera-item .name {
+            padding: 8px;
+            font-weight: 500;
             font-size: 0.85rem;
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
+            }
+            .chat-container {
+                max-height: 400px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Scott's Dashboard</h1>
-        <div class="subtitle" id="datetime">Loading...</div>
-    </div>
-    
-    <div class="grid">
-        <!-- AM Drive Report -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon drive-icon">🚗</div>
-                <div class="card-title">AM Drive Report</div>
-            </div>
-            <div class="card-body" id="drive-data">
-                <span class="loading">Loading drive times...</span>
-            </div>
-        </div>
+    <div class="container">
+        <header>
+            <h1>Dashboard</h1>
+            <div class="server-time" id="server-time">Loading...</div>
+        </header>
         
-        <!-- PM Drive Report -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon drive-icon">🐍</div>
-                <div class="card-title">PM Drive Report</div>
+        <div class="grid">
+            <!-- AM Drive Report -->
+            <div class="card">
+                <h2>AM Drive</h2>
+                <div id="drive-data" class="loading">Loading...</div>
             </div>
-            <div class="card-body" id="pm-drive-data">
-                <span class="loading">Loading drive times...</span>
+            
+            <!-- PM Drive Report -->
+            <div class="card">
+                <h2>PM Drive</h2>
+                <div id="pm-drive-data" class="loading">Loading...</div>
             </div>
-        </div>
-        
-        <!-- Weather -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon weather-icon">🌮</div>
-                <div class="card-title">Weather — Temple, GA</div>
+            
+            <!-- Weather -->
+            <div class="card">
+                <h2>Weather</h2>
+                <div id="weather-data" class="loading">Loading...</div>
             </div>
-            <div class="card-body" id="weather-data">
-                <span class="loading">Loading weather...</span>
+            
+            <!-- Links -->
+            <div class="card">
+                <h2>Quick Links</h2>
+                <div id="links-data" class="loading">Loading...</div>
             </div>
-        </div>
-        
-        <!-- Sam Hunter -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon link-icon">🔬</div>
-                <div class="card-title">Quick Links</div>
+            
+            <!-- Gmail -->
+            <div class="card">
+                <h2>Gmail</h2>
+                <div id="gmail-data" class="loading">Loading...</div>
             </div>
-            <div class="card-body" id="links-data">
-                <span class="loading">Loading links...</span>
+            
+            <!-- OpenRouter Usage -->
+            <div class="card">
+                <h2>OpenRouter Usage</h2>
+                <div id="openroute-data" class="loading">Loading...</div>
             </div>
-        </div>
-        
-        <!-- Gmail Summary -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon gmail-icon">📧</div>
-                <div class="card-title">Email Summary</div>
+            
+            <!-- Ollama Models on Mac Studio -->
+            <div class="card">
+                <h2>Ollama (Mac Studio)</h2>
+                <div id="gemma-data" class="loading">Loading...</div>
             </div>
-            <div class="card-body" id="gmail-data">
-                <span class="loading">Loading email...</span>
+            
+            <!-- Linux Server -->
+            <div class="card">
+                <h2>Linux Server</h2>
+                <div id="linux-server-data" class="loading">Loading...</div>
             </div>
-        </div>
-        
-        <!-- OpenRoute Usage -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon openroute-icon">🗾</div>
-                        <div class="card-title">OpenRoute Usage</div>
-                    </div>
-                    <div class="card-body" id="openroute-data">
-                        <span class="loading">Loading usage...</span>
-                    </div>
+            
+            <!-- Mac Studio -->
+            <div class="card">
+                <h2>Mac Studio</h2>
+                <div id="mac-studio-data" class="loading">Loading...</div>
+            </div>
+            
+            <!-- Cameras -->
+            <div class="card">
+                <h2>Cameras</h2>
+                <div id="cameras-data" class="loading">Loading...</div>
+            </div>
+            
+            <!-- LLM Metrics -->
+            <div class="card">
+                <h2>LLM Metrics</h2>
+                <div id="llm-metrics-data" class="loading">Loading...</div>
+            </div>
+            
+            <!-- Chat with Ollama -->
+            <div class="card chat-container">
+                <h2>Chat</h2>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <textarea id="chat-input" placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"></textarea>
+                    <button id="chat-send" disabled>Send</button>
                 </div>
-
-                <!-- LLM Call Metrics -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon llm-icon">🤖</div>
-                        <div class="card-title">Local LLM Metrics</div>
-                    </div>
-                    <div class="card-body" id="llm-metrics-data">
-                        <span class="loading">Loading LLM metrics...</span>
-                    </div>
-                </div>
-
-                <!-- Hermes-4-14B Chat -->
-                <div class="card" style="grid-column: 1 / -1; max-height: 600px; display: flex; flex-direction: column;">
-                    <div class="card-header">
-                        <div class="card-icon llm-icon">🤖</div>
-                        <div class="card-title">Hermes-4-14B Chat (via Mac Studio Ollama)</div>
-                    </div>
-                    <div class="card-body" style="flex: 1; display: flex; flex-direction: column; min-height: 400px;">
-                        <div id="chat-messages" style="flex: 1; overflow-y: auto; margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; max-height: 350px;">
-                            <div style="color: #888; font-size: 0.85rem; text-align: center; padding: 20px;">
-                                Start a conversation with Hermes-4-14B...
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <select id="chat-model" style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #eee; font-size: 0.9rem;">
-                                <option value="hermes-4-14b">hermes-4-14b (9 GB)</option>
-                            </select>
-                            <button id="chat-send" style="padding: 8px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #00d4ff, #7b2cbf); color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem;" disabled>Send</button>
-                        </div>
-                        <div style="display: flex; gap: 8px; margin-top: 8px;">
-                            <textarea id="chat-input" placeholder="Message Hermes-4-14B..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #eee; font-family: inherit; font-size: 0.9rem; resize: none; min-height: 44px; max-height: 120px;" rows="1"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Local Gemma Model Status -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon gemma-icon">🕾</div>
-                <div class="card-title">Local AI Model</div>
-            </div>
-            <div class="card-body" id="gemma-data">
-                <span class="loading">Loading model status...</span>
-            </div>
-        </div>
-        
-        <!-- Linux Server (clawz840) Status -->
-        <div class="card linux-server-card">
-            <div class="card-header">
-                <div class="card-icon linux-icon">🐾</div>
-                <div class="card-title">Linux Server (clawz840)</div>
-            </div>
-            <div class="card-body" id="linux-server-data">
-                <span class="loading">Loading server status...</span>
-            </div>
-        </div>
-        
-        <!-- Mac Studio Status -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon mac-icon">🖼️</div>
-                <div class="card-title">Mac Studio (192.168.1.174)</div>
-            </div>
-            <div class="card-body" id="mac-studio-data">
-                <span class="loading">Loading Mac Studio status...</span>
-            </div>
-        </div>
-        
-        <!-- Camera Snapshots -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon camera-icon">🌟</div>
-                <div class="card-title">Cameras</div>
-            </div>
-            <div class="card-body" id="cameras-data">
-                <span class="loading">Loading cameras...</span>
             </div>
         </div>
     </div>
-    
-    <div class="footer">
-        Last updated: <span id="last-updated">--</span> • Auto-refreshes every 30 minutes
-    </div>
-    
+
     <script>
-        // Utility function to format numbers
-        function formatNum(n, decimals = 2) {
-            if (n === null || n === undefined) return 'N/A';
-            if (typeof n === 'number') return n.toLocaleString(undefined, { maximumFractionDigits: decimals });
-            return n;
-        }
-        
         // Load server time
         async function loadServerTime() {
             try {
-                const res = await fetch('/api/server-time');
+                const res = await fetch('/api/time');
                 const data = await res.json();
-                document.getElementById('datetime').textContent = data.datetime;
-                document.getElementById('last-updated').textContent = data.datetime;
+                if (data.time) {
+                    document.getElementById('server-time').textContent = data.time;
+                }
             } catch (e) {
                 console.error('Failed to load server time:', e);
             }
         }
-        
+
         // Load AM Drive Report
         async function loadDriveReport() {
             try {
@@ -336,7 +337,7 @@
                         <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>
                         <div class="metric-row"><span>Duration</span><span class="metric-value">${data.duration_minutes} min</span></div>
-                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: ${data.status === 'ok' ? '#00b894' : '#e17055'}">${data.status.toUpperCase()}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value ${data.status === 'ok' ? 'status-ok' : 'status-error'}">${data.status.toUpperCase()}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -345,7 +346,7 @@
                 document.getElementById('drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
+
         // Load PM Drive Report
         async function loadPMDriveReport() {
             try {
@@ -360,7 +361,7 @@
                         <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time || 'N/A'}</span></div>
                         <div class="metric-row"><span>Distance</span><span class="metric-value">${data.distance_miles} mi</span></div>
                         <div class="metric-row"><span>Duration</span><span class="metric-value">${data.duration_minutes} min</span></div>
-                        <div class="metric-row"><span>Status</span><span class="metric-value" style="color: ${data.status === 'ok' ? '#00b894' : '#e17055'}">${data.status.toUpperCase()}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value ${data.status === 'ok' ? 'status-ok' : 'status-error'}">${data.status.toUpperCase()}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -369,7 +370,7 @@
                 document.getElementById('pm-drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
+
         // Load Weather
         async function loadWeather() {
             try {
@@ -404,17 +405,19 @@
             if (c.includes('wind')) return '💨';
             return '🌤️';
         }
-        
+
         // Load Links
         async function loadLinks() {
             try {
                 const res = await fetch('/api/links');
                 const data = await res.json();
                 const el = document.getElementById('links-data');
-                if (data.status === 'ok') {
-                    el.innerHTML = `
-                        <a href="${data.sam_url}" target="_blank" style="color: #74b9ff; text-decoration: none;">🔬 ${data.sam_name}</a>
-                    `;
+                if (data.status === 'ok' && data.links) {
+                    el.innerHTML = data.links.map(link => 
+                        `<a href="${link.url}" target="_blank" style="display: block; color: #00d4ff; text-decoration: none; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            ${link.name}
+                        </a>`
+                    ).join('');
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
@@ -422,7 +425,7 @@
                 document.getElementById('links-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
+
         // Load Gmail Summary
         async function loadGmail() {
             try {
@@ -436,20 +439,21 @@
                         <div class="metric-row"><span>Starred</span><span class="metric-value">${data.starred_count}</span></div>
                     `;
                 } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                    el.innerHTML = `<span class="loading">${data.message || 'Not configured'}</span>`;
                 }
             } catch (e) {
                 document.getElementById('gmail-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
-        // Load OpenRoute Usage
+
+        // Load OpenRouter Usage
         async function loadOpenRoute() {
             try {
                 const res = await fetch('/api/usage');
                 const data = await res.json();
                 const el = document.getElementById('openroute-data');
                 if (data.status === 'ok') {
+                    const formatNum = n => n ? n.toLocaleString() : 'N/A';
                     const usageTotal = formatNum(data.usage_total);
                     const usageDaily = formatNum(data.usage_daily);
                     const usageWeekly = formatNum(data.usage_weekly);
@@ -461,10 +465,10 @@
                     el.innerHTML = `
                         <div class="metric-row"><span>Account</span><span class="metric-value">${data.label || 'N/A'}</span></div>
                         <div class="metric-row"><span>Plan</span><span class="metric-value">${freeTier}</span></div>
-                        <div class="metric-row"><span>Usage (Total)</span><span class="metric-value">${usageTotal}</span></div>
-                        <div class="metric-row"><span>Usage (Today)</span><span class="metric-value">${usageDaily}</span></div>
-                        <div class="metric-row"><span>Usage (Week)</span><span class="metric-value">${usageWeekly}</span></div>
-                        <div class="metric-row"><span>Usage (Month)</span><span class="metric-value">${usageMonthly}</span></div>
+                        <div class="metric-row"><span>Total Credits</span><span class="metric-value">${usageTotal}</span></div>
+                        <div class="metric-row"><span>Today</span><span class="metric-value">${usageDaily}</span></div>
+                        <div class="metric-row"><span>This Week</span><span class="metric-value">${usageWeekly}</span></div>
+                        <div class="metric-row"><span>This Month</span><span class="metric-value">${usageMonthly}</span></div>
                         <div class="metric-row"><span>Limit</span><span class="metric-value">${limit}</span></div>
                         <div class="metric-row"><span>Remaining</span><span class="metric-value">${remaining}</span></div>
                     `;
@@ -475,30 +479,30 @@
                 document.getElementById('openroute-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
-        // Load Ollama Model Status on Mac Studio
+
+        // Load Ollama Models on Mac Studio
         async function loadOllamaModelStatus() {
-                    try {
-                        const res = await fetch('/api/mac-studio/ollama');
-                        const data = await res.json();
-                        const el = document.getElementById('gemma-data');
-                        if (data.status === 'ok' && data.models && data.models.length > 0) {
-                            const model = data.models[0];
-                            el.innerHTML = `
-                                <div class="metric-row"><span>Status</span><span class="metric-value" style="color: #00b894">Ollama Running</span></div>
-                                <div class="metric-row"><span>Model</span><span class="metric-value">${model.name}</span></div>
-                                <div class="metric-row"><span>Size</span><span class="metric-value">${model.size}</span></div>
-                                <div class="metric-row"><span>Modified</span><span class="metric-value">${model.modified}</span></div>
-                                <div class="metric-row"><span>Running</span><span class="metric-value" style="color: ${model.running ? '#00b894' : '#fdcb6e'}">${model.running ? 'Yes' : 'No'}</span></div>
-                            `;
-                        } else {
-                            el.innerHTML = `<span class="loading">No models installed</span>`;
-                        }
-                    } catch (e) {
-                        document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
-                    }
+            try {
+                const res = await fetch('/api/mac-studio/ollama');
+                const data = await res.json();
+                const el = document.getElementById('gemma-data');
+                if (data.status === 'ok' && data.models && data.models.length > 0) {
+                    const model = data.models[0];
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">Ollama Running</span></div>
+                        <div class="metric-row"><span>Model</span><span class="metric-value">${model.name}</span></div>
+                        <div class="metric-row"><span>Size</span><span class="metric-value">${model.size}</span></div>
+                        <div class="metric-row"><span>Modified</span><span class="metric-value">${model.modified}</span></div>
+                        <div class="metric-row"><span>Running</span><span class="metric-value ${model.running ? 'status-ok' : 'status-warn'}">${model.running ? 'Yes' : 'No'}</span></div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">No models installed</span>`;
                 }
-        
+            } catch (e) {
+                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
+
         // Load Linux Server Status
         async function loadLinuxServer() {
             try {
@@ -523,7 +527,7 @@
                 document.getElementById('linux-server-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
+
         // Load Mac Studio Status
         async function loadMacStudio() {
             try {
@@ -541,7 +545,6 @@
                         <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
                         <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_used_gb} GB / ${data.memory_total_gb} GB)</span></div>
                         <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
-                        <div class="metric-row"><span>IP</span><span class="metric-value">${data.ip || 'N/A'}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -550,7 +553,7 @@
                 document.getElementById('mac-studio-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
+
         // Load Cameras
         async function loadCameras() {
             try {
@@ -563,13 +566,17 @@
                         el.innerHTML = '<span class="loading">No cameras found</span>';
                         return;
                     }
-                    el.innerHTML = cameras.map(cam => `
-                        <div class="metric-row" style="display: flex; flex-direction: column; gap: 8px; margin: 8px 0;">
-                            <span style="font-weight: 600;">${cam.name || cam.id}</span>
-                            <img src="${cam.url}" alt="${cam.name || cam.id}" style="width: 100%; max-width: 320px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <span style="display: none; color: #888; font-size: 0.8rem;">Failed to load snapshot</span>
+                    el.innerHTML = `
+                        <div class="camera-grid">
+                            ${cameras.map(cam => `
+                                <div class="camera-item">
+                                    <img src="${cam.url}" alt="${cam.name || cam.id}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <span style="display: none; color: #888; font-size: 0.8rem; padding: 40px; display: block; text-align: center;">Failed to load snapshot</span>
+                                    <div class="name">${cam.name || cam.id}</div>
+                                </div>
+                            `).join('')}
                         </div>
-                    `).join('');
+                    `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
@@ -585,6 +592,7 @@
                 const data = await res.json();
                 const el = document.getElementById('llm-metrics-data');
                 if (data.status === 'ok') {
+                    const formatNum = n => n ? n.toLocaleString() : '0';
                     el.innerHTML = `
                         <div class="metric-row"><span>Total Calls</span><span class="metric-value">${formatNum(data.total_calls)}</span></div>
                         <div class="metric-row"><span>Today's Calls</span><span class="metric-value">${formatNum(data.today_calls)}</span></div>
@@ -603,108 +611,79 @@
                 document.getElementById('llm-metrics-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
-        // Initialize all loaders
-        async function init() {
-            await Promise.all([
-                loadServerTime(),
-                loadDriveReport(),
-                loadPMDriveReport(),
-                loadWeather(),
-                loadLinks(),
-                loadGmail(),
-                loadOpenRoute(),
-                loadOllamaModelStatus(),
-                loadLinuxServer(),
-                loadMacStudio(),
-                loadCameras(),
-                loadLLMMetrics(),
-                loadChat()
-            ]);
-            
-            // Auto-refresh drive reports every 30 minutes (matches footer claim)
-            setInterval(() => {
-                loadDriveReport();
-                loadPMDriveReport();
-            }, 30 * 60 * 1000); // 30 minutes
-            
-            // Also refresh weather and server time every 30 minutes
-            setInterval(() => {
-                loadWeather();
-                loadServerTime();
-            }, 30 * 60 * 1000);
-        }
-        
+
         // Chat functionality
+        let chatHistory = [];
+        let defaultModel = 'qwen3:14b';
+
         async function loadOllamaModels() {
             try {
                 const res = await fetch('/api/ollama-models');
                 const data = await res.json();
-                if (data.models) {
+                if (data.models && data.models.length > 0) {
                     window.ollamaModels = data.models;
+                    defaultModel = data.models[0].name;
                     console.log('Loaded Ollama models:', data.models.map(m => m.name));
                 }
             } catch (e) {
                 console.error('Failed to load Ollama models:', e);
             }
         }
-        
-        let chatHistory = [];
-        
+
         function appendToChat(role, content) {
             const chatMessages = document.getElementById('chat-messages');
             if (!chatMessages) return;
-            
+
             const msgDiv = document.createElement('div');
-            msgDiv.style.cssText = 'margin: 12px 0; padding: 12px; border-radius: 8px; ' + 
-                (role === 'user' ? 'background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3);' : 
-                                   'background: rgba(123, 44, 191, 0.1); border: 1px solid rgba(123, 44, 191, 0.3);');
+            msgDiv.className = `chat-message ${role}`;
             
-            const roleLabel = role === 'user' ? 'You' : 'Hermes-4-14B';
+            const roleLabel = role === 'user' ? 'You' : defaultModel;
             const roleColor = role === 'user' ? '#00d4ff' : '#7b2cbf';
             
-            msgDiv.innerHTML = `<div style="font-weight: 600; color: ${roleColor}; margin-bottom: 4px;">${roleLabel}</div>
-                <div style="white-space: pre-wrap; color: #eee;">${escapeHtml(content)}</div>`;
-            
+            msgDiv.innerHTML = `
+                <div class="role" style="color: ${roleColor};">${roleLabel}</div>
+                <div class="content">${escapeHtml(content)}</div>
+            `;
+
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-        
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
+
         async function sendChatMessage() {
             const input = document.getElementById('chat-input');
             const sendBtn = document.getElementById('chat-send');
             const message = input.value.trim();
-            
+
             if (!message) return;
-            
+
             input.value = '';
             input.style.height = 'auto';
             sendBtn.disabled = true;
             sendBtn.textContent = '...';
-            
+
             // Add user message to chat
             appendToChat('user', message);
             chatHistory.push({role: 'user', content: message});
-            
+
             try {
                 const res = await fetch('/api/ollama-chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        model: 'hermes-4-14b',
+                        model: defaultModel,
                         messages: chatHistory,
                         stream: false
                     })
                 });
-                
+
                 const data = await res.json();
-                
+
                 if (data.message && data.message.content) {
                     const response = data.message.content;
                     appendToChat('assistant', response);
@@ -721,23 +700,23 @@
                 sendBtn.textContent = 'Send';
             }
         }
-        
+
         // Auto-resize textarea
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.getElementById('chat-input');
             const sendBtn = document.getElementById('chat-send');
-            
+
             if (input) {
                 input.addEventListener('input', () => {
                     input.style.height = 'auto';
                     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-                    
+
                     // Enable/disable send button based on input content
                     if (sendBtn) {
                         sendBtn.disabled = !input.value.trim();
                     }
                 });
-                
+
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -745,12 +724,39 @@
                     }
                 });
             }
-            
+
             if (sendBtn) {
                 sendBtn.addEventListener('click', sendChatMessage);
             }
         });
-        
+
+        // Initialize all loaders
+        async function init() {
+            await Promise.all([
+                loadServerTime(),
+                loadDriveReport(),
+                loadPMDriveReport(),
+                loadWeather(),
+                loadLinks(),
+                loadGmail(),
+                loadOpenRoute(),
+                loadOllamaModelStatus(),
+                loadLinuxServer(),
+                loadMacStudio(),
+                loadCameras(),
+                loadLLMMetrics(),
+                loadOllamaModels()
+            ]);
+        }
+
+        // Refresh time and weather periodically
+        setInterval(() => {
+            loadServerTime();
+            loadWeather();
+        }, 30 * 60 * 1000);
+
         // Run on page load
         init();
-</script>
+    </script>
+</body>
+</html>

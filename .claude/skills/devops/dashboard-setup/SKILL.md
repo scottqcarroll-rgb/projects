@@ -7,7 +7,7 @@ category: devops
 # Dashboard Setup — Complete Recreation Guide
 
 ## Overview
-Flask-based personal dashboard served at **http://100.124.71.12:5001** (Tailscale) / **192.168.1.222:5001** (LAN). Managed via systemd service `dashboard` on `clawz840`.
+Flask-based personal dashboard served at **http://100.124.71.12:5001** (Tailscale) / **192.168.1.222:5001** (LAN). Managed via systemd service `dashboard` on `clawz840` (user: scott).
 
 ## Project Structure
 ```
@@ -17,14 +17,14 @@ Flask-based personal dashboard served at **http://100.124.71.12:5001** (Tailscal
 ├── templates/
 │   └── dashboard.html        # Full HTML/CSS/JS template (927 lines)
 ├── static/                   # Empty directory (reserved)
-├── credentials.json          # Gmail API credentials (gitignored, required for email)
+├── credentials.json          # Gmail API credentials (gitignored, required for email tile)
 ├── token.json                # Gmail OAuth token (gitignored, auto-generated)
 ├── .git/                     # Git repo → github.com:scottqcarroll-rgb/projects
 └── .claude/skills/devops/dashboard-setup/  # THIS skill (backed up to GitHub)
 ```
 
 ## Systemd Service (dashboard.service)
-**Location:** `/etc/systemd/system/dashboard.service` (or created via `sudo systemctl edit --force --full dashboard`)
+**Location:** `/etc/systemd/system/dashboard.service`
 ```ini
 [Unit]
 Description=Scott's Dashboard
@@ -49,7 +49,8 @@ WantedBy=multi-user.target
 
 ---
 
-## app.py — Complete Flask App (72 lines)
+## app.py — Complete Flask App (227 lines)
+
 ```python
 #!/usr/bin/env python3
 from flask import Flask, render_template, jsonify, request, Response
@@ -239,29 +240,30 @@ if __name__ == '__main__':
 
 ## data_fetcher.py — Complete (701 lines)
 
-**Key Functions & Signatures:**
+### Key Functions & Signatures
 
 | Function | Returns | Notes |
 |----------|---------|-------|
 | `get_drive_routes(origin, destination)` | `{'status', 'routes[]'}` | Google Maps Directions API, `departure_time=now`, alternatives=true |
-| `get_drive_report()` (AM) | `{'status', 'origin', 'destination', 'departure_time', 'arrival_time', 'distance_miles', 'duration_minutes', 'routes'}` | Home → Work (616 Huntwood Cir → 5303 New Peachtree Rd) |
-| `get_pm_drive_report()` (PM) | Same structure | Work → Home (reversed), **uses `datetime.now()` for departure (synced with dashboard)** |
+| `get_drive_report()` (AM) | `{'status', 'origin', 'destination', 'departure_time', 'arrival_time', 'distance_miles', 'duration_minutes', 'routes'}` | Home → Work: `616 Huntwood Cir, Temple GA 30179` → `5303 New Peachtree Rd, Chamblee GA 30341` |
+| `get_pm_drive_report()` (PM) | Same structure | Work → Home (swapped), **uses `datetime.now()` for departure (synced with dashboard)** |
 | `parse_duration_to_minutes(str)` | `int` | Parses "1 hour 15 mins" or "45 mins" |
-| `get_weather()` | `{'status', 'temperature', 'condition', 'humidity', 'wind_speed', 'feels_like', 'high', 'low', 'precip'}` | Open-Meteo API, Temple GA (33.7353, -85.0308) |
+| `get_weather()` | `{'status', 'temperature', 'condition', 'humidity', 'wind_speed', 'feels_like', 'high', 'low', 'precip'}` | Open-Meteo API, Temple GA (33.7353, -85.0308), no key needed |
 | `get_sam_hunter()` | `{'status', 'url', 'name'}` | Returns `http://100.124.71.12:5002` |
 | `get_gmail_summary()` | `{'status', 'email_address', 'unread_count', 'total_count', 'starred_count', 'message'}` | Uses `email-agent/gmail_client.py` |
-| `get_openrouter_usage()` | `{'status', 'usage_total', 'usage_daily', 'usage_weekly', 'usage_monthly', 'limit', 'limit_remaining', 'is_free_tier', 'label'}` | OpenRouter `/api/v1/key` endpoint |
-| `get_ollama_status()` | `{'status', 'model', 'params', 'context', 'size_gb', 'host'}` | Local llama.cpp server (port varies) |
+| `get_openrouter_usage()` | `{'status', 'usage_total', 'usage_daily', 'usage_weekly', 'usage_monthly', 'limit', 'limit_remaining', 'is_free_tier', 'label'}` | OpenRouter `/api/v1/key` |
+| `get_ollama_status()` | `{'status', 'model', 'params', 'context', 'size_gb', 'host'}` | Local llama.cpp server |
 | `get_linux_server_status()` | `{'status', 'hostname', 'cpu_model', 'load_1m', 'load_5m', 'load_15m', 'memory_total_gb', 'memory_used_pct', 'memory_avail_gb', 'disk_used', 'disk_total', 'disk_pct', 'uptime', 'cpu_temp', 'ip'}` | Reads `/proc/*`, `df -h /` |
 | `get_mac_studio_status()` | `{'status', 'hostname', 'model', 'chip', 'ram', 'os', 'storage', 'load_1m', 'load_5m', 'load_15m', 'memory_total_gb', 'memory_used_gb', 'memory_free_gb', 'memory_used_pct', 'disk_used', 'disk_total', 'disk_pct', 'ip'}` | SSH to `macstudio`, runs `system_profiler`, `top`, `df` |
-| `get_mac_studio_ollama_status()` | `{'status', 'ollama_running', 'models_installed', 'models[]', 'running_models[]'}` | SSH to Mac Studio, runs `ollama list` + `curl localhost:11434/api/ps` |
-| `get_camera_snapshots()` | `{'status', 'cameras[{id, name, ip, snapshot_url}]'}` | Returns metadata; browser loads images directly via `/api/camera-image?url=...` |
+| `get_mac_studio_ollama_status()` | `{'status', 'ollama_running', 'models_installed', 'models[]', 'running_models[]'}` | SSH to Mac Studio, `ollama list` + `curl localhost:11434/api/ps` |
+| `get_camera_snapshots()` | `{'status', 'cameras[{id, name, ip, snapshot_url}]'}` | Returns metadata; browser loads images via `/api/camera-image?url=...` |
 
-**Critical Implementation Details:**
+### Critical Implementation Details
+
 - **Google Maps API Key:** Read from first `*.py` file in `/home/scott/.hermes/scripts/` containing `API_KEY="..."`
 - **AM Drive:** Origin=`616 Huntwood Cir, Temple GA 30179`, Dest=`5303 New Peachtree Rd, Chamblee GA 30341`
-- **PM Drive:** Origin/Dest swapped, departure_time = `datetime.now().strftime('%-I:%M %p')` (current time, synced)
-- **Weather:** Open-Meteo, no API key, WMO code mapping to condition text
+- **PM Drive:** Origin/Dest swapped, `departure_time = datetime.now().strftime('%-I:%M %p')` (current time, synced)
+- **Weather:** Open-Meteo, WMO code mapping to condition text
 - **Mac Studio SSH:** Uses `macstudio` SSH alias (configured in `~/.ssh/config`)
 - **Cameras:** Two FLIR cameras at `192.168.1.158` (Gun Room) and `192.168.1.163` (Office), snapshot endpoint `/cgi-bin/snapshot.cgi?chn=0`
 
@@ -279,15 +281,15 @@ if __name__ == '__main__':
 |-------|---------|
 | `.card-icon.drive-icon` | Teal gradient for drive cards |
 | `.card-icon.weather-icon` | Orange/yellow gradient |
-| `.card-icon.gemma-icon` | Orange/pink gradient |
+| `.card-icon.gemma-icon` | Orange/pink gradient (Ollama tile) |
 | `.card-icon.linux-icon` | Teal/cyan gradient |
 | `.card-icon.mac-icon` | Pink/red gradient |
 | `.weather-icon-large` | 2.5rem weather emoji |
-| `.metric-row` | Flex row with label + value |
+| `.metric-row` | Flex row: label + value |
 | `.camera-grid` | Grid for camera images |
 | `.camera-item img` | 100% width, 16:9 aspect-ratio |
 
-### PM Drive Icon (CRITICAL)
+### PM Drive Icon (CRITICAL — DO NOT CHANGE)
 ```html
 <div class="card-icon drive-icon" style="transform: scaleX(-1);">🚗</div>
 ```
@@ -331,10 +333,10 @@ el.innerHTML = `
 
 ---
 
-## Icon Convention Table (DO NOT CHANGE)
+## Icon Conventions (CRITICAL — DO NOT CHANGE)
 
-| Tile | Icon | Direction/Style | Meaning |
-|------|------|-----------------|---------|
+| Tile | Icon | Direction | Meaning |
+|------|------|-----------|---------|
 | AM Drive Report | 🚗 | Left (default) | Going TO work |
 | PM Drive Report | 🚗 + `transform: scaleX(-1)` | Right (flipped) | Returning HOME |
 | Weather | 🌤️ | N/A | Sun behind cloud |
@@ -353,94 +355,54 @@ el.innerHTML = `
 ## Drive Report Time Rules
 
 ### AM Drive Report
-- **Departure:** Current dashboard time (synced via JS `updateDriveTimes()` every 60s)
-- **Arrival:** Departure + traffic duration from Google Maps
-- **Endpoint:** `/api/drive` → `get_drive_report()`
+- **Departure:** Current dashboard time (synced via JS `updateDriveTimes()`)
+- **Arrival:** Departure + traffic duration
 
-### PM Drive Report  
-- **Departure:** Current dashboard time (synced like AM) — **NOT fixed "5:00 PM"**
-- **Arrival:** Departure + traffic duration from Google Maps
-- **Endpoint:** `/api/pm-drive` → `get_pm_drive_report()`
-- **Backend:** Uses `datetime.now()` for departure_time, same as AM
+### PM Drive Report
+- **Departure:** Current dashboard time (synced like AM) — **NOT fixed 5:00 PM**
+- **Arrival:** Departure + traffic duration
+- **Endpoint:** `/api/drive-times` returns both AM and PM with current time
 
 ---
 
-## API Endpoints Reference
+## API Endpoints Summary
 
-| Endpoint | Method | Data Source |
-|----------|--------|-------------|
-| `/` | GET | Renders `dashboard.html` |
-| `/api/time` | GET | Server time (Eastern) |
-| `/api/drive` | GET | AM drive (home→work) |
-| `/api/pm-drive` | GET | PM drive (work→home) |
-| `/api/weather` | GET | Open-Meteo (Temple, GA) |
-| `/api/links` | GET | Sam Hunter link |
-| `/api/gmail` | GET | Gmail API (24h summary) |
-| `/api/usage` | GET | OpenRouter `/api/v1/key` |
-| `/api/ollama` | GET | Local llama.cpp status |
-| `/api/linux-server` | GET | `/proc/*`, `df -h /` |
-| `/api/mac-studio` | GET | SSH `macstudio` system_profiler |
-| `/api/mac-studio/ollama` | GET | SSH `macstudio` ollama list/ps |
-| `/api/cameras` | GET | Static camera metadata |
-| `/api/camera-image?url=` | GET | Proxy for camera snapshots |
-| `/api/ollama-chat` | POST | Proxy to Mac Studio Ollama |
-| `/api/ollama-models` | GET | Proxy to Ollama `/api/tags` |
-| `/api/llm-metrics` | GET | `/home/scott/projects/llm_call_log.txt` |
-
----
-
-## Git Workflow (MANDATORY)
-
-**After EVERY change:**
-```bash
-cd /home/scott/projects/dashboard
-git add <changed-files>
-git commit -m "Verb-first message under 70 chars"
-git push
-sudo systemctl restart dashboard && sleep 3
-# Verify via browser snapshot
-```
-
-**Commit Message Format:**
-- `Fix PM drive icon to face right with CSS flip`
-- `Update Ollama tile to show running model from Mac Studio`
-- `Sync PM drive departure time with dashboard clock`
+| Endpoint | Purpose |
+|----------|---------|
+| `/` | Dashboard HTML |
+| `/api/time` | Server time (Eastern) |
+| `/api/drive` | AM drive report |
+| `/api/pm-drive` | PM drive report |
+| `/api/weather` | Weather for Temple, GA |
+| `/api/links` | Quick links (Sam Hunter) |
+| `/api/gmail` | Gmail summary |
+| `/api/usage` | OpenRouter usage |
+| `/api/ollama` | Local Ollama status |
+| `/api/mac-studio/ollama` | Mac Studio Ollama (running model, installed models) |
+| `/api/linux-server` | Linux server stats |
+| `/api/mac-studio` | Mac Studio specs |
+| `/api/cameras` | Camera list with snapshot URLs |
+| `/api/camera-image?url=...` | Camera image proxy |
+| `/api/llm-metrics` | LLM call metrics from `/home/scott/projects/llm_call_log.txt` |
+| `/api/ollama-chat` | Proxy to Mac Studio Ollama `/api/chat` |
+| `/api/ollama-models` | Mac Studio Ollama `/api/tags` |
 
 ---
 
-## Verification Checklist (After Each Deploy)
-
-1. ✅ `sudo systemctl status dashboard` → `active (running)`
-2. ✅ Browser snapshot at `http://100.124.71.12:5001` shows:
-   - AM Drive: 🚗 facing LEFT, departure = current time
-   - PM Drive: 🚗 facing RIGHT (flipped), departure = current time
-   - Weather: 🌤️ (not 🌮)
-   - Ollama: Shows "Running Model: <name>" or "None (idle)"
-   - Cameras: Images loading (if on LAN)
-3. ✅ Git push confirmed to `github.com:scottqcarroll-rgb/projects`
+## Git Workflow
+- After EVERY change: `git add ... && git commit -m "verb-first message" && git push`
+- Commit messages: verb-first, under 70 chars
+- Service restart: `sudo systemctl restart dashboard && sleep 3`
 
 ---
 
-## Required Environment / Secrets
-
-| Secret | Location | Purpose |
-|--------|----------|---------|
-| Google Maps API Key | `/home/scott/.hermes/scripts/*.py` (first file with `API_KEY=`) | Drive times |
-| Gmail credentials.json | `/home/scott/projects/dashboard/credentials.json` | Email summary |
-| Gmail token.json | `/home/scott/projects/dashboard/token.json` (auto-generated) | OAuth token |
-| OPENROUTER_API_KEY | Environment variable | OpenRouter usage |
-| SSH `macstudio` alias | `~/.ssh/config` | Mac Studio metrics |
-| Tailscale | `100.124.71.12` | VPN access to dashboard |
-
----
-
-## Complete Recreation Steps
-
-1. **Clone repo:** `git clone https://github.com/scottqcarroll-rgb/projects.git /home/scott/projects`
-2. **Install deps:** `pip3 install flask pytz requests`
-3. **Configure SSH:** Add `macstudio` alias to `~/.ssh/config` pointing to `192.168.1.174`
-4. **Place secrets:** `credentials.json` in dashboard dir, Google Maps key in `~/.hermes/scripts/`
-5. **Create systemd service:** Copy service file above to `/etc/systemd/system/dashboard.service`
-6. **Enable & start:** `sudo systemctl daemon-reload → enable → start`
-7. **Verify:** `curl http://100.124.71.12:5001/api/time`
-8. **Push skill:** Copy this skill to `~/.hermes/skills/devops/dashboard-setup/`
+## Verification Steps
+1. `sudo systemctl restart dashboard && sleep 3`
+2. Browser snapshot at `http://100.124.71.12:5001`
+3. Verify:
+   - AM icon 🚗 (left), PM icon 🚗 flipped (right)
+   - Both departure times match dashboard clock
+   - Weather shows 🌤️
+   - Ollama tile shows "Running Model: None (idle)" + "Models Installed: 2"
+   - Cameras load via proxy
+   - LLM Metrics shows call counts

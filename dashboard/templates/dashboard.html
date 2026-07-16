@@ -656,27 +656,30 @@
         }
         
         // === Load Ollama Model Status (Mac Studio) ===
-        async function loadOllamaModelStatus() {
-            try {
-                const res = await fetch('/api/mac-studio/ollama');
-                const data = await res.json();
-                const el = document.getElementById('gemma-data');
-                if (data.status === 'ok') {
-                    const runningModel = data.running_models && data.running_models.length > 0 
-                        ? data.running_models[0].name 
-                        : 'None (idle)';
-                    el.innerHTML = `
-                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Ollama Running' : 'Ollama Stopped'}</span></div>
-                        <div class="metric-row"><span>Running Model</span><span class="metric-value">${runningModel}</span></div>
-                        <div class="metric-row"><span>Models Installed</span><span class="metric-value">${data.models_installed}</span></div>
-                    `;
-                } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                async function loadOllamaModelStatus() {
+                    try {
+                        const res = await fetch('/api/mac-studio/ollama');
+                        const data = await res.json();
+                        const el = document.getElementById('gemma-data');
+                        if (data.status === 'ok') {
+                            const runningModel = data.running_models && data.running_models.length > 0
+                                ? data.running_models[0].name
+                                : 'None (idle)';
+                            const installedModels = data.models && data.models.length > 0
+                                ? data.models.map(m => m.name).join(', ')
+                                : `${data.models_installed} installed`;
+                            el.innerHTML = `
+                                <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Ollama Running' : 'Ollama Stopped'}</span></div>
+                                <div class="metric-row"><span>Running Model</span><span class="metric-value">${runningModel}</span></div>
+                                <div class="metric-row"><span>Models Installed</span><span class="metric-value">${installedModels}</span></div>
+                            `;
+                        } else {
+                            el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                        }
+                    } catch (e) {
+                        document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                    }
                 }
-            } catch (e) {
-                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
-            }
-        }
         
         // === Load Linux Server ===
         async function loadLinuxServer() {

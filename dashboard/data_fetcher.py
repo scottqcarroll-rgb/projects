@@ -598,9 +598,9 @@ def get_mac_studio_ollama_status():
                         'modified': modified
                     })
         
-        # Also check if Ollama is running and what's loaded
+        # Also check if Ollama is running and what's loaded (use /api/ps for running models)
         result2 = subprocess.run(
-            ['ssh', 'macstudio', 'curl -s http://localhost:11434/api/tags 2>/dev/null || echo "not running"'],
+            ['ssh', 'macstudio', 'curl -s http://localhost:11434/api/ps 2>/dev/null || echo "not running"'],
             capture_output=True, text=True, timeout=10, shell=True
         )
         

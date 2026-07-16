@@ -116,7 +116,7 @@ def api_usage():
 import requests
 
 OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://192.168.1.174:11434')
-DEFAULT_OLLAMA_MODEL = 'qwen3:14b'
+DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
 
 @app.route('/api/ollama-chat', methods=['POST'])
 def api_ollama_chat():
@@ -129,11 +129,16 @@ def api_ollama_chat():
         model = data.get('model', DEFAULT_OLLAMA_MODEL)
         messages = data.get('messages', [])
         stream = data.get('stream', False)
+        tools = data.get('tools', None)
         
         # Forward to Ollama API
+        payload = {'model': model, 'messages': messages, 'stream': stream}
+        if tools is not None:
+            payload['tools'] = tools
+        
         resp = requests.post(
             f'{OLLAMA_BASE_URL}/api/chat',
-            json={'model': model, 'messages': messages, 'stream': stream},
+            json=payload,
             timeout=120,
             stream=stream
         )

@@ -136,3 +136,11 @@
 ---
 
 *Report generated at 2026-07-16 22:03:43 by daily cron job. Pushed to GitHub (master branch).*
+### 📊 LLM‑Call Metrics (as of 2026-07-16)
+- **All‑time total**: 10
+- **Today's calls**: 1
+- **Share of total**: 10%
+- **30‑day average**: 3 per day
+- **Hourly rate** (est.): 0
+- **Timestamps**:
+  - 2026-07-16T22:03:43

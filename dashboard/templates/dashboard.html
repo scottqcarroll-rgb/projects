@@ -91,6 +91,7 @@
         .linux-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
         .camera-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .truenas-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .link-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
         
         .card-title {
@@ -424,6 +425,17 @@
             </div>
         </div>
         
+        <!-- TrueNAS Server -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon truenas-icon">🗄️</div>
+                <div class="card-title">TrueNAS Server</div>
+            </div>
+            <div class="card-body" id="truenas-data">
+                <span class="loading">Loading TrueNAS status...</span>
+            </div>
+        </div>
+        
         <!-- Cameras -->
         <div class="card">
             <div class="card-header">
@@ -652,6 +664,85 @@
                 }
             } catch (e) {
                 document.getElementById('openroute-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
+        
+        // === Load TrueNAS Status ===
+        async function loadTruenas() {
+            try {
+                const res = await fetch('/api/truenas');
+                const data = await res.json();
+                const el = document.getElementById('truenas-data');
+                if (data.status === 'ok') {
+                    // Pool status
+                    let poolHtml = '';
+                    if (data.pools && data.pools.length > 0) {
+                        poolHtml = data.pools.map(pool => {
+                            const statusClass = pool.healthy ? 'status-ok' : 'status-error';
+                            return `
+                                <div class="metric-row">
+                                    <span>${pool.name} (${pool.status})</span>
+                                    <span class="metric-value ${statusClass}">${pool.pct_used}% used (${pool.free_tb} TB free)</span>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        poolHtml = '<div class="metric-row"><span>No pools</span><span class="metric-value">N/A</span></div>';
+                    }
+                    
+                    // Alerts
+                    let alertHtml = '';
+                    const totalAlerts = (data.alerts.CRITICAL || 0) + (data.alerts.WARNING || 0) + (data.alerts.INFO || 0);
+                    if (totalAlerts > 0) {
+                        alertHtml = `
+                            <div class="metric-row"><span>Alerts</span><span class="metric-value">${totalAlerts} total (${data.alerts.CRITICAL || 0} critical, ${data.alerts.WARNING || 0} warning)</span></div>
+                        `;
+                        if (data.active_alerts && data.active_alerts.length > 0) {
+                            alertHtml += data.active_alerts.map(a => 
+                                `<div class="metric-row"><span>${a.level}</span><span class="metric-value status-warn">${escapeHtml(a.text.substring(0, 60))}...</span></div>`
+                            ).join('');
+                        }
+                    } else {
+                        alertHtml = '<div class="metric-row"><span>Alerts</span><span class="metric-value status-ok">None</span></div>';
+                    }
+                    
+                    // Key apps
+                    let appHtml = '';
+                    if (data.key_apps && data.key_apps.length > 0) {
+                        appHtml = data.key_apps.map(app => {
+                            const stateClass = app.state === 'RUNNING' ? 'status-ok' : 'status-error';
+                            const urlHtml = app.url ? `<a href="${app.url}" target="_blank" style="color: #00d4ff; font-size: 0.75rem;">${app.url}</a>` : '';
+                            return `
+                                <div class="metric-row">
+                                    <span>${app.name}</span>
+                                    <span class="metric-value ${stateClass}">${app.state} ${app.version}</span>
+                                </div>
+                                ${urlHtml ? `<div class="metric-row"><span></span><span class="metric-value">${urlHtml}</span></div>` : ''}
+                            `;
+                        }).join('');
+                    }
+                    
+                    // Load average
+                    const load = data.load_avg || [0, 0, 0];
+                    const loadStr = load.map(l => l.toFixed(2)).join(', ');
+                    
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Hostname</span><span class="metric-value">${data.hostname}</span></div>
+                        <div class="metric-row"><span>Version</span><span class="metric-value">${data.version}</span></div>
+                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_model} (${data.cpu_cores} cores)</span></div>
+                        <div class="metric-row"><span>Load (1/5/15)</span><span class="metric-value">${loadStr}</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_total_gb} GB</span></div>
+                        ${poolHtml}
+                        ${alertHtml}
+                        <div class="metric-row"><span>Apps Running</span><span class="metric-value">${data.apps_running}/${data.apps_total}</span></div>
+                        ${appHtml}
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('truenas-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
         
@@ -910,11 +1001,12 @@
                 loadGmail(),
                 loadOpenRoute(),
                 loadOllamaModelStatus(),
-                loadLinuxServer(),
-                loadMacStudio(),
-                loadCameras(),
-                loadLLMMetrics(),
-                loadOllamaModels()
+                .loadLinuxServer(),
+                                loadMacStudio(),
+                                loadTruenas(),
+                                loadCameras(),
+                                loadLLMMetrics(),
+                                loadOllamaModels()
             ]);
         }
         

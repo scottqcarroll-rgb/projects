@@ -9,6 +9,7 @@ This Flask app provides a real-time dashboard showing:
 - Camera status and snapshots
 - OpenRoute usage statistics
 - Quick links to related services
+- TrueNAS server monitoring
 """
 from flask import Flask, render_template, jsonify, request, Response
 import pytz
@@ -17,11 +18,18 @@ from data_fetcher import (
     get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
     get_gmail_summary, get_ollama_status, get_linux_server_status,
     get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
-    get_mac_studio_ollama_status
+    get_mac_studio_ollama_status, get_truenas_status
 )
 import os
 import json
 import subprocess
+
+# Load .env file for environment variables
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, will rely on system env vars
 
 app = Flask(__name__)
 
@@ -114,8 +122,13 @@ def api_server_time():
 def api_usage():
     return jsonify(get_openrouter_usage())
 
-import requests
 
+@app.route('/api/truenas')
+def api_truenas():
+    return jsonify(get_truenas_status())
+
+
+import requests
 OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://192.168.1.174:11434')
 DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
 

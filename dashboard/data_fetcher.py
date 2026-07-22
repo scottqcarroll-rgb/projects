@@ -544,7 +544,114 @@ def get_camera_snapshots():
     }
 
 
-# --- 9. OpenRouter Usage ---
+# --- 9. TrueNAS Server Status ---
+def get_truenas_status():
+    """Fetch TrueNAS system info, pool status, alerts, and running apps."""
+    try:
+        import urllib.request
+        import json
+        import ssl
+        
+        api_key = os.environ.get('TRUENAS_API_KEY', '')
+        truenas_host = os.environ.get('TRUENAS_HOST', '192.168.1.68')
+        
+        if not api_key:
+            return {'status': 'error', 'message': 'TRUENAS_API_KEY not set'}
+        
+        # Disable SSL verification for self-signed certs
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Accept': 'application/json',
+        }
+        
+        base_url = f'https://{truenas_host}/api/v2.0'
+        
+        def fetch_json(endpoint):
+            url = f'{base_url}{endpoint}'
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as response:
+                return json.loads(response.read().decode('utf-8'))
+        
+        # Fetch all data in parallel-ish (sequential but fast)
+        system_info = fetch_json('/system/info')
+        pools = fetch_json('/pool')
+        alerts = fetch_json('/alert/list')
+        apps = fetch_json('/app')
+        
+        # Parse pools - extract key metrics
+        pool_summary = []
+        for pool in pools:
+            pool_summary.append({
+                'name': pool.get('name'),
+                'status': pool.get('status'),
+                'healthy': pool.get('healthy', False),
+                'size_tb': round(pool.get('size', 0) / (1024**4), 2),
+                'allocated_tb': round(pool.get('allocated', 0) / (1024**4), 2),
+                'free_tb': round(pool.get('free', 0) / (1024**4), 2),
+                'pct_used': round((pool.get('allocated', 0) / pool.get('size', 1)) * 100, 1) if pool.get('size', 0) > 0 else 0,
+                'fragmentation': pool.get('fragmentation', '0'),
+            })
+        
+        # Parse alerts - count by level
+        alert_counts = {'CRITICAL': 0, 'WARNING': 0, 'INFO': 0}
+        active_alerts = []
+        for alert in alerts:
+            level = alert.get('level', 'INFO')
+            if level in alert_counts:
+                alert_counts[level] += 1
+            if not alert.get('dismissed', False):
+                active_alerts.append({
+                    'level': level,
+                    'text': alert.get('formatted', alert.get('text', '')),
+                })
+        
+        # Parse apps - running count and key apps
+        running_apps = [a for a in apps if a.get('state') == 'RUNNING']
+        key_apps = ['immich', 'jellyfin', 'tailscale', 'actual-budget']
+        app_status = []
+        for app in apps:
+            if app.get('name') in key_apps:
+                portals = app.get('portals', {})
+                web_url = list(portals.values())[0] if portals else None
+                app_status.append({
+                    'name': app.get('name'),
+                    'state': app.get('state'),
+                    'version': app.get('human_version', app.get('version')),
+                    'url': web_url,
+                })
+        
+        # Memory calculation
+        mem_total_gb = round(system_info.get('physmem', 0) / (1024**3), 1)
+        
+        return {
+            'status': 'ok',
+            'hostname': system_info.get('hostname'),
+            'version': system_info.get('version'),
+            'uptime': system_info.get('uptime'),
+            'uptime_seconds': system_info.get('uptime_seconds'),
+            'cpu_model': system_info.get('model'),
+            'cpu_cores': system_info.get('cores'),
+            'cpu_physical_cores': system_info.get('physical_cores'),
+            'load_avg': system_info.get('loadavg', [0, 0, 0]),
+            'memory_total_gb': mem_total_gb,
+            'pools': pool_summary,
+            'alerts': alert_counts,
+            'active_alerts': active_alerts[:5],  # top 5
+            'apps_running': len(running_apps),
+            'apps_total': len(apps),
+            'key_apps': app_status,
+        }
+    except urllib.error.HTTPError as e:
+        return {'status': 'error', 'message': f'HTTP {e.code}: {e.read().decode()}'}
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
+# --- 10. OpenRouter Usage ---
 def get_openrouter_usage():
     try:
         import urllib.request

@@ -59,6 +59,11 @@ def api_links():
         'status': 'ok',
         'links': [
             {'name': 'Sam Hunter', 'url': 'http://100.124.71.12:5002'},
+            {'name': 'Immich', 'url': 'http://192.168.1.68:30041'},
+            {'name': 'Jellyfin', 'url': 'http://192.168.1.68:30013'},
+            {'name': 'Actual Budget', 'url': 'http://192.168.1.68:31012'},
+            {'name': 'Gateway Logs', 'url': 'http://100.124.71.12:5001/api/gateway-logs?limit=50'},
+            {'name': 'Gateway Errors', 'url': 'http://100.124.71.12:5001/api/gateway-errors?limit=20'},
         ]
     })
 
@@ -244,6 +249,70 @@ def api_llm_metrics():
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+
+@app.route('/api/gateway-logs')
+def api_gateway_logs():
+    """API endpoint for recent gateway logs."""
+    try:
+        log_file = '/home/scott/.hermes/logs/gateway.log'
+        limit = int(request.args.get('limit', 100))
+        level = request.args.get('level')  # DEBUG, INFO, WARNING, ERROR
+        search = request.args.get('search')
+        
+        if not os.path.exists(log_file):
+            return jsonify({'status': 'ok', 'logs': [], 'total_lines': 0})
+        
+        with open(log_file, 'r') as f:
+            lines = f.readlines()
+        
+        # Filter from end (most recent first)
+        filtered = []
+        for line in reversed(lines):
+            line = line.strip()
+            if not line:
+                continue
+            if level and level.upper() not in line:
+                continue
+            if search and search.lower() not in line.lower():
+                continue
+            filtered.append(line)
+            if len(filtered) >= limit:
+                break
+        
+        return jsonify({
+            'status': 'ok',
+            'logs': filtered,
+            'total_lines': len(lines),
+            'returned': len(filtered)
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
+@app.route('/api/gateway-errors')
+def api_gateway_errors():
+    """API endpoint for gateway errors only."""
+    try:
+        log_file = '/home/scott/.hermes/logs/errors.log'
+        limit = int(request.args.get('limit', 50))
+        
+        if not os.path.exists(log_file):
+            return jsonify({'status': 'ok', 'errors': [], 'total_lines': 0})
+        
+        with open(log_file, 'r') as f:
+            lines = f.readlines()
+        
+        errors = [line.strip() for line in reversed(lines) if line.strip()][:limit]
+        
+        return jsonify({
+            'status': 'ok',
+            'errors': errors,
+            'total_lines': len(lines),
+            'returned': len(errors)
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)

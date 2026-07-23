@@ -13,10 +13,10 @@ Wednesday, July 22, 2026
 
 ## 📊 LLM-Call Metrics Summary
 ### 📊 LLM‑Call Metrics (as of 2026-07-22)
-- **All‑time total**: 11
+- **All‑time total**: 8
 - **Today's calls**: 0
 - **Share of total**: 0%
-- **30‑day average**: 4 per day
+- **30‑day average**: 2 per day
 - **Hourly rate** (est.): 0
 - **No calls today**
 

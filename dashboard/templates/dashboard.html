@@ -127,10 +127,65 @@
         }
         
         .weather-icon-large {
-            font-size: 2.5rem;
-        }
-        
-        .status-ok {
+                    font-size: 2.5rem;
+                }
+
+                .forecast-divider {
+                    border-top: 1px solid rgba(255, 255, 255, 0.1);
+                    margin: 12px 0 8px 0;
+                }
+
+                .forecast-label {
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    color: #888;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 8px;
+                }
+
+                .forecast-day {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 6px 0;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    font-size: 0.8rem;
+                }
+
+                .forecast-day:last-child {
+                    border-bottom: none;
+                }
+
+                .forecast-date {
+                    font-weight: 600;
+                    color: #fff;
+                    min-width: 50px;
+                }
+
+                .forecast-icon {
+                    font-size: 1.1rem;
+                    margin: 0 8px;
+                }
+
+                .forecast-condition {
+                    color: #aaa;
+                    flex: 1;
+                    text-align: center;
+                }
+
+                .forecast-temps {
+                    font-weight: 600;
+                    color: #fff;
+                    margin: 0 8px;
+                }
+
+                .forecast-precip {
+                    color: #00d4ff;
+                    font-size: 0.7rem;
+                }
+
+                .status-ok {
             color: #00b894;
         }
         
@@ -351,7 +406,7 @@
         <!-- Weather -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon weather-icon">🌤️</div>
+                <div class="card-icon weather-icon" id="weather-header-icon">🌤️</div>
                 <div class="card-title">Weather — Temple, GA</div>
             </div>
             <div class="card-body" id="weather-data">
@@ -574,14 +629,36 @@
                 const res = await fetch('/api/weather');
                 const data = await res.json();
                 const el = document.getElementById('weather-data');
+                const headerIcon = document.getElementById('weather-header-icon');
                 if (data.status === 'ok') {
                     const icon = getWeatherIcon(data.condition);
+                    if (headerIcon) headerIcon.textContent = icon;
+                    // Build forecast HTML
+                    let forecastHtml = '';
+                    if (data.forecast && data.forecast.length > 0) {
+                        forecastHtml = '<div class="forecast-divider"></div><div class="forecast-label">5-Day Forecast</div>';
+                        data.forecast.forEach(day => {
+                            const dayIcon = getWeatherIcon(day.condition);
+                            // Format date: "Jul 26"
+                            const dateObj = new Date(day.date);
+                            const dateStr = dateObj.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+                            forecastHtml += `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">${dateStr}</span>
+                                    <span class="forecast-icon">${dayIcon}</span>
+                                    <span class="forecast-condition">${day.condition}</span>
+                                    <span class="forecast-temps">${day.high}° / ${day.low}°</span>
+                                    <span class="forecast-precip">💧 ${day.precip}mm</span>
+                                </div>`;
+                        });
+                    }
                     el.innerHTML = `
                         <div class="metric-row weather-icon-row"><span></span><span class="metric-value weather-icon-large">${icon}</span></div>
                         <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temperature}°F</span></div>
                         <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
                         <div class="metric-row"><span>Humidity</span><span class="metric-value">${data.humidity}%</span></div>
                         <div class="metric-row"><span>Wind</span><span class="metric-value">${data.wind_speed} mph</span></div>
+                        ${forecastHtml}
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -596,9 +673,11 @@
             if (c.includes('rain') || c.includes('drizzle')) return '🌧️';
             if (c.includes('snow')) return '❄️';
             if (c.includes('storm') || c.includes('thunder')) return '⛈️';
-            if (c.includes('cloud') || c.includes('overcast')) return '☁️';
+            if (c.includes('overcast')) return '☁️';
+            if (c.includes('cloud') || c.includes('partly')) return '⛅';
             if (c.includes('fog') || c.includes('mist') || c.includes('haze')) return '🌫️';
-            if (c.includes('clear') || c.includes('sunny')) return '☀️';
+            if (c === 'clear' || c.includes('sunny')) return '☀️';
+            if (c.includes('mostly clear')) return '🌤️';
             if (c.includes('wind')) return '💨';
             return '🌤️';
         }

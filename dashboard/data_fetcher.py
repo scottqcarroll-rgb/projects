@@ -117,8 +117,9 @@ def parse_duration_to_minutes(duration_str):
 def get_weather():
     try:
         # Open-Meteo API (free, no key needed) for Temple, GA
+        # Request 6 days (today + 5 future days), we'll skip today in the forecast display
         lat, lon = 33.7353, -85.0308
-        url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=America%2FNew_York&forecast_days=1'
+        url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=America%2FNew_York&forecast_days=6'
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -149,6 +150,24 @@ def get_weather():
         high_c = daily.get('temperature_2m_max', ['N/A'])[0]
         low_c = daily.get('temperature_2m_min', ['N/A'])[0]
 
+        # Build 5-day forecast (skip index 0 = today, show indices 1-5 = next 5 days)
+        forecast = []
+        daily_times = daily.get('time', [])
+        daily_max = daily.get('temperature_2m_max', [])
+        daily_min = daily.get('temperature_2m_min', [])
+        daily_precip = daily.get('precipitation_sum', [])
+        daily_codes = daily.get('weather_code', [])
+        # Start from index 1 to skip today, show next 5 days
+        for i in range(1, min(6, len(daily_times))):
+            day_code = daily_codes[i] if i < len(daily_codes) else -1
+            forecast.append({
+                'date': daily_times[i],
+                'high': c_to_f(daily_max[i]) if i < len(daily_max) else 'N/A',
+                'low': c_to_f(daily_min[i]) if i < len(daily_min) else 'N/A',
+                'precip': daily_precip[i] if i < len(daily_precip) else 'N/A',
+                'condition': wmo.get(day_code, f'Unknown ({day_code})')
+            })
+
         return {
             'status': 'ok',
             'temperature': c_to_f(temp_c),
@@ -158,7 +177,8 @@ def get_weather():
             'feels_like': c_to_f(feels_c),
             'high': c_to_f(high_c),
             'low': c_to_f(low_c),
-            'precip': daily.get('precipitation_sum', ['N/A'])[0]
+            'precip': daily.get('precipitation_sum', ['N/A'])[0],
+            'forecast': forecast
         }
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
@@ -383,19 +403,29 @@ def get_mac_studio_status():
                 load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
                 load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
             elif 'PhysMem' in line:
-                # Parse: "PhysMem: 17G used (1693M wired, 982M compressor), 14G unused."
+                # Parse: "PhysMem: 3981M used (1245M wired, 0B compressor), 28G unused."
                 import re
-                used_match = re.search(r'(\d+)[GM]i? used', line)
-                # unused can be in M or G (megabytes or gigabytes)
-                unused_match = re.search(r'(\d+)[GM]i? unused', line)
+                # Match used value with unit (M/G)
+                used_match = re.search(r'(\d+)([GM])i? used', line)
+                # Match unused value with unit (M/G)
+                unused_match = re.search(r'(\d+)([GM])i? unused', line)
+                
                 if used_match:
-                    mem_used_gb = int(used_match.group(1))
+                    used_val = int(used_match.group(1))
+                    used_unit = used_match.group(2)
+                    if used_unit == 'M':
+                        mem_used_gb = round(used_val / 1024, 1)
+                    else:  # G
+                        mem_used_gb = float(used_val)
+                
                 if unused_match:
-                    # Check if it's M or G to convert properly
-                    if 'M unused' in line or 'Mi unused' in line:
-                        mem_free_gb = round(int(unused_match.group(1)) / 1024, 1)
-                    else:
-                        mem_free_gb = float(unused_match.group(1))
+                    unused_val = int(unused_match.group(1))
+                    unused_unit = unused_match.group(2)
+                    if unused_unit == 'M':
+                        mem_free_gb = round(unused_val / 1024, 1)
+                    else:  # G
+                        mem_free_gb = float(unused_val)
+                
                 mem_total_gb = round(mem_used_gb + mem_free_gb, 1)
                 if mem_total_gb > 0:
                     mem_used_pct = round(mem_used_gb / mem_total_gb * 100, 1)

@@ -59,6 +59,7 @@ def api_links():
         'status': 'ok',
         'links': [
             {'name': 'Sam Hunter', 'url': 'http://100.124.71.12:5002'},
+            {'name': 'Documenso', 'url': 'http://100.124.71.12:3000'},
             {'name': 'Immich', 'url': 'http://192.168.1.68:30041'},
             {'name': 'Jellyfin', 'url': 'http://192.168.1.68:30013'},
             {'name': 'Actual Budget', 'url': 'http://192.168.1.68:31012'},

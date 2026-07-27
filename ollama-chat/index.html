@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Chat</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; height: 100vh; display: flex; flex-direction: column; }
+        header { background: #16213e; padding: 1rem 1.5rem; border-bottom: 1px solid #0f3460; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        header h1 { font-size: 1.25rem; font-weight: 600; color: #e94560; }
+        .model-selector { display: flex; align-items: center; gap: 0.5rem; flex: 1; max-width: 400px; }
+        .model-selector label { font-size: 0.875rem; color: #aaa; }
+        .model-selector select { background: #0f3460; border: 1px solid #e94560; color: #eee; padding: 0.5rem; border-radius: 4px; font-size: 0.875rem; min-width: 200px; }
+        .model-selector select:focus { outline: none; box-shadow: 0 0 0 2px #e94560; }
+        .status { font-size: 0.75rem; color: #888; padding: 0.25rem 0.5rem; background: #0f3460; border-radius: 3px; }
+        .status.connected { color: #4ade80; }
+        .status.error { color: #f87171; }
+        main { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.5rem; }
+        .message { display: flex; gap: 0.75rem; max-width: 85%; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .message.assistant { align-self: flex-start; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; }
+        .message.user .avatar { background: #e94560; }
+        .message.assistant .avatar { background: #0f3460; border: 1px solid #e94560; }
+        .bubble { padding: 0.75rem 1rem; border-radius: 12px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+        .message.user .bubble { background: #e94560; color: #fff; border-bottom-right-radius: 4px; }
+        .message.assistant .bubble { background: #16213e; border: 1px solid #0f3460; border-bottom-left-radius: 4px; }
+        .message.assistant .bubble.thinking { border-color: #fbbf24; background: #1f1f3a; font-style: italic; color: #fbbf24; font-size: 0.875rem; }
+        .input-area { border-top: 1px solid #0f3460; padding-top: 1rem; }
+        .input-wrapper { display: flex; gap: 0.5rem; }
+        textarea { flex: 1; background: #0f3460; border: 1px solid #16213e; color: #eee; padding: 0.75rem; border-radius: 8px; resize: none; min-height: 48px; max-height: 150px; font-family: inherit; font-size: 0.9375rem; line-height: 1.5; }
+        textarea:focus { outline: none; border-color: #e94560; }
+        button.send { background: #e94560; color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; min-width: 80px; transition: background 0.15s; }
+        button.send:hover:not(:disabled) { background: #d13a56; }
+        button.send:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .model-info { font-size: 0.75rem; color: #888; margin-top: 0.25rem; }
+        .empty-state { text-align: center; color: #666; padding: 3rem; font-size: 0.875rem; }
+        .empty-state .hint { color: #e94560; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🤖 Ollama Chat</h1>
+        <div class="model-selector">
+            <label for="modelSelect">Model:</label>
+            <select id="modelSelect" disabled>
+                <option value="">Loading models…</option>
+            </select>
+        </div>
+        <span id="status" class="status">Connecting…</span>
+    </header>
+    <main>
+        <div id="messages" class="messages">
+            <div class="empty-state">
+                Select a model to start chatting.<br>
+                <span class="hint">Press Enter to send, Shift+Enter for new line.</span>
+            </div>
+        </div>
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="input" placeholder="Type a message…" disabled rows="1"></textarea>
+                <button class="send" id="sendBtn" disabled>Send</button>
+            </div>
+            <div id="modelInfo" class="model-info"></div>
+        </div>
+    </main>
+
+    <script>
+        const OLLAMA_HOST = 'http://192.168.1.174:11434';
+        const messagesEl = document.getElementById('messages');
+        const inputEl = document.getElementById('input');
+        const sendBtn = document.getElementById('sendBtn');
+        const modelSelect = document.getElementById('modelSelect');
+        const statusEl = document.getElementById('status');
+        const modelInfoEl = document.getElementById('modelInfo');
+
+        let currentModel = '';
+        let abortController = null;
+        let isStreaming = false;
+
+        function setStatus(text, className = '') {
+            statusEl.textContent = text;
+            statusEl.className = 'status ' + className;
+        }
+
+        async function fetchModels() {
+            try {
+                const res = await fetch(`${OLLAMA_HOST}/api/tags`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                modelSelect.innerHTML = '<option value="">Select a model</option>';
+                data.models.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.name;
+                    const caps = m.details?.capabilities?.join(', ') || 'completion';
+                    opt.textContent = `${m.name} (${caps})`;
+                    modelSelect.appendChild(opt);
+                });
+                modelSelect.disabled = false;
+                setStatus('Connected', 'connected');
+            } catch (e) {
+                setStatus('Connection failed: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+
+        modelSelect.addEventListener('change', () => {
+            currentModel = modelSelect.value;
+            if (currentModel) {
+                inputEl.disabled = false;
+                sendBtn.disabled = false;
+                inputEl.focus();
+                messagesEl.innerHTML = '<div class="empty-state">Chatting with <span class="hint">' + currentModel + '</span><br><span class="hint">Press Enter to send, Shift+Enter for new line.</span></div>';
+                const m = Array.from(modelSelect.options).find(o => o.value === currentModel);
+                modelInfoEl.textContent = m ? m.textContent : '';
+            } else {
+                inputEl.disabled = true;
+                sendBtn.disabled = true;
+                messagesEl.innerHTML = '<div class="empty-state">Select a model to start chatting.<br><span class="hint">Press Enter to send, Shift+Enter for new line.</span></div>';
+                modelInfoEl.textContent = '';
+            }
+        });
+
+        function appendMessage(role, content, isThinking = false) {
+            const empty = messagesEl.querySelector('.empty-state');
+            if (empty) empty.remove();
+
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`;
+            msg.innerHTML = `
+                <div class="avatar">${role === 'user' ? 'You' : 'AI'}</div>
+                <div class="bubble${isThinking ? ' thinking' : ''}">${escapeHtml(content)}</div>
+            `;
+            messagesEl.appendChild(msg);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return msg.querySelector('.bubble');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function sendMessage() {
+            const text = inputEl.value.trim();
+            if (!text || isStreaming || !currentModel) return;
+
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+            isStreaming = true;
+
+            appendMessage('user', text);
+            const assistantBubble = appendMessage('assistant', '');
+
+            abortController = new AbortController();
+
+            try {
+                const res = await fetch(`${OLLAMA_HOST}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: currentModel,
+                        messages: [{ role: 'user', content: text }],
+                        stream: true
+                    }),
+                    signal: abortController.signal
+                });
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                let fullResponse = '';
+                let thinkingContent = '';
+                let inThinking = false;
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n').filter(l => l.trim());
+
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.message?.content) {
+                                const content = data.message.content;
+                                fullResponse += content;
+                                assistantBubble.textContent = fullResponse;
+                                messagesEl.scrollTop = messagesEl.scrollHeight;
+                            }
+                            if (data.done) {
+                                isStreaming = false;
+                                inputEl.disabled = false;
+                                sendBtn.disabled = false;
+                                inputEl.focus();
+                            }
+                        } catch (e) {
+                            console.warn('Parse error:', line);
+                        }
+                    }
+                }
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    assistantBubble.textContent = 'Error: ' + e.message;
+                    assistantBubble.classList.add('thinking');
+                }
+                isStreaming = false;
+                inputEl.disabled = false;
+                sendBtn.disabled = false;
+                inputEl.focus();
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        inputEl.addEventListener('input', () => {
+            inputEl.style.height = 'auto';
+            inputEl.style.height = Math.min(inputEl.scrollHeight, 150) + 'px';
+        });
+
+        // Auto-resize textarea
+        fetchModels();
+    </script>
+</body>
+</html>

@@ -173,7 +173,7 @@ def get_weather():
             'temperature': c_to_f(temp_c),
             'condition': wmo.get(code, f'Unknown ({code})'),
             'humidity': current.get('relative_humidity_2m', 'N/A'),
-            'wind_speed': round(current.get('wind_speed_10m', 0) * 2.237, 1) if current.get('wind_speed_10m') else 'N/A',  # m/s to mph
+            'wind_speed': round(current.get('wind_speed_10m', 0) * 0.621371, 1) if current.get('wind_speed_10m') else 'N/A',  # km/h to mph
             'feels_like': c_to_f(feels_c),
             'high': c_to_f(high_c),
             'low': c_to_f(low_c),

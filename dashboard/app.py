@@ -62,9 +62,10 @@ def api_links():
             {'name': 'Documenso', 'url': 'http://100.124.71.12:3000'},
             {'name': 'Coolify', 'url': 'http://100.124.71.12:8080'},
             {'name': 'AppFlowy', 'url': 'http://100.124.71.12:3001'},
-            {'name': 'Immich', 'url': 'http://192.168.1.68:30041'},
-            {'name': 'Jellyfin', 'url': 'http://192.168.1.68:30013'},
-            {'name': 'Actual Budget', 'url': 'http://192.168.1.68:31012'},
+            {'name': 'TrueNAS', 'url': 'https://100.79.220.32'},
+            {'name': 'Immich', 'url': 'http://100.124.71.12:2283'},
+            {'name': 'Jellyfin', 'url': 'http://100.79.220.32:30013'},
+            {'name': 'Actual Budget', 'url': 'http://100.79.220.32:31012'},
             {'name': 'Gateway Logs', 'url': 'http://100.124.71.12:5001/api/gateway-logs?limit=50'},
             {'name': 'Gateway Errors', 'url': 'http://100.124.71.12:5001/api/gateway-errors?limit=20'},
         ]

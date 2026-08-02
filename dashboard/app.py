@@ -62,7 +62,7 @@ def api_links():
             {'name': 'Documenso', 'url': 'http://100.124.71.12:3000'},
             {'name': 'Coolify', 'url': 'http://100.124.71.12:8080'},
             {'name': 'AppFlowy', 'url': 'http://100.124.71.12:3001'},
-            {'name': 'TrueNAS', 'url': 'https://100.79.220.32'},
+            {'name': 'TrueNAS', 'url': 'http://192.168.1.68'},
             {'name': 'Immich', 'url': 'http://100.124.71.12:2283'},
             {'name': 'Jellyfin', 'url': 'http://100.79.220.32:30013'},
             {'name': 'Actual Budget', 'url': 'http://100.79.220.32:31012'},

@@ -1,0 +1,14 @@
+#!/bin/bash
+# check-dashboard wrapper script
+# Usage: check-dashboard [check|capture|diff|list-baselines] [--full] [commit]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_SCRIPT="$SCRIPT_DIR/check_dashboard.py"
+
+if [[ ! -f "$PYTHON_SCRIPT" ]]; then
+    echo "❌ check_dashboard.py not found at $PYTHON_SCRIPT"
+    exit 1
+fi
+
+# Run with python3
+python3 "$PYTHON_SCRIPT" "$@"

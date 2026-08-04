@@ -127,65 +127,65 @@
         }
         
         .weather-icon-large {
-                    font-size: 2.5rem;
-                }
-
-                .forecast-divider {
-                    border-top: 1px solid rgba(255, 255, 255, 0.1);
-                    margin: 12px 0 8px 0;
-                }
-
-                .forecast-label {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: #888;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin-bottom: 8px;
-                }
-
-                .forecast-day {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 6px 0;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                    font-size: 0.8rem;
-                }
-
-                .forecast-day:last-child {
-                    border-bottom: none;
-                }
-
-                .forecast-date {
-                    font-weight: 600;
-                    color: #fff;
-                    min-width: 50px;
-                }
-
-                .forecast-icon {
-                    font-size: 1.1rem;
-                    margin: 0 8px;
-                }
-
-                .forecast-condition {
-                    color: #aaa;
-                    flex: 1;
-                    text-align: center;
-                }
-
-                .forecast-temps {
-                    font-weight: 600;
-                    color: #fff;
-                    margin: 0 8px;
-                }
-
-                .forecast-precip {
-                    color: #00d4ff;
-                    font-size: 0.7rem;
-                }
-
-                .status-ok {
+            font-size: 2.5rem;
+        }
+        
+        .forecast-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 12px 0 8px 0;
+        }
+        
+        .forecast-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .forecast-day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+        }
+        
+        .forecast-day:last-child {
+            border-bottom: none;
+        }
+        
+        .forecast-date {
+            font-weight: 600;
+            color: #fff;
+            min-width: 50px;
+        }
+        
+        .forecast-icon {
+            font-size: 1.1rem;
+            margin: 0 8px;
+        }
+        
+        .forecast-condition {
+            color: #aaa;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .forecast-temps {
+            font-weight: 600;
+            color: #fff;
+            margin: 0 8px;
+        }
+        
+        .forecast-precip {
+            color: #00d4ff;
+            font-size: 0.7rem;
+        }
+        
+        .status-ok {
             color: #00b894;
         }
         
@@ -229,130 +229,6 @@
             padding: 40px;
             background: rgba(0,0,0,0.5);
             border-radius: 8px;
-        }
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            color: #888;
-            font-size: 0.8rem;
-        }
-        
-        /* Chat Styles */
-        .chat-container {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .chat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #7b2cbf, #a29bfe);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-        
-        .chat-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        
-        .chat-messages {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 16px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-        
-        .chat-message {
-            margin-bottom: 12px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        
-        .chat-message.user {
-            background: rgba(0, 212, 255, 0.1);
-            border-left: 3px solid #00d4ff;
-        }
-        
-        .chat-message.assistant {
-            background: rgba(123, 44, 191, 0.1);
-            border-left: 3px solid #7b2cbf;
-        }
-        
-        .chat-role {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .chat-role.user { color: #00d4ff; }
-        .chat-role.assistant { color: #7b2cbf; }
-        
-        .chat-content {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-        
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .chat-input {
-            flex: 1;
-            min-height: 60px;
-            max-height: 120px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.3);
-            color: #eee;
-            font-family: inherit;
-            font-size: 0.9rem;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        
-        .chat-input:focus {
-            outline: none;
-            border-color: #00d4ff;
-        }
-        
-        .chat-send {
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: none;
-            background: linear-gradient(135deg, #7b2cbf, #a29bfe);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            align-self: flex-end;
-            transition: opacity 0.2s;
-        }
-        
-        .chat-send:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-        
-        .chat-send:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
         
         .footer {
@@ -514,24 +390,6 @@
         </div>
     </div>
     
-    <!-- Chat Container -->
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="chat-icon">💬</div>
-            <div class="chat-title">Chat with Ollama (Mac Studio)</div>
-        </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input-area">
-            <textarea 
-                id="chat-input" 
-                class="chat-input" 
-                placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
-                rows="2"
-            ></textarea>
-            <button id="chat-send" class="chat-send" disabled>Send</button>
-        </div>
-    </div>
-    
     <div class="footer">
         <span id="footer-time">Last updated: —</span> | Data refreshes every 5 min
     </div>
@@ -598,30 +456,30 @@
         }
         
         // === Load PM Drive Report ===
-                async function loadPMDriveReport() {
-                    try {
-                        const res = await fetch('/api/pm-drive');
-                        const data = await res.json();
-                        const el = document.getElementById('pm-drive-data');
-                        if (data.status === 'ok') {
-                            const durationStr = data.duration_minutes ? `${data.duration_minutes} min` : 'N/A';
-                            const distanceStr = data.distance_miles ? `${data.distance_miles} mi` : 'N/A';
-                            el.innerHTML = `
-                                <div class="metric-row"><span>From</span><span class="metric-value">${data.origin}</span></div>
-                                <div class="metric-row"><span>To</span><span class="metric-value">${data.destination}</span></div>
-                                <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time}</span></div>
-                                <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time}</span></div>
-                                <div class="metric-row"><span>Distance</span><span class="metric-value">${distanceStr}</span></div>
-                                <div class="metric-row"><span>Duration</span><span class="metric-value">${durationStr}</span></div>
-                                <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
-                            `;
-                        } else {
-                            el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
-                        }
-                    } catch (e) {
-                        document.getElementById('pm-drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
-                    }
+        async function loadPMDriveReport() {
+            try {
+                const res = await fetch('/api/pm-drive');
+                const data = await res.json();
+                const el = document.getElementById('pm-drive-data');
+                if (data.status === 'ok') {
+                    const durationStr = data.duration_minutes ? `${data.duration_minutes} min` : 'N/A';
+                    const distanceStr = data.distance_miles ? `${data.distance_miles} mi` : 'N/A';
+                    el.innerHTML = `
+                        <div class="metric-row"><span>From</span><span class="metric-value">${data.origin}</span></div>
+                        <div class="metric-row"><span>To</span><span class="metric-value">${data.destination}</span></div>
+                        <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time}</span></div>
+                        <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time}</span></div>
+                        <div class="metric-row"><span>Distance</span><span class="metric-value">${distanceStr}</span></div>
+                        <div class="metric-row"><span>Duration</span><span class="metric-value">${durationStr}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
+            } catch (e) {
+                document.getElementById('pm-drive-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
         
         // === Load Weather ===
         async function loadWeather() {
@@ -631,14 +489,16 @@
                 const el = document.getElementById('weather-data');
                 const headerIcon = document.getElementById('weather-header-icon');
                 if (data.status === 'ok') {
-                    const icon = getWeatherIcon(data.condition);
+                    const now = new Date();
+                    const hour = now.getHours();
+                    const icon = getWeatherIcon(data.condition, hour);
                     if (headerIcon) headerIcon.textContent = icon;
                     // Build forecast HTML
                     let forecastHtml = '';
                     if (data.forecast && data.forecast.length > 0) {
                         forecastHtml = '<div class="forecast-divider"></div><div class="forecast-label">5-Day Forecast</div>';
                         data.forecast.forEach(day => {
-                            const dayIcon = getWeatherIcon(day.condition);
+                            const dayIcon = getWeatherIcon(day.condition, hour);
                             // Format date: "Jul 26"
                             const dateObj = new Date(day.date);
                             const dateStr = dateObj.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
@@ -647,15 +507,19 @@
                                     <span class="forecast-date">${dateStr}</span>
                                     <span class="forecast-icon">${dayIcon}</span>
                                     <span class="forecast-condition">${day.condition}</span>
-                                    <span class="forecast-temps">${day.high}° / ${day.low}°</span>
-                                    <span class="forecast-precip">💧 ${day.precip}mm</span>
-                                </div>`;
+                                    <span class="forecast-temps">${day.high_temp}°/${day.low_temp}°</span>
+                                    ${day.precip_chance ? `<span class="forecast-precip">${day.precip_chance}% rain</span>` : ''}
+                                </div>
+                            `;
                         });
                     }
                     el.innerHTML = `
-                        <div class="metric-row weather-icon-row"><span></span><span class="metric-value weather-icon-large">${icon}</span></div>
-                        <div class="metric-row"><span>Temperature</span><span class="metric-value">${data.temperature}°F</span></div>
+                        <div class="weather-icon-row">
+                            <span class="weather-icon-large">${icon}</span>
+                            <span class="metric-value">${data.temp}°</span>
+                        </div>
                         <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
+                        <div class="metric-row"><span>Feels Like</span><span class="metric-value">${data.feels_like}°</span></div>
                         <div class="metric-row"><span>Humidity</span><span class="metric-value">${data.humidity}%</span></div>
                         <div class="metric-row"><span>Wind</span><span class="metric-value">${data.wind_speed} mph</span></div>
                         ${forecastHtml}
@@ -668,18 +532,26 @@
             }
         }
         
-        function getWeatherIcon(condition) {
-            const c = condition.toLowerCase();
-            if (c.includes('rain') || c.includes('drizzle')) return '🌧️';
-            if (c.includes('snow')) return '❄️';
-            if (c.includes('storm') || c.includes('thunder')) return '⛈️';
-            if (c.includes('overcast')) return '☁️';
-            if (c.includes('cloud') || c.includes('partly')) return '⛅';
-            if (c.includes('fog') || c.includes('mist') || c.includes('haze')) return '🌫️';
-            if (c === 'clear' || c.includes('sunny')) return '☀️';
-            if (c.includes('mostly clear')) return '🌤️';
-            if (c.includes('wind')) return '💨';
-            return '🌤️';
+        // === Weather Icon Map ===
+        function getWeatherIcon(condition, hour) {
+            const isNight = hour !== undefined && (hour < 6 || hour >= 20); // Before 6am or after 8pm
+            const icons = {
+                'clear': isNight ? '🌙' : '☀️',
+                'sunny': isNight ? '🌙' : '☀️',
+                'partly cloudy': isNight ? '☁️' : '⛅',
+                'partly': isNight ? '☁️' : '⛅',
+                'cloudy': '☁️', 'overcast': '☁️',
+                'rain': '🌧️', 'light rain': '🌦️', 'heavy rain': '🌧️',
+                'thunderstorm': '⛈️', 'storm': '⛈️',
+                'snow': '❄️', 'sleet': '🌨️',
+                'fog': '🌫️', 'mist': '🌫️',
+                'windy': '💨',
+            };
+            const key = condition.toLowerCase();
+            for (const [k, v] of Object.entries(icons)) {
+                if (key.includes(k)) return v;
+            }
+            return isNight ? '🌙' : '🌤️';
         }
         
         // === Load Links ===
@@ -690,9 +562,7 @@
                 const el = document.getElementById('links-data');
                 if (data.status === 'ok' && data.links) {
                     el.innerHTML = data.links.map(link => 
-                        `<a href="${link.url}" target="_blank" style="display: block; color: #00d4ff; text-decoration: none; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            ${link.name}
-                        </a>`
+                        `<a href="${link.url}" target="_blank" style="display:block;color:#00d4ff;margin:4px 0;text-decoration:none;">${link.name}</a>`
                     ).join('');
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -702,7 +572,7 @@
             }
         }
         
-        // === Load Gmail Summary ===
+        // === Load Gmail ===
         async function loadGmail() {
             try {
                 const res = await fetch('/api/gmail');
@@ -710,13 +580,18 @@
                 const el = document.getElementById('gmail-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>Account</span><span class="metric-value">${data.email_address}</span></div>
-                        <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count}</span></div>
-                        <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count}</span></div>
-                        <div class="metric-row"><span>Starred</span><span class="metric-value">${data.starred_count}</span></div>
+                        <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count || 0}</span></div>
+                        <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count || 0}</span></div>
+                        ${data.latest && data.latest.length > 0 ? data.latest.map(m => `
+                            <div style="margin:8px 0;padding:8px;background:rgba(255,255,255,0.05);border-radius:4px;font-size:0.85rem;">
+                                <div style="color:#00d4ff;font-weight:600;">${escapeHtml(m.from)}</div>
+                                <div style="color:#aaa;margin-top:2px;">${escapeHtml(m.subject)}</div>
+                                <div style="color:#666;font-size:0.75rem;margin-top:2px;">${m.date}</div>
+                            </div>
+                        `).join('') : '<span class="loading">No recent messages</span>'}
                     `;
                 } else {
-                    el.innerHTML = `<span class="loading">${data.message || 'Not configured'}</span>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
                 document.getElementById('gmail-data').innerHTML = `<span class="loading">Error loading data</span>`;
@@ -726,17 +601,16 @@
         // === Load OpenRouter Usage ===
         async function loadOpenRoute() {
             try {
-                const res = await fetch('/api/usage');
+                const res = await fetch('/api/openroute');
                 const data = await res.json();
                 const el = document.getElementById('openroute-data');
                 if (data.status === 'ok') {
-                    const formatNum = n => n ? n.toLocaleString() : '0';
                     el.innerHTML = `
-                        <div class="metric-row"><span>Total Calls</span><span class="metric-value">${formatNum(data.total_calls)}</span></div>
-                        <div class="metric-row"><span>Today's Calls</span><span class="metric-value">${formatNum(data.today_calls)}</span></div>
-                        <div class="metric-row"><span>Today's Share</span><span class="metric-value">${data.share_of_total}%</span></div>
-                        <div class="metric-row"><span>30-Day Avg</span><span class="metric-value">${formatNum(data.avg_30_day)}</span></div>
-                        <div class="metric-row"><span>Hourly Rate</span><span class="metric-value">${formatNum(data.hourly_rate)}</span></div>
+                        <div class="metric-row"><span>Requests</span><span class="metric-value">${data.requests || 0}</span></div>
+                        <div class="metric-row"><span>Prompt Tokens</span><span class="metric-value">${data.prompt_tokens || 0}</span></div>
+                        <div class="metric-row"><span>Completion Tokens</span><span class="metric-value">${data.completion_tokens || 0}</span></div>
+                        <div class="metric-row"><span>Cost</span><span class="metric-value">$${(data.cost_usd || 0).toFixed(4)}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -746,110 +620,37 @@
             }
         }
         
-        // === Load TrueNAS Status ===
-        async function loadTruenas() {
+        // === Load Ollama (Mac Studio) ===
+        async function loadGemma() {
             try {
-                const res = await fetch('/api/truenas');
+                const res = await fetch('/api/mac-studio/ollama');
                 const data = await res.json();
-                const el = document.getElementById('truenas-data');
+                const el = document.getElementById('gemma-data');
                 if (data.status === 'ok') {
-                    // Pool status
-                    let poolHtml = '';
-                    if (data.pools && data.pools.length > 0) {
-                        poolHtml = data.pools.map(pool => {
-                            const statusClass = pool.healthy ? 'status-ok' : 'status-error';
-                            return `
-                                <div class="metric-row">
-                                    <span>${pool.name} (${pool.status})</span>
-                                    <span class="metric-value ${statusClass}">${pool.pct_used}% used (${pool.free_tb} TB free)</span>
-                                </div>
-                            `;
-                        }).join('');
-                    } else {
-                        poolHtml = '<div class="metric-row"><span>No pools</span><span class="metric-value">N/A</span></div>';
-                    }
-                    
-                    // Alerts
-                    let alertHtml = '';
-                    const totalAlerts = (data.alerts.CRITICAL || 0) + (data.alerts.WARNING || 0) + (data.alerts.INFO || 0);
-                    if (totalAlerts > 0) {
-                        alertHtml = `
-                            <div class="metric-row"><span>Alerts</span><span class="metric-value">${totalAlerts} total (${data.alerts.CRITICAL || 0} critical, ${data.alerts.WARNING || 0} warning)</span></div>
-                        `;
-                        if (data.active_alerts && data.active_alerts.length > 0) {
-                            alertHtml += data.active_alerts.map(a => 
-                                `<div class="metric-row"><span>${a.level}</span><span class="metric-value status-warn">${escapeHtml(a.text.substring(0, 60))}...</span></div>`
-                            ).join('');
-                        }
-                    } else {
-                        alertHtml = '<div class="metric-row"><span>Alerts</span><span class="metric-value status-ok">None</span></div>';
-                    }
-                    
-                    // Key apps
-                    let appHtml = '';
-                    if (data.key_apps && data.key_apps.length > 0) {
-                        appHtml = data.key_apps.map(app => {
-                            const stateClass = app.state === 'RUNNING' ? 'status-ok' : 'status-error';
-                            const urlHtml = app.url ? `<a href="${app.url}" target="_blank" style="color: #00d4ff; font-size: 0.75rem;">${app.url}</a>` : '';
-                            return `
-                                <div class="metric-row">
-                                    <span>${app.name}</span>
-                                    <span class="metric-value ${stateClass}">${app.state} ${app.version}</span>
-                                </div>
-                                ${urlHtml ? `<div class="metric-row"><span></span><span class="metric-value">${urlHtml}</span></div>` : ''}
-                            `;
-                        }).join('');
-                    }
-                    
-                    // Load average
-                    const load = data.load_avg || [0, 0, 0];
-                    const loadStr = load.map(l => l.toFixed(2)).join(', ');
-                    
+                    const models = data.models || [];
+                    const running = data.running || [];
                     el.innerHTML = `
-                        <div class="metric-row"><span>Hostname</span><span class="metric-value">${data.hostname}</span></div>
-                        <div class="metric-row"><span>Version</span><span class="metric-value">${data.version}</span></div>
-                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
-                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_model} (${data.cpu_cores} cores)</span></div>
-                        <div class="metric-row"><span>Load (1/5/15)</span><span class="metric-value">${loadStr}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_total_gb} GB</span></div>
-                        ${poolHtml}
-                        ${alertHtml}
-                        <div class="metric-row"><span>Apps Running</span><span class="metric-value">${data.apps_running}/${data.apps_total}</span></div>
-                        ${appHtml}
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Running' : 'Stopped'}</span></div>
+                        <div class="metric-row"><span>Models Installed</span><span class="metric-value">${models.length}</span></div>
+                        <div class="metric-row"><span>Currently Running</span><span class="metric-value">${running.length}</span></div>
+                        ${models.length > 0 ? `
+                            <div style="margin-top:12px;font-size:0.85rem;">
+                                ${models.map(m => `
+                                    <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                                        <span>${escapeHtml(m.name)}</span>
+                                        <span class="metric-value">${(m.size_gb || 0).toFixed(1)} GB</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<span class="loading">No models installed</span>'}
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                document.getElementById('truenas-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
-        // === Load Ollama Model Status (Mac Studio) ===
-                async function loadOllamaModelStatus() {
-                    try {
-                        const res = await fetch('/api/mac-studio/ollama');
-                        const data = await res.json();
-                        const el = document.getElementById('gemma-data');
-                        if (data.status === 'ok') {
-                            const runningModel = data.running_models && data.running_models.length > 0
-                                ? data.running_models[0].name
-                                : 'None (idle)';
-                            const installedModels = data.models && data.models.length > 0
-                                ? data.models.map(m => m.name).join(', ')
-                                : `${data.models_installed} installed`;
-                            el.innerHTML = `
-                                <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Ollama Running' : 'Ollama Stopped'}</span></div>
-                                <div class="metric-row"><span>Running Model</span><span class="metric-value">${runningModel}</span></div>
-                                <div class="metric-row"><span>Models Installed</span><span class="metric-value">${installedModels}</span></div>
-                            `;
-                        } else {
-                            el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
-                        }
-                    } catch (e) {
-                        document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
-                    }
-                }
         
         // === Load Linux Server ===
         async function loadLinuxServer() {
@@ -858,18 +659,12 @@
                 const data = await res.json();
                 const el = document.getElementById('linux-server-data');
                 if (data.status === 'ok') {
-                    const diskFreeGb = data.disk_total && data.disk_used ? 
-                        (parseFloat(data.disk_total.replace('T', '')) * 1024 - parseFloat(data.disk_used.replace('G', ''))).toFixed(1) + ' GB' :
-                        'N/A';
                     el.innerHTML = `
-                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
-                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_model}</span></div>
-                        <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_avail_gb} GB free of ${data.memory_total_gb} GB)</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_percent}%</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_percent}%</span></div>
+                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_percent}%</span></div>
+                        <div class="metric-row"><span>Load</span><span class="metric-value">${data.load_1m}</span></div>
                         <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
-                        <div class="metric-row"><span>CPU Temp</span><span class="metric-value">${data.cpu_temp}</span></div>
-                        <div class="metric-row"><span>IP</span><span class="metric-value">${data.ip}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -887,15 +682,10 @@
                 const el = document.getElementById('mac-studio-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
-                        <div class="metric-row"><span>Model</span><span class="metric-value">${data.model}</span></div>
-                        <div class="metric-row"><span>Chip</span><span class="metric-value">${data.chip}</span></div>
-                        <div class="metric-row"><span>OS</span><span class="metric-value">${data.os}</span></div>
-                        <div class="metric-row"><span>RAM</span><span class="metric-value">${data.ram}</span></div>
-                        <div class="metric-row"><span>Storage</span><span class="metric-value">${data.storage}</span></div>
-                        <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_used_gb} GB / ${data.memory_total_gb} GB)</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_percent}%</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_percent}%</span></div>
+                        <div class="metric-row"><span>Load</span><span class="metric-value">${data.load_1m}</span></div>
+                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -905,25 +695,42 @@
             }
         }
         
+        // === Load TrueNAS ===
+        async function loadTrueNAS() {
+            try {
+                const res = await fetch('/api/truenas');
+                const data = await res.json();
+                const el = document.getElementById('truenas-data');
+                if (data.status === 'ok') {
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Pool</span><span class="metric-value">${data.pool_name || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Capacity</span><span class="metric-value">${data.pool_capacity || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Used</span><span class="metric-value">${data.pool_used || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Free</span><span class="metric-value">${data.pool_free || 'N/A'}</span></div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('truenas-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
+        
         // === Load Cameras ===
         async function loadCameras() {
             try {
                 const res = await fetch('/api/cameras');
                 const data = await res.json();
                 const el = document.getElementById('cameras-data');
-                if (data.status === 'ok' && data.cameras && data.cameras.length > 0) {
-                    el.innerHTML = `
-                        <div class="camera-grid">
-                            ${data.cameras.map(cam => `
-                                <div class="camera-item">
-                                    <img src="/api/camera-image?url=${encodeURIComponent(cam.snapshot_url)}" alt="${cam.name} (${cam.ip})" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <span style="display: none; color: #888; font-size: 0.8rem; padding: 40px; align-items: center; justify-content: center;">Failed to load snapshot</span>
-                                </div>
-                            `).join('')}
+                if (data.status === 'ok' && data.cameras) {
+                    el.innerHTML = data.cameras.map(cam => `
+                        <div class="camera-item">
+                            <img src="${cam.url}" alt="${cam.name}" loading="lazy">
+                            <span>Failed to load</span>
                         </div>
-                    `;
+                    `).join('');
                 } else {
-                    el.innerHTML = `<span class="loading">${data.message || 'No cameras configured'}</span>`;
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
                 document.getElementById('cameras-data').innerHTML = `<span class="loading">Error loading data</span>`;
@@ -937,17 +744,23 @@
                 const data = await res.json();
                 const el = document.getElementById('llm-metrics-data');
                 if (data.status === 'ok') {
-                    const formatNum = n => n ? n.toLocaleString() : '0';
+                    const stats = data.stats || {};
+                    const modelUsage = data.model_usage || {};
                     el.innerHTML = `
-                        <div class="metric-row"><span>Total Calls</span><span class="metric-value">${formatNum(data.total_calls)}</span></div>
-                        <div class="metric-row"><span>Today's Calls</span><span class="metric-value">${formatNum(data.today_calls)}</span></div>
-                        <div class="metric-row"><span>Today's Share</span><span class="metric-value">${data.share_of_total}%</span></div>
-                        <div class="metric-row"><span>30-Day Avg</span><span class="metric-value">${formatNum(data.avg_30_day)}</span></div>
-                        <div class="metric-row"><span>Hourly Rate</span><span class="metric-value">${formatNum(data.hourly_rate)}</span></div>
-                        ${data.calls_today.length > 0 ? `
-                            <div class="metric-row"><span>Calls Today</span></div>
-                            ${data.calls_today.map(ts => `<div class="metric-row" style="margin-left: 12px;"><span>• ${ts}</span></div>`).join('')}
-                        ` : '<div class="metric-row"><span>Calls Today</span><span class="metric-value">No calls today</span></div>'}
+                        <div class="metric-row"><span>Total Requests</span><span class="metric-value">${stats.total_requests || 0}</span></div>
+                        <div class="metric-row"><span>Total Tokens</span><span class="metric-value">${(stats.total_tokens || 0).toLocaleString()}</span></div>
+                        <div class="metric-row"><span>Avg Latency</span><span class="metric-value">${stats.avg_latency_ms || 0} ms</span></div>
+                        <div class="metric-row"><span>Errors</span><span class="metric-value">${stats.errors || 0}</span></div>
+                        ${Object.keys(modelUsage).length > 0 ? `
+                            <div class="forecast-divider"></div>
+                            <div class="forecast-label">Model Usage</div>
+                            ${Object.entries(modelUsage).map(([model, usage]) => `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">${escapeHtml(model)}</span>
+                                    <span class="forecast-temps">${usage.requests} req / ${usage.tokens.toLocaleString()} tok</span>
+                                </div>
+                            `).join('')}
+                        ` : ''}
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -957,119 +770,7 @@
             }
         }
         
-        // === Chat Functionality ===
-        let chatHistory = [];
-        let defaultModel = 'hermes-4-14b:latest';
-        
-        async function loadOllamaModels() {
-            try {
-                const res = await fetch('/api/ollama-models');
-                const data = await res.json();
-                if (data.models && data.models.length > 0) {
-                    window.ollamaModels = data.models;
-                    defaultModel = data.models[0].name;
-                    console.log('Loaded Ollama models:', data.models.map(m => m.name));
-                }
-            } catch (e) {
-                console.error('Failed to load Ollama models:', e);
-            }
-        }
-        
-        function appendToChat(role, content) {
-            const chatMessages = document.getElementById('chat-messages');
-            if (!chatMessages) return;
-            
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `chat-message ${role}`;
-            
-            const roleLabel = role === 'user' ? 'You' : defaultModel;
-            const roleClass = role === 'user' ? 'user' : 'assistant';
-            
-            msgDiv.innerHTML = `
-                <div class="chat-role ${roleClass}">${roleLabel}</div>
-                <div class="chat-content">${escapeHtml(content)}</div>
-            `;
-            
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        async function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const sendBtn = document.getElementById('chat-send');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            input.value = '';
-            input.style.height = 'auto';
-            sendBtn.disabled = true;
-            sendBtn.textContent = '...';
-            
-            // Add user message to chat
-            appendToChat('user', message);
-            chatHistory.push({role: 'user', content: message});
-            
-            try {
-                const res = await fetch('/api/ollama-chat', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        model: defaultModel,
-                        messages: chatHistory,
-                        stream: false
-                    })
-                });
-                
-                const data = await res.json();
-                
-                if (data.message && data.message.content) {
-                    const response = data.message.content;
-                    appendToChat('assistant', response);
-                    chatHistory.push({role: 'assistant', content: response});
-                } else if (data.error) {
-                    appendToChat('assistant', `Error: ${data.error}`);
-                } else {
-                    appendToChat('assistant', 'Error: Unexpected response format');
-                }
-            } catch (e) {
-                appendToChat('assistant', `Error: ${e.message}`);
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.textContent = 'Send';
-            }
-        }
-        
-        // Auto-resize textarea
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('chat-input');
-            const sendBtn = document.getElementById('chat-send');
-            
-            if (input) {
-                input.addEventListener('input', () => {
-                    input.style.height = 'auto';
-                    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-                    
-                    // Enable/disable send button based on input content
-                    if (sendBtn) {
-                        sendBtn.disabled = !input.value.trim();
-                    }
-                });
-                
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendChatMessage();
-                    }
-                });
-            }
-            
-            if (sendBtn) {
-                sendBtn.addEventListener('click', sendChatMessage);
-            }
-        });
-        
-        // === Initialize All Loaders ===
+        // === Initial Load ===
         async function init() {
             await Promise.all([
                 loadServerTime(),
@@ -1079,24 +780,17 @@
                 loadLinks(),
                 loadGmail(),
                 loadOpenRoute(),
-                loadOllamaModelStatus(),
+                loadGemma(),
                 loadLinuxServer(),
                 loadMacStudio(),
-                                loadTruenas(),
+                loadTrueNAS(),
                 loadCameras(),
-                loadLLMMetrics(),
-                loadOllamaModels()
+                loadLLMMetrics()
             ]);
         }
         
-        // Refresh time and weather periodically
-        setInterval(() => {
-            loadServerTime();
-            loadWeather();
-        }, 30 * 60 * 1000); // 30 minutes
-        
-        // Run on page load
         init();
+        setInterval(init, 5 * 60 * 1000);
     </script>
 </body>
 </html>

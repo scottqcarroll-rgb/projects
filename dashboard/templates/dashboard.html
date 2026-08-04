@@ -418,7 +418,7 @@
         // === Load Server Time ===
         async function loadServerTime() {
             try {
-                const res = await fetch('/api/time');
+                const res = await fetch('/api/server-time');
                 const data = await res.json();
                 if (data.status === 'ok') {
                     document.getElementById('datetime').textContent = `Last updated: ${data.datetime} (${data.timezone})`;
@@ -601,16 +601,18 @@
         // === Load OpenRouter Usage ===
         async function loadOpenRoute() {
             try {
-                const res = await fetch('/api/openroute');
+                const res = await fetch('/api/usage');
                 const data = await res.json();
                 const el = document.getElementById('openroute-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>Requests</span><span class="metric-value">${data.requests || 0}</span></div>
-                        <div class="metric-row"><span>Prompt Tokens</span><span class="metric-value">${data.prompt_tokens || 0}</span></div>
-                        <div class="metric-row"><span>Completion Tokens</span><span class="metric-value">${data.completion_tokens || 0}</span></div>
-                        <div class="metric-row"><span>Cost</span><span class="metric-value">$${(data.cost_usd || 0).toFixed(4)}</span></div>
-                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
+                        <div class="metric-row"><span>Total Usage</span><span class="metric-value">$${(data.usage_total || 0).toFixed(2)}</span></div>
+                        <div class="metric-row"><span>Daily</span><span class="metric-value">$${(data.usage_daily || 0).toFixed(2)}</span></div>
+                        <div class="metric-row"><span>Weekly</span><span class="metric-value">$${(data.usage_weekly || 0).toFixed(2)}</span></div>
+                        <div class="metric-row"><span>Monthly</span><span class="metric-value">$${(data.usage_monthly || 0).toFixed(2)}</span></div>
+                        <div class="metric-row"><span>Limit</span><span class="metric-value">${data.limit ? '$' + data.limit : 'N/A'}</span></div>
+                        <div class="metric-row"><span>Remaining</span><span class="metric-value">${data.limit_remaining ? '$' + data.limit_remaining : 'N/A'}</span></div>
+                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.is_free_tier ? 'Free Tier' : 'Paid'}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -660,9 +662,9 @@
                 const el = document.getElementById('linux-server-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_percent}%</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_percent}%</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_percent}%</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.load_1m}</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}%</span></div>
+                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct}</span></div>
                         <div class="metric-row"><span>Load</span><span class="metric-value">${data.load_1m}</span></div>
                         <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
                     `;
@@ -682,8 +684,8 @@
                 const el = document.getElementById('mac-studio-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_percent}%</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_percent}%</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.load_1m}</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}%</span></div>
                         <div class="metric-row"><span>Load</span><span class="metric-value">${data.load_1m}</span></div>
                         <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
                     `;
@@ -702,11 +704,12 @@
                 const data = await res.json();
                 const el = document.getElementById('truenas-data');
                 if (data.status === 'ok') {
+                    const pool = data.pools && data.pools[0] ? data.pools[0] : {};
                     el.innerHTML = `
-                        <div class="metric-row"><span>Pool</span><span class="metric-value">${data.pool_name || 'N/A'}</span></div>
-                        <div class="metric-row"><span>Capacity</span><span class="metric-value">${data.pool_capacity || 'N/A'}</span></div>
-                        <div class="metric-row"><span>Used</span><span class="metric-value">${data.pool_used || 'N/A'}</span></div>
-                        <div class="metric-row"><span>Free</span><span class="metric-value">${data.pool_free || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Pool</span><span class="metric-value">${pool.name || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Capacity</span><span class="metric-value">${pool.size_tb || 'N/A'} TB</span></div>
+                        <div class="metric-row"><span>Used</span><span class="metric-value">${pool.allocated_tb || 'N/A'} TB</span></div>
+                        <div class="metric-row"><span>Free</span><span class="metric-value">${pool.free_tb || 'N/A'} TB</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -725,8 +728,8 @@
                 if (data.status === 'ok' && data.cameras) {
                     el.innerHTML = data.cameras.map(cam => `
                         <div class="camera-item">
-                            <img src="${cam.url}" alt="${cam.name}" loading="lazy">
-                            <span>Failed to load</span>
+                            <img src="/api/camera-image?url=${encodeURIComponent(cam.snapshot_url)}" alt="${cam.name}" loading="lazy">
+                            <span>${cam.name}</span>
                         </div>
                     `).join('');
                 } else {

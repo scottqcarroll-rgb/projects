@@ -507,8 +507,8 @@
                                     <span class="forecast-date">${dateStr}</span>
                                     <span class="forecast-icon">${dayIcon}</span>
                                     <span class="forecast-condition">${day.condition}</span>
-                                    <span class="forecast-temps">${day.high_temp}°/${day.low_temp}°</span>
-                                    ${day.precip_chance ? `<span class="forecast-precip">${day.precip_chance}% rain</span>` : ''}
+                                    <span class="forecast-temps">${day.high}°/${day.low}°</span>
+                                    ${day.precip && day.precip > 0 ? `<span class="forecast-precip">${day.precip} in rain</span>` : ''}
                                 </div>
                             `;
                         });
@@ -516,7 +516,7 @@
                     el.innerHTML = `
                         <div class="weather-icon-row">
                             <span class="weather-icon-large">${icon}</span>
-                            <span class="metric-value">${data.temp}°</span>
+                            <span class="metric-value">${data.temperature}°</span>
                         </div>
                         <div class="metric-row"><span>Condition</span><span class="metric-value">${data.condition}</span></div>
                         <div class="metric-row"><span>Feels Like</span><span class="metric-value">${data.feels_like}°</span></div>

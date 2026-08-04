@@ -438,6 +438,20 @@
                 if (data.status === 'ok') {
                     const durationStr = data.duration_minutes ? `${data.duration_minutes} min` : 'N/A';
                     const distanceStr = data.distance_miles ? `${data.distance_miles} mi` : 'N/A';
+                    let routesHtml = '';
+                    if (data.routes && data.routes.length > 0) {
+                        routesHtml = '<div class="forecast-divider"></div><div class="forecast-label">Route Options</div>';
+                        data.routes.forEach((route, i) => {
+                            routesHtml += `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">Route ${i + 1}: ${route.summary}</span>
+                                    <span class="forecast-condition">${route.distance}</span>
+                                    <span class="forecast-temps">${route.duration}</span>
+                                    <span class="forecast-precip">${route.traffic} ${route.delay ? '• ' + route.delay : ''}</span>
+                                </div>
+                            `;
+                        });
+                    }
                     el.innerHTML = `
                         <div class="metric-row"><span>From</span><span class="metric-value">${data.origin}</span></div>
                         <div class="metric-row"><span>To</span><span class="metric-value">${data.destination}</span></div>
@@ -446,6 +460,7 @@
                         <div class="metric-row"><span>Distance</span><span class="metric-value">${distanceStr}</span></div>
                         <div class="metric-row"><span>Duration</span><span class="metric-value">${durationStr}</span></div>
                         <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
+                        ${routesHtml}
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
@@ -457,23 +472,38 @@
         
         // === Load PM Drive Report ===
         async function loadPMDriveReport() {
-            try {
-                const res = await fetch('/api/pm-drive');
-                const data = await res.json();
-                const el = document.getElementById('pm-drive-data');
-                if (data.status === 'ok') {
-                    const durationStr = data.duration_minutes ? `${data.duration_minutes} min` : 'N/A';
-                    const distanceStr = data.distance_miles ? `${data.distance_miles} mi` : 'N/A';
-                    el.innerHTML = `
-                        <div class="metric-row"><span>From</span><span class="metric-value">${data.origin}</span></div>
-                        <div class="metric-row"><span>To</span><span class="metric-value">${data.destination}</span></div>
-                        <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time}</span></div>
-                        <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time}</span></div>
-                        <div class="metric-row"><span>Distance</span><span class="metric-value">${distanceStr}</span></div>
-                        <div class="metric-row"><span>Duration</span><span class="metric-value">${durationStr}</span></div>
-                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
-                    `;
-                } else {
+                    try {
+                        const res = await fetch('/api/pm-drive');
+                        const data = await res.json();
+                        const el = document.getElementById('pm-drive-data');
+                        if (data.status === 'ok') {
+                            const durationStr = data.duration_minutes ? `${data.duration_minutes} min` : 'N/A';
+                            const distanceStr = data.distance_miles ? `${data.distance_miles} mi` : 'N/A';
+                            let routesHtml = '';
+                            if (data.routes && data.routes.length > 0) {
+                                routesHtml = '<div class="forecast-divider"></div><div class="forecast-label">Route Options</div>';
+                                data.routes.forEach((route, i) => {
+                                    routesHtml += `
+                                        <div class="forecast-day">
+                                            <span class="forecast-date">Route ${i + 1}: ${route.summary}</span>
+                                            <span class="forecast-condition">${route.distance}</span>
+                                            <span class="forecast-temps">${route.duration}</span>
+                                            <span class="forecast-precip">${route.traffic} ${route.delay ? '• ' + route.delay : ''}</span>
+                                        </div>
+                                    `;
+                                });
+                            }
+                            el.innerHTML = `
+                                <div class="metric-row"><span>From</span><span class="metric-value">${data.origin}</span></div>
+                                <div class="metric-row"><span>To</span><span class="metric-value">${data.destination}</span></div>
+                                <div class="metric-row"><span>Departure</span><span class="metric-value">${data.departure_time}</span></div>
+                                <div class="metric-row"><span>Arrival</span><span class="metric-value">${data.arrival_time}</span></div>
+                                <div class="metric-row"><span>Distance</span><span class="metric-value">${distanceStr}</span></div>
+                                <div class="metric-row"><span>Duration</span><span class="metric-value">${durationStr}</span></div>
+                                <div class="metric-row"><span>Status</span><span class="metric-value status-ok">OK</span></div>
+                                ${routesHtml}
+                            `;
+                        } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
@@ -704,12 +734,28 @@
                 const data = await res.json();
                 const el = document.getElementById('truenas-data');
                 if (data.status === 'ok') {
-                    const pool = data.pools && data.pools[0] ? data.pools[0] : {};
+                    const pools = data.pools || [];
+                    const alerts = data.alerts || {};
                     el.innerHTML = `
-                        <div class="metric-row"><span>Pool</span><span class="metric-value">${pool.name || 'N/A'}</span></div>
-                        <div class="metric-row"><span>Capacity</span><span class="metric-value">${pool.size_tb || 'N/A'} TB</span></div>
-                        <div class="metric-row"><span>Used</span><span class="metric-value">${pool.allocated_tb || 'N/A'} TB</span></div>
-                        <div class="metric-row"><span>Free</span><span class="metric-value">${pool.free_tb || 'N/A'} TB</span></div>
+                        <div class="metric-row"><span>Version</span><span class="metric-value">${data.version || 'N/A'}</span></div>
+                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime || 'N/A'}</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_physical_cores || 'N/A'} cores</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_total_gb || 'N/A'} GB</span></div>
+                        <div class="metric-row"><span>Alerts</span><span class="metric-value">${alerts.CRITICAL || 0} crit / ${alerts.WARNING || 0} warn / ${alerts.INFO || 0} info</span></div>
+                        <div class="metric-row"><span>Apps</span><span class="metric-value">${data.apps_running || 0}/${data.apps_total || 0} running</span></div>
+                        ${pools.length > 0 ? `
+                            <div class="forecast-divider"></div>
+                            <div class="forecast-label">Storage Pools (${pools.length})</div>
+                            ${pools.map(pool => `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">${pool.name}</span>
+                                    <span class="forecast-icon">${pool.status === 'ONLINE' ? '🟢' : pool.status === 'DEGRADED' ? '🟡' : '🔴'}</span>
+                                    <span class="forecast-condition">${pool.pct_used}% used</span>
+                                    <span class="forecast-temps">${pool.allocated_tb} TB / ${pool.size_tb} TB</span>
+                                    <span class="forecast-precip">${pool.free_tb} TB free</span>
+                                </div>
+                            `).join('')}
+                        ` : ''}
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

@@ -630,7 +630,7 @@
                 const el = document.getElementById('gemma-data');
                 if (data.status === 'ok') {
                     const models = data.models || [];
-                    const running = data.running || [];
+                    const running = data.running_models || [];
                     el.innerHTML = `
                         <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.ollama_running ? 'Running' : 'Stopped'}</span></div>
                         <div class="metric-row"><span>Models Installed</span><span class="metric-value">${models.length}</span></div>
@@ -747,23 +747,12 @@
                 const data = await res.json();
                 const el = document.getElementById('llm-metrics-data');
                 if (data.status === 'ok') {
-                    const stats = data.stats || {};
-                    const modelUsage = data.model_usage || {};
                     el.innerHTML = `
-                        <div class="metric-row"><span>Total Requests</span><span class="metric-value">${stats.total_requests || 0}</span></div>
-                        <div class="metric-row"><span>Total Tokens</span><span class="metric-value">${(stats.total_tokens || 0).toLocaleString()}</span></div>
-                        <div class="metric-row"><span>Avg Latency</span><span class="metric-value">${stats.avg_latency_ms || 0} ms</span></div>
-                        <div class="metric-row"><span>Errors</span><span class="metric-value">${stats.errors || 0}</span></div>
-                        ${Object.keys(modelUsage).length > 0 ? `
-                            <div class="forecast-divider"></div>
-                            <div class="forecast-label">Model Usage</div>
-                            ${Object.entries(modelUsage).map(([model, usage]) => `
-                                <div class="forecast-day">
-                                    <span class="forecast-date">${escapeHtml(model)}</span>
-                                    <span class="forecast-temps">${usage.requests} req / ${usage.tokens.toLocaleString()} tok</span>
-                                </div>
-                            `).join('')}
-                        ` : ''}
+                        <div class="metric-row"><span>Total Requests</span><span class="metric-value">${data.total_calls || 0}</span></div>
+                        <div class="metric-row"><span>Today</span><span class="metric-value">${data.today_calls || 0}</span></div>
+                        <div class="metric-row"><span>30-Day Avg/Day</span><span class="metric-value">${data.avg_30_day || 0}</span></div>
+                        <div class="metric-row"><span>Hourly Rate</span><span class="metric-value">${data.hourly_rate || 0}</span></div>
+                        <div class="metric-row"><span>Share of Total</span><span class="metric-value">${(data.share_of_total * 100).toFixed(1)}%</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

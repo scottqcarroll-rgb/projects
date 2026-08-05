@@ -6,11 +6,15 @@ Workflow for dual LLM verification:
 3. Compare and present both results
 
 Usage: python mac_openai_workflow.py "Your question here"
+
+Environment variables:
+  OPENROUTER_API_KEY - Required for OpenRouter queries
 """
 
 import json
 import requests
 import sys
+import os
 from typing import Dict, Any
 
 def query_mac_llm(question: str) -> Dict[str, Any]:
@@ -39,7 +43,12 @@ def query_mac_llm(question: str) -> Dict[str, Any]:
 def query_openai(question: str) -> Dict[str, Any]:
     """Query OpenAI via OpenRouter"""
     url = "https://openrouter.ai/api/v1/chat/completions"
-    api_key = "4aa10f03a61e484189d1c8e1baa34d70.kvYiU58dcgybDEZw"
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        return {
+            "source": "OpenAI (via OpenRouter)",
+            "error": "OPENROUTER_API_KEY environment variable not set"
+        }
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}",
@@ -126,6 +135,8 @@ def main():
                 print("📊 SIDE-BY-SIDE COMPARISON:")
                 print(f"Mac LLM: {mac_sentences[0]}")
                 print(f"OpenAI:  {openai_sentences[0]}")
+    elif "OPENROUTER_API_KEY environment variable not set" in openai_content:
+        print("\n💡 Set OPENROUTER_API_KEY to enable OpenRouter comparison")
 
 if __name__ == "__main__":
     main()

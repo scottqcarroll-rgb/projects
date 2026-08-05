@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Local LLM Client — calls Gemma 4 E4B on Mac Studio via HTTP API
+Local LLM Client — calls Hermes 4 14B on Mac Studio via HTTP API
 Usage: python3 local_llm.py "Your prompt here" [--max-tokens 512] [--temperature 0.7]
 
 Every successful call is automatically logged to logs/llm_calls.jsonl
@@ -15,8 +15,8 @@ import urllib.error
 import time
 from datetime import datetime
 
-LLM_URL = "http://[IP_ADDRESS]:8081/v1/chat/completions"
-MODEL = "gemma-4-E4B-it-Q4_K_M.gguf"
+LLM_URL = "http://100.75.240.39:11434/v1/chat/completions"
+MODEL = "hermes-4-14b"
 
 # Call log lives alongside the project so it is backed up to GitHub
 LOG_DIR = "/home/scott/projects/logs"
@@ -95,7 +95,7 @@ def chat(prompt, max_tokens=512, temperature=0.7, system=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Query local Gemma 4 E4B model")
+    parser = argparse.ArgumentParser(description="Query local Hermes 4 14B model")
     parser.add_argument("prompt", nargs="?", help="Prompt to send")
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--temperature", type=float, default=0.7)

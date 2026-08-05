@@ -1,0 +1,14 @@
+{
+  "/api/linux-server": [],
+  "/api/mac-studio": [],
+  "/api/truenas": [],
+  "/api/weather": [],
+  "/api/drive": [],
+  "/api/pm-drive": [],
+  "/api/ollama": [],
+  "/api/mac-studio/ollama": [],
+  "/api/cameras": [],
+  "/api/samhunter": [],
+  "/api/gmail": [],
+  "/api/usage": []
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LLM-powered email classifier using local Gemma 4 via HTTP.
+LLM-powered email classifier using local Hermes 4 14B via HTTP.
 Falls back to rule-based keywords if LLM is unavailable.
 """
 
@@ -8,8 +8,8 @@ import json
 import requests
 import sys
 
-LLM_URL = "http://192.168.1.174:8081/v1/completions"
-LLM_MODEL = "gemma-4-E4B-it"
+LLM_URL = "http://100.75.240.39:11434/v1/chat/completions"
+LLM_MODEL = "hermes-4-14b"
 
 FALLBACK_KEYWORDS = {
     'important': [
@@ -71,7 +71,10 @@ Now classify these {len(emails_data)} emails:
             LLM_URL,
             json={
                 "model": LLM_MODEL,
-                "prompt": prompt,
+                "messages": [
+                    {"role": "system", "content": "You are an email classifier. For each email below, output exactly 3 lines:\n<important_N>YES or NO</important_N>\n<reason_N>one sentence reason</reason_N>\n<action_N>specific action or none</action_N>\n\nExample:\n<important_1>YES</important_1>\n<reason_1>From boss, requires confirmation of deadline</reason_1>\n<action_1>Reply to confirm availability</action_1>\n<important_2>NO</important_2>\n<reason_2>Promotional newsletter with sale</reason_2>\n<action_2>none</action_2>"},
+                    {"role": "user", "content": f"Now classify these {len(emails_data)} emails:\n{emails_text}"}
+                ],
                 "max_tokens": 800,
                 "temperature": 0.1
             },

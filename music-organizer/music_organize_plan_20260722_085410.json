@@ -1,0 +1,642 @@
+{
+  "timestamp": "20260722_085410",
+  "music_root": "/mnt/Family/Media/Music",
+  "total_moves": 70,
+  "total_skipped": 18,
+  "moves": [
+    {
+      "source": "/mnt/Family/Media/Music/Winger - She's Only 17.mp3",
+      "destination": "/mnt/Family/Media/Music/Winger/Winger - She's Only 17.mp3",
+      "artist": "Winger",
+      "filename": "Winger - She's Only 17.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Winger - Miles Away.mp3",
+      "destination": "/mnt/Family/Media/Music/Winger/Winger - Miles Away.mp3",
+      "artist": "Winger",
+      "filename": "Winger - Miles Away.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Little Big Town - 01 - Fine Line.mp3",
+      "destination": "/mnt/Family/Media/Music/Little Big Town/Little Big Town - 01 - Fine Line.mp3",
+      "artist": "Little Big Town",
+      "filename": "Little Big Town - 01 - Fine Line.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Already Gone.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Already Gone.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Already Gone.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Something More.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Something More.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Something More.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Devo - Working In The Coal Min.mp3",
+      "destination": "/mnt/Family/Media/Music/Devo/Devo - Working In The Coal Min.mp3",
+      "artist": "Devo",
+      "filename": "Devo - Working In The Coal Min.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Donald Fagen - True Companion.mp3",
+      "destination": "/mnt/Family/Media/Music/Donald Fagen/Donald Fagen - True Companion.mp3",
+      "artist": "Donald Fagen",
+      "filename": "Donald Fagen - True Companion.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Riggs - Radar Rider.mp3",
+      "destination": "/mnt/Family/Media/Music/Riggs/Riggs - Radar Rider.mp3",
+      "artist": "Riggs",
+      "filename": "Riggs - Radar Rider.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Tina Turner - Private Dancer.mp3",
+      "destination": "/mnt/Family/Media/Music/Tina Turner/Tina Turner - Private Dancer.mp3",
+      "artist": "Tina Turner",
+      "filename": "Tina Turner - Private Dancer.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Mitchell Tenpenny - Drunk Me.mp3",
+      "destination": "/mnt/Family/Media/Music/Mitchell Tenpenny/Mitchell Tenpenny - Drunk Me.mp3",
+      "artist": "Mitchell Tenpenny",
+      "filename": "Mitchell Tenpenny - Drunk Me.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Stevie Nicks - Blue Lamp.mp3",
+      "destination": "/mnt/Family/Media/Music/Stevie Nicks/Stevie Nicks - Blue Lamp.mp3",
+      "artist": "Stevie Nicks",
+      "filename": "Stevie Nicks - Blue Lamp.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtrey - Conviction.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtrey/Chris Daughtrey - Conviction.mp3",
+      "artist": "Chris Daughtrey",
+      "filename": "Chris Daughtrey - Conviction.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Tina Turner - Better Be Good To Me.mp3",
+      "destination": "/mnt/Family/Media/Music/Tina Turner/Tina Turner - Better Be Good To Me.mp3",
+      "artist": "Tina Turner",
+      "filename": "Tina Turner - Better Be Good To Me.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Rihanna - S&M.mp3",
+      "destination": "/mnt/Family/Media/Music/Rihanna/Rihanna - S&M.mp3",
+      "artist": "Rihanna",
+      "filename": "Rihanna - S&M.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Julianne Hough - That Song In My Head.mp3",
+      "destination": "/mnt/Family/Media/Music/Julianne Hough/Julianne Hough - That Song In My Head.mp3",
+      "artist": "Julianne Hough",
+      "filename": "Julianne Hough - That Song In My Head.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Winger - Headed For A Heartbreak.mp3",
+      "destination": "/mnt/Family/Media/Music/Winger/Winger - Headed For A Heartbreak.mp3",
+      "artist": "Winger",
+      "filename": "Winger - Headed For A Heartbreak.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Bennatar - Love is a Battlefield.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Bennatar/Pat Bennatar - Love is a Battlefield.mp3",
+      "artist": "Pat Bennatar",
+      "filename": "Pat Bennatar - Love is a Battlefield.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Urban, Keith - raining on sunday.mp3",
+      "destination": "/mnt/Family/Media/Music/Urban, Keith/Urban, Keith - raining on sunday.mp3",
+      "artist": "Urban, Keith",
+      "filename": "Urban, Keith - raining on sunday.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Just Might (Make Me Believe).mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Just Might (Make Me Believe).mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Just Might (Make Me Believe).mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Don Felder - Heavy Metal (Taki.mp3",
+      "destination": "/mnt/Family/Media/Music/Don Felder/Don Felder - Heavy Metal (Taki.mp3",
+      "artist": "Don Felder",
+      "filename": "Don Felder - Heavy Metal (Taki.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Want To.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Want To.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Want To.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Background (Feat. C-Lite).m4a",
+      "destination": "/mnt/Family/Media/Music/Background (Feat. C/Background (Feat. C-Lite).m4a",
+      "artist": "Background (Feat. C",
+      "filename": "Background (Feat. C-Lite).m4a",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benetar - Invincible.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benetar/Pat Benetar - Invincible.mp3",
+      "artist": "Pat Benetar",
+      "filename": "Pat Benetar - Invincible.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtrey - It's Not Over.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtrey/Chris Daughtrey - It's Not Over.mp3",
+      "artist": "Chris Daughtrey",
+      "filename": "Chris Daughtrey - It's Not Over.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Cher - If I Could Turn Back Time.mp3",
+      "destination": "/mnt/Family/Media/Music/Wild Cherry/Cher - If I Could Turn Back Time.mp3",
+      "artist": "Wild Cherry",
+      "filename": "Cher - If I Could Turn Back Time.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benetar - Shadows of the Night.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benetar/Pat Benetar - Shadows of the Night.mp3",
+      "artist": "Pat Benetar",
+      "filename": "Pat Benetar - Shadows of the Night.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Three Doors Down- Kryptonite.mp3",
+      "destination": "/mnt/Family/Media/Music/Three Doors Down/Three Doors Down- Kryptonite.mp3",
+      "artist": "Three Doors Down",
+      "filename": "Three Doors Down- Kryptonite.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Carrie Underwood - I Know You Won't(1).mp3",
+      "destination": "/mnt/Family/Media/Music/Carrie Underwood/Carrie Underwood - I Know You Won't(1).mp3",
+      "artist": "Carrie Underwood",
+      "filename": "Carrie Underwood - I Know You Won't(1).mp3",
+      "match_type": "exact",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtrey - Home.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtrey/Chris Daughtrey - Home.mp3",
+      "artist": "Chris Daughtrey",
+      "filename": "Chris Daughtrey - Home.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Juice Newton - Queen of Hearts.mp3",
+      "destination": "/mnt/Family/Media/Music/Juice Newton/Juice Newton - Queen of Hearts.mp3",
+      "artist": "Juice Newton",
+      "filename": "Juice Newton - Queen of Hearts.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Stevie Nicks - Bette Davis Eyes.mp3",
+      "destination": "/mnt/Family/Media/Music/Stevie Nicks/Stevie Nicks - Bette Davis Eyes.mp3",
+      "artist": "Stevie Nicks",
+      "filename": "Stevie Nicks - Bette Davis Eyes.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benetar - Total Eclipse of the Heart.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benetar/Pat Benetar - Total Eclipse of the Heart.mp3",
+      "artist": "Pat Benetar",
+      "filename": "Pat Benetar - Total Eclipse of the Heart.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/One Republic Ft. Timberland - It's Too Late To Apologize.mp3",
+      "destination": "/mnt/Family/Media/Music/One Republic/One Republic Ft. Timberland - It's Too Late To Apologize.mp3",
+      "artist": "One Republic",
+      "filename": "One Republic Ft. Timberland - It's Too Late To Apologize.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Aldo Nova - Fantasy.mp3",
+      "destination": "/mnt/Family/Media/Music/Aldo Nova/Aldo Nova - Fantasy.mp3",
+      "artist": "Aldo Nova",
+      "filename": "Aldo Nova - Fantasy.mp3",
+      "match_type": "exact",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Ronnie James Dio - Last in Line.mp3",
+      "destination": "/mnt/Family/Media/Music/DIO/Ronnie James Dio - Last in Line.mp3",
+      "artist": "DIO",
+      "filename": "Ronnie James Dio - Last in Line.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Everyday America.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Everyday America.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Everyday America.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Don Felder - All Of You.mp3",
+      "destination": "/mnt/Family/Media/Music/Don Felder/Don Felder - All Of You.mp3",
+      "artist": "Don Felder",
+      "filename": "Don Felder - All Of You.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - All I Want To Do.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - All I Want To Do.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - All I Want To Do.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Jack Ingram - Lips of an Angel.mp3",
+      "destination": "/mnt/Family/Media/Music/Jack Ingram/Jack Ingram - Lips of an Angel.mp3",
+      "artist": "Jack Ingram",
+      "filename": "Jack Ingram - Lips of an Angel.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugar Land - Baby Girl.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugar Land/Sugar Land - Baby Girl.mp3",
+      "artist": "Sugar Land",
+      "filename": "Sugar Land - Baby Girl.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Lady Antebellum- Looking for a Good Time.mp3",
+      "destination": "/mnt/Family/Media/Music/Lady Antebellum/Lady Antebellum- Looking for a Good Time.mp3",
+      "artist": "Lady Antebellum",
+      "filename": "Lady Antebellum- Looking for a Good Time.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Tina Turner - What's Love Got To Do With It.mp3",
+      "destination": "/mnt/Family/Media/Music/Tina Turner/Tina Turner - What's Love Got To Do With It.mp3",
+      "artist": "Tina Turner",
+      "filename": "Tina Turner - What's Love Got To Do With It.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Carrie Underwood - I Told You So.mp3",
+      "destination": "/mnt/Family/Media/Music/Carrie Underwood/Carrie Underwood - I Told You So.mp3",
+      "artist": "Carrie Underwood",
+      "filename": "Carrie Underwood - I Told You So.mp3",
+      "match_type": "exact",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Taylor Swift - Change.mp3",
+      "destination": "/mnt/Family/Media/Music/Taylor swift - speak now/Taylor Swift - Change.mp3",
+      "artist": "Taylor swift - speak now",
+      "filename": "Taylor Swift - Change.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benetar - We Belong.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benetar/Pat Benetar - We Belong.mp3",
+      "artist": "Pat Benetar",
+      "filename": "Pat Benetar - We Belong.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Winger - Easy Come, Easy Go.mp3",
+      "destination": "/mnt/Family/Media/Music/Winger/Winger - Easy Come, Easy Go.mp3",
+      "artist": "Winger",
+      "filename": "Winger - Easy Come, Easy Go.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Jon Bon Jovi - Have A Nice Day .mp3",
+      "destination": "/mnt/Family/Media/Music/Bon Jovi/Jon Bon Jovi - Have A Nice Day .mp3",
+      "artist": "Bon Jovi",
+      "filename": "Jon Bon Jovi - Have A Nice Day .mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Blue Murder - Valley of the Kings - Blue Murder.mp3",
+      "destination": "/mnt/Family/Media/Music/Blue Murder/Blue Murder - Valley of the Kings - Blue Murder.mp3",
+      "artist": "Blue Murder",
+      "filename": "Blue Murder - Valley of the Kings - Blue Murder.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland-Stay.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland-Stay.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland-Stay.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Juice Newton - Just Call Me Angel of the Morning.mp3",
+      "destination": "/mnt/Family/Media/Music/Juice Newton/Juice Newton - Just Call Me Angel of the Morning.mp3",
+      "artist": "Juice Newton",
+      "filename": "Juice Newton - Just Call Me Angel of the Morning.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Julianne Hough - 04 - My hallelujah song.mp3",
+      "destination": "/mnt/Family/Media/Music/Julianne Hough/Julianne Hough - 04 - My hallelujah song.mp3",
+      "artist": "Julianne Hough",
+      "filename": "Julianne Hough - 04 - My hallelujah song.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benatar - Fire And Ice.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benatar/Pat Benatar - Fire And Ice.mp3",
+      "artist": "Pat Benatar",
+      "filename": "Pat Benatar - Fire And Ice.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Timbaland-Its Too Late to apologize.mp3",
+      "destination": "/mnt/Family/Media/Music/Timbaland/Timbaland-Its Too Late to apologize.mp3",
+      "artist": "Timbaland",
+      "filename": "Timbaland-Its Too Late to apologize.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Ronnie James Dio - Gates Of Babylon - Yngwie Malmsteen(1).mp3",
+      "destination": "/mnt/Family/Media/Music/DIO/Ronnie James Dio - Gates Of Babylon - Yngwie Malmsteen(1).mp3",
+      "artist": "DIO",
+      "filename": "Ronnie James Dio - Gates Of Babylon - Yngwie Malmsteen(1).mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Eagles - Victim of Love.mp3",
+      "destination": "/mnt/Family/Media/Music/The Eagles/Eagles - Victim of Love.mp3",
+      "artist": "The Eagles",
+      "filename": "Eagles - Victim of Love.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Jack Ingram - Love You.mp3",
+      "destination": "/mnt/Family/Media/Music/Jack Ingram/Jack Ingram - Love You.mp3",
+      "artist": "Jack Ingram",
+      "filename": "Jack Ingram - Love You.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtrey- Suspicious Minds.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtrey/Chris Daughtrey- Suspicious Minds.mp3",
+      "artist": "Chris Daughtrey",
+      "filename": "Chris Daughtrey- Suspicious Minds.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Josh Turner- Firecracker.mp3",
+      "destination": "/mnt/Family/Media/Music/Josh Turner/Josh Turner- Firecracker.mp3",
+      "artist": "Josh Turner",
+      "filename": "Josh Turner- Firecracker.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benetar - Hit Me With Your Best Shot.mp3",
+      "destination": "/mnt/Family/Media/Music/Pat Benetar/Pat Benetar - Hit Me With Your Best Shot.mp3",
+      "artist": "Pat Benetar",
+      "filename": "Pat Benetar - Hit Me With Your Best Shot.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Ronnie James Dio - Gates Of Babylon.mp3",
+      "destination": "/mnt/Family/Media/Music/DIO/Ronnie James Dio - Gates Of Babylon.mp3",
+      "artist": "DIO",
+      "filename": "Ronnie James Dio - Gates Of Babylon.mp3",
+      "match_type": "fuzzy",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Pat Benitar - Love is a battlefield.MP3",
+      "destination": "/mnt/Family/Media/Music/Pat Benitar/Pat Benitar - Love is a battlefield.MP3",
+      "artist": "Pat Benitar",
+      "filename": "Pat Benitar - Love is a battlefield.MP3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Riggs - Heartbeat.mp3",
+      "destination": "/mnt/Family/Media/Music/Riggs/Riggs - Heartbeat.mp3",
+      "artist": "Riggs",
+      "filename": "Riggs - Heartbeat.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Nazareth - Crazy (A Suitable C.mp3",
+      "destination": "/mnt/Family/Media/Music/Nazareth/Nazareth - Crazy (A Suitable C.mp3",
+      "artist": "Nazareth",
+      "filename": "Nazareth - Crazy (A Suitable C.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Leona Lewis - bleeding love.mp3",
+      "destination": "/mnt/Family/Media/Music/Leona Lewis/Leona Lewis - bleeding love.mp3",
+      "artist": "Leona Lewis",
+      "filename": "Leona Lewis - bleeding love.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Stevie Nicks - Edge Of Seventeen .mp3",
+      "destination": "/mnt/Family/Media/Music/Stevie Nicks/Stevie Nicks - Edge Of Seventeen .mp3",
+      "artist": "Stevie Nicks",
+      "filename": "Stevie Nicks - Edge Of Seventeen .mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtery - Over You.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtery/Chris Daughtery - Over You.mp3",
+      "artist": "Chris Daughtery",
+      "filename": "Chris Daughtery - Over You.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Chris Daughtrey - Broken.mp3",
+      "destination": "/mnt/Family/Media/Music/Chris Daughtrey/Chris Daughtrey - Broken.mp3",
+      "artist": "Chris Daughtrey",
+      "filename": "Chris Daughtrey - Broken.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Sugarland - Settlin'.mp3",
+      "destination": "/mnt/Family/Media/Music/Sugarland/Sugarland - Settlin'.mp3",
+      "artist": "Sugarland",
+      "filename": "Sugarland - Settlin'.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/Tina Turner - Simply the Best.mp3",
+      "destination": "/mnt/Family/Media/Music/Tina Turner/Tina Turner - Simply the Best.mp3",
+      "artist": "Tina Turner",
+      "filename": "Tina Turner - Simply the Best.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    },
+    {
+      "source": "/mnt/Family/Media/Music/James Otto - Just Got Started Lovin' You.mp3",
+      "destination": "/mnt/Family/Media/Music/James Otto/James Otto - Just Got Started Lovin' You.mp3",
+      "artist": "James Otto",
+      "filename": "James Otto - Just Got Started Lovin' You.mp3",
+      "match_type": "new",
+      "llm_confidence": 0.0
+    }
+  ],
+  "skipped": [
+    {
+      "filename": "Same 'Ol Situation.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "I Walk Alone .m4a",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Blue Murder Valley of the Kings .mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Nothin' at All.wma",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Lights.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Passion Rules The Game.m4a",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Whenever You Remember.wma",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Dr. Feelgood.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Shout at the Devil.MP3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Starts with Goodbye.wma",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Love Song (rare).mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Kickstart My Heart.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Wild Side.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Too Young to Fall in Love.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Play That Funky music white boy.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Passion Rules The Game Scorpions Savage Amusement.wma",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Looks That Kill.mp3",
+      "reason": "Could not identify artist"
+    },
+    {
+      "filename": "Neon Knights.mp3",
+      "reason": "Could not identify artist"
+    }
+  ]
+}

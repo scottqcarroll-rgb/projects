@@ -232,8 +232,8 @@ def get_ollama_status():
     try:
         import urllib.request
         import json
-        # Check Mac Studio Ollama API (port 11434) - more reliable than dynamic llama.cpp port
-        url = 'http://192.168.1.174:11434/api/ps'
+        # Check Mac Studio Ollama API (Tailscale IP 100.75.240.39:11434)
+        url = 'http://100.75.240.39:11434/api/ps'
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -253,8 +253,6 @@ def get_ollama_status():
             
             if 'hermes' in model_name.lower():
                 model_name = 'Hermes 4 14B'
-            elif 'gemma' in model_name.lower():
-                model_name = 'Gemma'
             elif 'qwen' in family.lower():
                 model_name = f'Qwen {param_size}' if param_size else 'Qwen'
             
@@ -264,7 +262,7 @@ def get_ollama_status():
                 'params': param_size if param_size else f'{n_params/1e9:.1f}B',
                 'context': f'{n_ctx//1000}K',
                 'size_gb': size_gb,
-                'host': 'Mac Studio (192.168.1.174:11434)'
+                'host': 'Mac Studio (100.75.240.39:11434)'
             }
         return {'status': 'error', 'message': 'No model loaded'}
     except Exception as e:

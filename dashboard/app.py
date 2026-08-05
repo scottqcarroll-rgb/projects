@@ -138,7 +138,7 @@ def api_truenas():
 
 
 import requests
-OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://192.168.1.174:11434')
+OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://100.75.240.39:11434')
 DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
 
 @app.route('/api/ollama-chat', methods=['POST'])

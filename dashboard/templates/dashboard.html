@@ -87,7 +87,7 @@
         .weather-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
         .gmail-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
         .openroute-icon { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .gemma-icon { background: linear-gradient(135deg, #e17055, #fdcb6e); }
+        .ollama-icon { background: linear-gradient(135deg, #e17055, #fdcb6e); }
         .linux-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
         .camera-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
@@ -326,10 +326,10 @@
         <!-- Ollama Models on Mac Studio -->
         <div class="card">
             <div class="card-header">
-                <div class="card-icon gemma-icon">🦙</div>
+                <div class="card-icon ollama-icon">🦙</div>
                 <div class="card-title">Ollama (Mac Studio)</div>
             </div>
-            <div class="card-body" id="gemma-data">
+            <div class="card-body" id="ollama-data">
                 <span class="loading">Loading Ollama status...</span>
             </div>
         </div>
@@ -653,11 +653,11 @@
         }
         
         // === Load Ollama (Mac Studio) ===
-        async function loadGemma() {
+        async function loadOllama() {
             try {
                 const res = await fetch('/api/mac-studio/ollama');
                 const data = await res.json();
-                const el = document.getElementById('gemma-data');
+                const el = document.getElementById('ollama-data');
                 if (data.status === 'ok') {
                     const models = data.models || [];
                     const running = data.running_models || [];
@@ -680,7 +680,7 @@
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
                 }
             } catch (e) {
-                document.getElementById('gemma-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                document.getElementById('ollama-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
         
@@ -826,7 +826,7 @@
                 loadLinks(),
                 loadGmail(),
                 loadOpenRoute(),
-                loadGemma(),
+                loadOllama(),
                 loadLinuxServer(),
                 loadMacStudio(),
                 loadTrueNAS(),

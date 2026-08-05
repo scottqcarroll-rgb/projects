@@ -1,0 +1,122 @@
+{
+  "loadServerTime": [
+    "datetime",
+    "timezone"
+  ],
+  "loadDriveReport": [
+    "distance_miles",
+    "destination",
+    "origin",
+    "message",
+    "departure_time",
+    "arrival_time",
+    "duration_minutes"
+  ],
+  "loadPMDriveReport": [
+    "distance_miles",
+    "destination",
+    "origin",
+    "message",
+    "departure_time",
+    "arrival_time",
+    "duration_minutes"
+  ],
+  "loadWeather": [
+    "condition",
+    "humidity",
+    "wind_speed",
+    "message",
+    "feels_like",
+    "temperature"
+  ],
+  "loadLinks": [
+    "message"
+  ],
+  "loadGmail": [
+    "total_count",
+    "unread_count",
+    "message",
+    "latest",
+    "date"
+  ],
+  "loadOpenRoute": [
+    "usage_total",
+    "usage_daily",
+    "is_free_tier",
+    "message",
+    "limit_remaining",
+    "usage_weekly",
+    "limit",
+    "usage_monthly"
+  ],
+  "loadGemma": [
+    "ollama_running",
+    "message",
+    "models",
+    "running"
+  ],
+  "loadLinuxServer": [
+    "load_15m",
+    "memory_used_pct",
+    "cpu_model",
+    "disk_total",
+    "uptime",
+    "ip",
+    "message",
+    "disk_used",
+    "memory_total_gb",
+    "memory_avail_gb",
+    "cpu_temp",
+    "hostname",
+    "load_5m",
+    "disk_pct",
+    "load_1m"
+  ],
+  "loadMacStudio": [
+    "chip",
+    "load_15m",
+    "memory_used_pct",
+    "disk_pct",
+    "os",
+    "disk_total",
+    "storage",
+    "message",
+    "disk_used",
+    "memory_total_gb",
+    "model",
+    "hostname",
+    "load_5m",
+    "memory_used_gb",
+    "ram",
+    "load_1m"
+  ],
+  "loadTrueNAS": [
+    "WARNING",
+    "pct_used",
+    "uptime",
+    "version",
+    "free_tb",
+    "message",
+    "cpu_physical_cores",
+    "pools",
+    "memory_total_gb",
+    "allocated_tb",
+    "INFO",
+    "CRITICAL",
+    "size_tb",
+    "name",
+    "apps_running",
+    "apps_total"
+  ],
+  "loadCameras": [
+    "message"
+  ],
+  "loadLLMMetrics": [
+    "share_of_total",
+    "message",
+    "total_calls",
+    "today_calls",
+    "hourly_rate",
+    "avg_30_day"
+  ]
+}

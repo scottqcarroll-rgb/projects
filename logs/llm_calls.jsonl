@@ -8,3 +8,6 @@
 {"timestamp": "2026-07-16T22:05:48", "date": "2026-07-16", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
 {"timestamp": "2026-08-04T16:30:13", "date": "2026-08-04", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
 {"timestamp": "2026-08-04T16:49:09", "date": "2026-08-04", "model": "hermes-4-14b:latest", "tokens": 1, "elapsed_s": 0.5, "ok": true}
+{"timestamp": "2026-08-05T05:36:29", "date": "2026-08-05", "model": "hermes-4-14b", "ok": true, "tokens": 33, "elapsed_s": 9.48, "prompt_preview": "test"}
+{"timestamp": "2026-08-05T05:50:31", "date": "2026-08-05", "model": "hermes-4-14b", "ok": true, "tokens": 33, "elapsed_s": 2.14, "prompt_preview": "test"}
+{"timestamp": "2026-08-05T05:51:26", "date": "2026-08-05", "model": "hermes-4-14b", "ok": true, "tokens": 49, "elapsed_s": 1.0, "prompt_preview": "What is 2+2?"}

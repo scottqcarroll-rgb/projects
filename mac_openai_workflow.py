@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Workflow for dual LLM verification:
-1. Get answer from Mac (local Gemma LLM)
+1. Get answer from Mac (local Hermes 4 14B LLM)
 2. Get answer from OpenAI (via OpenRouter)
 3. Compare and present both results
 
@@ -15,10 +15,10 @@ from typing import Dict, Any
 
 def query_mac_llm(question: str) -> Dict[str, Any]:
     """Query the local Mac LLM"""
-    url = "http://100.75.240.39:8081/v1/chat/completions"
+    url = "http://100.75.240.39:11434/v1/chat/completions"
     headers = {"Content-Type": "application/json"}
     data = {
-        "model": "gemma-4-E4B-it-Q4_K_M.gguf",
+        "model": "hermes-4-14b",
         "messages": [{"role": "user", "content": question}],
         "max_tokens": 500
     }
@@ -27,12 +27,12 @@ def query_mac_llm(question: str) -> Dict[str, Any]:
         response = requests.post(url, headers=headers, json=data, timeout=30)
         response.raise_for_status()
         return {
-            "source": "Mac LLM (Gemma 4 E4B)",
+            "source": "Mac LLM (Hermes 4 14B)",
             "response": response.json()
         }
     except Exception as e:
         return {
-            "source": "Mac LLM (Gemma 4 E4B)",
+            "source": "Mac LLM (Hermes 4 14B)",
             "error": str(e)
         }
 

@@ -4,3 +4,7 @@
 {"timestamp": "2026-07-14T15:15:10", "date": "2026-07-14", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
 {"timestamp": "2026-07-14T15:15:10", "date": "2026-07-14", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
 {"timestamp": "2026-07-14T15:15:10", "date": "2026-07-14", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
+{"timestamp": "2026-07-16T22:03:43", "date": "2026-07-16", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
+{"timestamp": "2026-07-16T22:05:48", "date": "2026-07-16", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
+{"timestamp": "2026-08-04T16:30:13", "date": "2026-08-04", "model": "gemma-4-E4B-it-Q4_K_M.gguf", "tokens": 1, "elapsed_s": 0.5, "ok": true}
+{"timestamp": "2026-08-04T16:49:09", "date": "2026-08-04", "model": "hermes-4-14b:latest", "tokens": 1, "elapsed_s": 0.5, "ok": true}

@@ -73,6 +73,7 @@ def load_api_key():
 
 def fetch_contracts(api_key):
     import urllib.request
+    import time
     today     = date.today()
     from_date = (today - timedelta(days=WINDOW_DAYS)).strftime('%m/%d/%Y')
     to_date   = today.strftime('%m/%d/%Y')
@@ -87,8 +88,22 @@ def fetch_contracts(api_key):
         f'&offset=0'
     )
     req = urllib.request.Request(url, headers={'User-Agent': 'BrisarInvestments/1.0'})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read())
+    
+    # Retry logic with exponential backoff for SAM.gov timeouts
+    max_retries = 3
+    base_timeout = 120  # 2 minutes base timeout
+    for attempt in range(max_retries):
+        try:
+            timeout = base_timeout * (2 ** attempt)  # 120s, 240s, 480s
+            print(f'[...] Fetching from SAM.gov (attempt {attempt + 1}/{max_retries}, timeout={timeout}s)...')
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read())
+        except Exception as e:
+            print(f'[WARN] SAM.gov attempt {attempt + 1} failed: {e}')
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(5 * (attempt + 1))  # 5s, 10s, 15s wait before retry
+    raise RuntimeError('All retry attempts exhausted')
 
 
 def score_contract(h):

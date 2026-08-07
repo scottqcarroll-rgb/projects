@@ -58,6 +58,7 @@ def api_links():
     return jsonify({
         'status': 'ok',
         'links': [
+            {'name': 'Email Summary', 'url': 'http://100.124.71.12:5050/daily_summary.html'},
             {'name': 'Sam Hunter', 'url': 'http://100.124.71.12:5002'},
             {'name': 'Documenso', 'url': 'http://100.124.71.12:3000'},
             {'name': 'Coolify', 'url': 'http://100.124.71.12:8080'},

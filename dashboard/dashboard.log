@@ -13,3 +13,17 @@ Press CTRL+C to quit
 127.0.0.1 - - [07/Aug/2026 13:29:21] "GET /api/links HTTP/1.1" 200 -
 127.0.0.1 - - [07/Aug/2026 13:29:27] "GET /auth HTTP/1.1" 404 -
 127.0.0.1 - - [07/Aug/2026 13:29:42] "GET /auth HTTP/1.1" 404 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/linux-server HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:51] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:52] "GET /api/cameras HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:52] "GET /api/llm-metrics HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:52] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:52] "GET /api/mac-studio/ollama HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:53] "GET /api/mac-studio HTTP/1.1" 200 -
+100.67.66.62 - - [07/Aug/2026 13:29:56] "GET /api/truenas HTTP/1.1" 200 -
+127.0.0.1 - - [07/Aug/2026 13:29:57] "GET /auth HTTP/1.1" 404 -

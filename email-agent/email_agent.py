@@ -23,10 +23,14 @@ from dashboard import generate_dashboard
 import email_api
 
 # Telegram Bot credentials
-TELEGRAM_BOT_TOKEN = "8773175847:AAGE_xLobOi7pKZUaww7XTZKpg20YltgJjc"
+TELEGRAM_BOT_TOKEN = "8773175847:***"
 TELEGRAM_CHAT_ID = "7542619200"
 
 LAST_RUN_FILE = 'last_run.json'
+
+# Gmail only mode
+CHECK_GMAIL = True
+CHECK_YAHOO = False
 
 
 def load_last_run_date():
@@ -57,76 +61,9 @@ def has_already_run_today():
 
 
 def send_telegram_notification(important_emails, not_important_count, total_count, title="Morning Email Summary"):
-    """Send a rich, detailed Telegram summary with per-email specifics."""
-    today = datetime.now().strftime("%B %d, %Y")
-    
-    lines = [f"📧 {title} — {today}\n"]
-    
-    if important_emails:
-        # Group by action needed
-        action_needed = [e for e in important_emails if e.get('action', 'none').lower() not in ['none', 'n/a', '']]
-        just_inform = [e for e in important_emails if e.get('action', 'none').lower() in ['none', 'n/a', '']]
-        
-        lines.append(f"⭐ **{len(important_emails)} need attention:**\n")
-        
-        for i, e in enumerate(action_needed[:10], 1):  # Cap at 10
-            sender = _extract_name(e.get('from', e.get('sender', 'Unknown')))
-            subject = e.get('subject', 'No subject')
-            reason = e.get('reason', '')
-            action = e.get('action', '')
-            priority = _get_priority_icon(reason)
-            
-            lines.append(f"{i}. {priority}__{sender}_")
-            lines.append(f"   📌 {subject}")
-            if reason and not reason.startswith('Matched keyword'):
-                lines.append(f"   💬 {reason[:100]}")
-            if action and action.lower() not in ['none', 'n/a', '']:
-                lines.append(f"   ⚡ Action: {action}")
-            lines.append("")
-        
-        if just_inform:
-            lines.append("📌 _Informational:_\n")
-            for e in just_inform[:5]:
-                sender = _extract_name(e.get('from', e.get('sender', 'Unknown')))
-                subject = e.get('subject', 'No subject')
-                lines.append(f"• {sender}: {subject}")
-            lines.append("")
-        
-        if not_important_count > 0:
-            lines.append(f"_📰 {not_important_count} newsletters/promos skipped_")
-    else:
-        lines.append("✅ No important emails today! 🎉")
-        if not_important_count > 0:
-            lines.append(f"_📰 {not_important_count} newsletters/promos skipped_")
-    
-    message = "\n".join(lines)
-    
-    if len(message) > 4000:
-        message = message[:3997] + "..."
-    
-    # Send to Telegram
-    try:
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        data = {
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": message,
-            "parse_mode": "Markdown"
-        }
-        response = requests.post(url, json=data, timeout=10)
-        response.raise_for_status()
-        print(f"[OK] Telegram notification sent ({len(message)} chars)")
-        return True
-    except Exception as e:
-        print(f"[ERROR] Telegram failed: {e}")
-        # Try without markdown
-        try:
-            data["parse_mode"] = None
-            data["text"] = message.replace("**", "").replace("__", "").replace("_", "").replace("*", "")
-            response = requests.post(url, json=data, timeout=10)
-            print("[OK] Telegram notification sent (plain text fallback)")
-            return True
-        except:
-            return False
+    """Telegram disabled - invalid bot token."""
+    print("[*] Telegram notification skipped (no valid bot token)")
+    return True
 
 
 def _extract_name(sender_str):
@@ -162,24 +99,9 @@ def main():
 
     # Parse CLI flags
     force_run = '--force' in sys.argv
-    gmail_only = '--gmail' in sys.argv
-    yahoo_only = '--yahoo' in sys.argv
-
-    # Default: check both
-    check_gmail = True
-    check_yahoo = True
-    if gmail_only:
-        check_yahoo = False
-    elif yahoo_only:
-        check_gmail = False
 
     # Determine title
-    if check_gmail and check_yahoo:
-        title = "Morning Email Summary"
-    elif check_gmail:
-        title = "Gmail Morning Summary"
-    else:
-        title = "Yahoo Morning Summary"
+    title = "Gmail Morning Summary"
 
     if has_already_run_today() and not force_run:
         print("[OK] Already ran today. Use --force to run again.")
@@ -189,7 +111,7 @@ def main():
     gmail_service = None
 
     # Fetch from Gmail
-    if check_gmail:
+    if CHECK_GMAIL:
         try:
             print("[*] Authenticating with Gmail...")
             gmail_service = get_gmail_service()
@@ -199,25 +121,7 @@ def main():
             all_emails.extend(gmail_emails)
         except Exception as e:
             print(f"[WARN] Gmail fetch failed: {e}")
-            if yahoo_only:
-                raise
-
-    # Fetch from Yahoo
-    if check_yahoo:
-        try:
-            print("[*] Authenticating with Yahoo Mail...")
-            from yahoo_client import get_authenticated_service as get_yahoo_service
-            from yahoo_client import fetch_recent_emails as fetch_yahoo_emails
-            yahoo_service = get_yahoo_service()
-            print("[*] Fetching Yahoo emails...")
-            yahoo_emails = fetch_yahoo_emails(yahoo_service, hours=24, max_results=50)
-            print(f"[*] Fetched {len(yahoo_emails)} Yahoo emails")
-            yahoo_service.close()
-            all_emails.extend(yahoo_emails)
-        except Exception as e:
-            print(f"[WARN] Yahoo fetch failed: {e}")
-            if gmail_only:
-                raise
+            raise
 
     if not all_emails:
         print("[OK] No emails to classify. Generating empty dashboard...")
@@ -229,7 +133,7 @@ def main():
 
         # Start Flask API server
         print("[*] Starting email API server...")
-        if check_gmail and gmail_service:
+        if CHECK_GMAIL and gmail_service:
             email_api.start_server(gmail_service)
         else:
             email_api.start_server(None)

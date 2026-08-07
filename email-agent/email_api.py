@@ -17,6 +17,7 @@ CORS(app)
 
 # Global references to services
 gmail_service = None
+yahoo_service = None  # Persistent Yahoo OAuth2 connection
 shutdown_timer = None
 SHUTDOWN_SECONDS = 7200  # 2 hours
 
@@ -26,6 +27,11 @@ def schedule_shutdown():
     global shutdown_timer
     def shutdown():
         import os
+        if yahoo_service:
+            try:
+                yahoo_service.close()
+            except:
+                pass
         os._exit(0)
     shutdown_timer = threading.Timer(SHUTDOWN_SECONDS, shutdown)
 
@@ -54,12 +60,16 @@ def delete_email():
             return jsonify({'success': True, 'message': f'Email deleted from Gmail'}), 200
 
         elif source == 'Yahoo':
+            global yahoo_service
             try:
-                conn = yahoo_client.get_authenticated_service()
-                yahoo_client.delete_email(conn, email_id.encode() if isinstance(email_id, str) else email_id)
-                conn.close()
+                if not yahoo_service:
+                    # Create persistent Yahoo connection
+                    yahoo_service = yahoo_client.get_authenticated_service()
+                yahoo_client.delete_email(yahoo_service, email_id.encode() if isinstance(email_id, str) else email_id)
                 return jsonify({'success': True, 'message': f'Email deleted from Yahoo'}), 200
             except Exception as e:
+                # Reset connection on error
+                yahoo_service = None
                 return jsonify({'error': f'Yahoo delete failed: {str(e)}'}), 500
 
         else:

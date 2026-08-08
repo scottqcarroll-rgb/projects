@@ -1,116 +1,102 @@
-# Daily Session Summary — 2026-08-05
+# Daily Session Summary — 2026-08-07
 
-**Reporting Period:** 2026-08-04 22:00:00 → 2026-08-05 22:00:00 EDT
-**Generated:** 2026-08-05 22:00:00 (automated cron job)
-**Host:** clawz840 (100.124.71.12 Tailscale / 192.168.1.222 LAN)
+**Report Generated:** 2026-08-07 22:00 EDT
+**Period Covered:** 2026-08-06 22:00 → 2026-08-07 22:00
 
 ---
 
-## 1. Local LLM Activity (from `/home/scott/projects/logs/llm_calls.jsonl`)
+## 📊 Local LLM Calls (llm_calls.jsonl)
 
-### Last 24 Hours
+### Last 24 Hours (Aug 6 22:00 – Aug 7 22:00)
 | Metric | Value |
 |--------|-------|
-| **Total Calls** | 1 |
-| **Total Tokens** | 33 |
-| **Total Inference Time** | 9.48s |
-| **Errors** | 0 |
+| **Total Calls** | 0 |
+| **Successful** | 0 |
+| **Failed** | 0 |
+| **Total Tokens** | 0 |
+| **Total Latency** | 0.00s |
 
-| Timestamp | Model | Tokens | Elapsed | Status |
-|-----------|-------|--------|---------|--------|
-| 2026-08-05T05:36:29 | hermes-4-14b | 33 | 9.48s | ✅ OK |
+> No local LLM calls recorded in the past 24 hours.
 
-### All-Time Statistics
-| Model | Calls | Total Tokens | Total Time | Avg Time/Call | Errors |
-|-------|-------|--------------|------------|---------------|--------|
-| gemma-4-E4B-it-Q4_K_M.gguf | 9 | 9 | 4.50s | 0.50s | 0 |
-| hermes-4-14b:latest | 1 | 1 | 0.50s | 0.50s | 0 |
-| **hermes-4-14b** | **1** | **33** | **9.48s** | **9.48s** | **0** |
-| **TOTAL** | **11** | **43** | **14.48s** | **1.32s** | **0** |
-
-### Calls by Date
-- 2026-07-14: 6 calls
-- 2026-07-16: 2 calls
-- 2026-08-04: 2 calls
-- **2026-08-05: 1 call** (today)
+### All-Time Cumulative (since logging began)
+| Model | Calls | Tokens | Total Latency |
+|-------|-------|--------|---------------|
+| gemma-4-E4B-it-Q4_K_M.gguf | 9 | 9 | 4.50s |
+| hermes-4-14b | 3 | 115 | 12.62s |
+| hermes-4-14b:latest | 1 | 1 | 0.50s |
+| **Total** | **13** | **125** | **17.62s** |
 
 ---
 
-## 2. System Automation Activity
+## ⚙️ System Actions & Automation Status
 
-### Email Agent (cron: 09:00 daily)
-| Metric | Count |
-|--------|-------|
-| Runs (last 24h) | 91 |
-| Successful | 89 |
-| Errors | 9 |
-| Emails Fetched | 136 |
+### ✅ Running Services
+| Service | Port | Status | Uptime | Notes |
+|---------|------|--------|--------|-------|
+| **Sam Hunter** (Federal Procurement) | 5002 | 🟢 Active (systemd) | 1 day 7h | PID 1516, serving requests |
+| **Dashboard** (Flask) | 5001 | 🟡 Running (unmanaged) | 6h 35m | PID 2739376 — *not* under systemd control |
+| **Email Agent API** | 5050 | 🟢 Running | Active | Started by cron at 09:00 |
 
-**Issues:** Recurring `invalid_grant: Token has been expired or revoked` from Gmail API. Telegram bot also failing with 403/401 errors. Token refresh needed.
+### ⚠️ Service Issues
+| Service | Issue | Impact |
+|---------|-------|--------|
+| **Dashboard (systemd)** | Port 5001 already in use (PID 2739376) | systemd restart loop (counter: 2931+) — service fails to start, but dashboard is accessible via the unmanaged process |
+| **Email Agent / Gmail** | `invalid_grant: Token has been expired or revoked` | Email fetching & sending **blocked** — daily summaries generate but cannot be emailed |
+| **Telegram Bot** | `401 Unauthorized` | Notifications fall back to plain text (bot token invalid) |
+| **Contract Report Email** | Same Gmail token error | Reports generated & saved locally, but email delivery fails |
 
-### Government Contracts Report (cron: 08:00 daily)
-| Metric | Count |
-|--------|-------|
-| Reports Generated (all-time) | 66 |
-| Emails Sent (all-time) | 13 |
+### 📅 Cron Jobs Executed (Last 24h)
+| Time | Job | Outcome |
+|------|-----|---------|
+| 08:00 | `send_contract_report.py` | ✅ SAM.gov fetch: 1,6067 total / 1,000 returned → 15 contracts matched across 4 categories → Report saved to `2026-08-07-categorized.md` ❌ Email send failed (expired token) |
+| 09:00 | `run_email_agent.sh` | ✅ Agent started, API on :5050 ❌ Gmail auth failed → empty dashboard generated |
+| @reboot | `run_sam_hunter.sh` | ✅ Sam Hunter started on port 5002 (Aug 6 14:39) |
 
-**Last Run (2026-08-04):** Report generated successfully (`2026-08-04-categorized.md`), but **email delivery failed** with same Gmail `invalid_grant` error.
-
-### Sam Hunter Federal Procurement Platform
-- **Service:** `sam-hunter.service` (systemd)
-- **Status:** ✅ Active (running since 2026-08-02 17:28 EDT — 2 days uptime)
-- **Port:** 5002 (Tailscale: 100.124.71.12:5002)
-- **PID:** 532840 | Memory: 39.5M | CPU: 23.0s
-- **Recent Access:** API calls from 100.107.194.13 (Tailscale) on 2026-08-02/03
-- **Note:** Previously had 4 restarts; stable since Aug 2.
-
-### Scott's Dashboard
-- **Service:** `dashboard.service` (systemd)
-- **Status:** ✅ Active (running since 2026-08-04 13:49 EDT — 15h uptime)
-- **Port:** 5001 (Tailscale: 100.124.71.12:5001)
-- **PID:** 1237635 | Memory: 63.0M | CPU: 45.9s
-- **Issue:** Persistent 404 errors on `/auth` endpoint (every 15s) — likely a polling client expecting auth endpoint that doesn't exist.
-
----
-
-## 3. Scheduled Jobs (crontab)
-
-| Schedule | Command | Status |
-|----------|---------|--------|
-| `0 9 * * *` | `~/projects/email-agent/run_email_agent.sh` | ⚠️ Running but token errors |
-| `0 8 * * *` | Govt contracts report | ⚠️ Running but email fails |
-| `@reboot` | Sam Hunter startup | ✅ Running (systemd also manages) |
-| `@reboot` | Claude Telegram bot | Unknown (check `claude-telegram-boot.log`) |
+### 📈 Contract Reports Generated (Last 7 Days)
+| Date | Raw Records | Categorized | Top Categories |
+|------|-------------|-------------|----------------|
+| 2026-08-07 | 1,000 | 15 contracts | Facility & Grounds (11), Security & Pest (2), Waste & Environmental (2) |
+| 2026-08-06 | 1,000 | ~15 contracts | Facility & Grounds, Waste & Environmental, Security, Textile |
+| 2026-08-05 | 1,000 | ~12 contracts | Similar distribution |
+| 2026-08-04 | 1,000 | ~12 contracts | — |
+| 2026-08-03 | 1,000 | ~11 contracts | — |
+| 2026-08-02 | 1,000 | ~12 contracts | — |
+| 2026-08-01 | 1,000 | ~13 contracts | — |
 
 ---
 
-## 4. System Health Summary
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| **Dashboard (Flask)** | ✅ Healthy | 15h uptime, serving on 5001 |
-| **Sam Hunter (Flask)** | ✅ Healthy | 2d uptime, serving on 5002 |
-| **Email Agent** | ⚠️ Degraded | Gmail token expired; Telegram 403/401 |
-| **Govt Contracts Cron** | ⚠️ Degraded | Report OK, email delivery broken |
-| **Local LLM (Ollama)** | ✅ Available | hermes-4-14b responding (9.5s latency) |
-| **Tailscale VPN** | ✅ Active | 100.124.71.12 reachable |
-| **GitHub Sync** | ✅ Working | Last push: this report |
+## 📡 Network & Access
+| Endpoint | IP (Tailscale) | IP (LAN) | Status |
+|----------|----------------|----------|--------|
+| **Dashboard** | http://100.124.71.12:5001 | http://192.168.1.222:5001 | 🟢 Accessible |
+| **Sam Hunter** | http://100.124.71.12:5002 | http://192.168.1.222:5002 | 🟢 Accessible |
+| **Email Agent API** | http://100.124.71.12:5050 | http://192.168.1.222:5050 | 🟢 Accessible |
+| **Ollama (Mac Studio)** | http://100.75.240.39:11434 | http://192.168.1.174:11434 | 🟢 Available (qwen3:14b, hermes-4-14b, qwen3-coder:30b) |
 
 ---
 
-## 5. Action Items
+## 🔧 Key Metrics Summary
 
-1. **🔴 CRITICAL:** Refresh Gmail OAuth token for email-agent and govt-contracts
-   - Run: `cd /home/scott/projects/email-agent && python -m gmail_auth` (or similar)
-
-2. **🟡 HIGH:** Fix Telegram bot token (403/401 errors)
-   - Verify bot token in config; check if bot was blocked
-
-3. **🟡 MEDIUM:** Dashboard `/auth` 404 spam
-   - Add `/auth` endpoint or identify/stop polling client
-
-4. **🟢 LOW:** Consider consolidating Sam Hunter startup (cron @reboot + systemd)
+| Category | Metric | Value |
+|----------|--------|-------|
+| **LLM Usage (24h)** | Calls | 0 |
+| **LLM Usage (All-time)** | Calls | 13 |
+| **Contracts Fetched (24h)** | Records from SAM.gov | 1,000 |
+| **Contracts Matched (24h)** | Relevant opportunities | 15 |
+| **Cron Runs (24h)** | Scheduled jobs executed | 2/2 (email agent, contract report) |
+| **Service Uptime** | Sam Hunter | 31h |
+| **Service Uptime** | Dashboard (actual) | 6h 35m |
+| **Auth Health** | Gmail OAuth | ❌ Expired |
+| **Auth Health** | Telegram Bot | ❌ Invalid token |
 
 ---
 
-*Report generated by automated cron job. Source logs: `/home/scott/projects/logs/llm_calls.jsonl`, service logs, systemd, crontab.*
+## 🚨 Action Items
+1. **Fix Dashboard systemd conflict** — Kill PID 2739376 and let systemd manage port 5001, or update systemd service to use the existing process.
+2. **Refresh Gmail OAuth token** — Run re-auth flow (`python3 exchange_code.py` or similar) to restore email sending.
+3. **Fix Telegram bot token** — Update bot token in email-agent config.
+4. **Consider consolidating dashboard process** — The unmanaged Flask process on :5001 should be migrated to systemd for proper supervision.
+
+---
+
+*Generated by Hermes Agent daily cron job — [Repository](https://github.com/scottqcarroll-rgb/hermes-projects)*

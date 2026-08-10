@@ -92,6 +92,7 @@
         .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
         .camera-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
         .truenas-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .stock-icon { background: linear-gradient(135deg, #ffd700, #ff8c00); }
         .link-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
         
         .card-title {
@@ -227,11 +228,66 @@
             color: #888;
             font-size: 0.8rem;
             padding: 40px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 8px;
-        }
-        
-        .footer {
+                        background: rgba(0,0,0,0.5);
+                        border-radius: 8px;
+                    }
+
+                    .stock-item {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 8px 0;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    }
+
+                    .stock-item:last-child {
+                        border-bottom: none;
+                    }
+
+                    .symbol {
+                        font-weight: bold;
+                        width: 50px;
+                        color: #00d4ff;
+                    }
+
+                    .price {
+                        width: 90px;
+                        text-align: right;
+                        color: #fff;
+                    }
+
+                    .change {
+                        width: 90px;
+                        text-align: right;
+                        font-weight: 600;
+                    }
+
+                    .change.negative {
+                        color: #e17055;
+                    }
+
+                    .change.positive {
+                        color: #00b894;
+                    }
+
+                    #refresh-stocks-btn {
+                        background: linear-gradient(135deg, #ffd700, #ff8c00);
+                        border: none;
+                        color: #1a1a2e;
+                        padding: 6px 12px;
+                        border-radius: 6px;
+                        font-weight: 600;
+                        font-size: 0.8rem;
+                        cursor: pointer;
+                        margin-left: auto;
+                        transition: transform 0.15s, box-shadow 0.15s;
+                    }
+
+                    #refresh-stocks-btn:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+                    }
+
+                    .footer {
             text-align: center;
             margin-top: 30px;
             padding: 16px;
@@ -367,6 +423,18 @@
             </div>
         </div>
         
+        <!-- Stock Watcher -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon stock-icon">📈</div>
+                <div class="card-title">Stock Watcher</div>
+                <button id="refresh-stocks-btn" onclick="fetchStocks()">Refresh</button>
+            </div>
+            <div class="card-body" id="stocks-data">
+                <span class="loading">Loading stocks...</span>
+            </div>
+        </div>
+
         <!-- Cameras -->
         <div class="card">
             <div class="card-header">
@@ -610,6 +678,7 @@
                 const el = document.getElementById('gmail-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
+                        ${data.email_address && data.email_address !== 'Unknown' ? `<div class="metric-row"><span>Account</span><span class="metric-value" style="font-size:0.85rem;color:#00d4ff;">${escapeHtml(data.email_address)}</span></div>` : ''}
                         <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count || 0}</span></div>
                         <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count || 0}</span></div>
                         ${data.latest && data.latest.length > 0 ? data.latest.map(m => `
@@ -815,25 +884,49 @@
                 document.getElementById('llm-metrics-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
-        
-        // === Initial Load ===
-        async function init() {
-            await Promise.all([
-                loadServerTime(),
-                loadDriveReport(),
-                loadPMDriveReport(),
-                loadWeather(),
-                loadLinks(),
-                loadGmail(),
-                loadOpenRoute(),
-                loadOllama(),
-                loadLinuxServer(),
-                loadMacStudio(),
-                loadTrueNAS(),
-                loadCameras(),
-                loadLLMMetrics()
-            ]);
-        }
+
+        // === Load Stocks ===
+                async function fetchStocks() {
+                    try {
+                        const res = await fetch('/api/stocks');
+                        const data = await res.json();
+                        const el = document.getElementById('stocks-data');
+                        let html = '';
+                        for (const [symbol, stock] of Object.entries(data)) {
+                            const changeClass = stock.change_percent && stock.change_percent.startsWith('-') ? 'negative' : 'positive';
+                            html += `
+                                <div class="stock-item">
+                                    <span class="symbol">${escapeHtml(symbol)}</span>
+                                    <span class="price">${stock.price}</span>
+                                    <span class="change ${changeClass}">${stock.change_percent || 'N/A'}</span>
+                                </div>
+                            `;
+                        }
+                        el.innerHTML = html || '<span class="loading">No stock data</span>';
+                    } catch (e) {
+                        document.getElementById('stocks-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                    }
+                }
+
+                // === Initial Load ===
+                async function init() {
+                    await Promise.all([
+                        loadServerTime(),
+                        loadDriveReport(),
+                        loadPMDriveReport(),
+                        loadWeather(),
+                        loadLinks(),
+                        loadGmail(),
+                        loadOpenRoute(),
+                        loadOllama(),
+                        loadLinuxServer(),
+                        loadMacStudio(),
+                        loadTrueNAS(),
+                        loadCameras(),
+                        loadLLMMetrics(),
+                        fetchStocks()
+                    ]);
+                }
         
         init();
         setInterval(init, 5 * 60 * 1000);

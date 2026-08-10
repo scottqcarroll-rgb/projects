@@ -18,7 +18,7 @@ from data_fetcher import (
     get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
     get_gmail_summary, get_ollama_status, get_linux_server_status,
     get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
-    get_mac_studio_ollama_status, get_truenas_status
+    get_mac_studio_ollama_status, get_truenas_status, get_stocks
 )
 import os
 import json
@@ -136,6 +136,11 @@ def api_usage():
 @app.route('/api/truenas')
 def api_truenas():
     return jsonify(get_truenas_status())
+
+
+@app.route('/api/stocks')
+def api_stocks():
+    return jsonify(get_stocks())
 
 
 import requests

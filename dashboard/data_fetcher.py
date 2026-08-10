@@ -679,7 +679,55 @@ def get_truenas_status():
         return {'status': 'error', 'message': str(e)}
 
 
-# --- 10. OpenRouter Usage ---
+# --- 10. Stock Watcher ---
+import yfinance as yf
+import time
+
+_stock_cache = {}
+_stock_cache_time = {}
+
+def get_stocks():
+    symbols = ['AAPL', 'TSLA', 'NVDA', 'SPY']
+    current_time = time.time()
+    
+    # Check if cached data is still valid (5 min cache)
+    if all(symbol in _stock_cache and 
+           current_time - _stock_cache_time.get(symbol, 0) < 300
+           for symbol in symbols):
+        return _stock_cache
+
+    stock_data = {}
+    for symbol in symbols:
+        try:
+            ticker = yf.Ticker(symbol)
+            info = ticker.info
+            hist = ticker.history(period="2d")
+            
+            if len(hist) >= 2:
+                current_price = hist['Close'].iloc[-1]
+                previous_price = hist['Close'].iloc[-2]
+                change = ((current_price - previous_price) / previous_price) * 100
+                change_percent = f"{change:.2f}%"
+            else:
+                current_price = info.get('currentPrice', 'N/A')
+                change_percent = 'N/A'
+                
+            stock_data[symbol] = {
+                'price': round(current_price, 2) if current_price != 'N/A' else 'N/A',
+                'change_percent': change_percent
+            }
+        except Exception:
+            stock_data[symbol] = {'price': 'N/A', 'change_percent': 'N/A'}
+    
+    # Cache the results
+    for symbol in symbols:
+        _stock_cache[symbol] = stock_data[symbol]
+        _stock_cache_time[symbol] = current_time
+    
+    return stock_data
+
+
+# --- 11. OpenRouter Usage ---
 def get_openrouter_usage():
     try:
         import urllib.request
@@ -736,3 +784,4 @@ if __name__ == '__main__':
     print("Linux Server:", json.dumps(get_linux_server_status(), indent=2))
     print("Mac Studio:", json.dumps(get_mac_studio_status(), indent=2))
     print("OpenRouter:", json.dumps(get_openrouter_usage(), indent=2))
+    print("Stocks:", json.dumps(get_stocks(), indent=2))

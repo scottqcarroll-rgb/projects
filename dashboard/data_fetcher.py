@@ -574,6 +574,80 @@ def get_mac_studio_ollama_status():
         return {'status': 'error', 'message': str(e)}
 
 
+# --- 7c. LLM Call Metrics (from Ollama GIN access logs on the Mac) ---
+def get_ollama_call_metrics():
+    """Count real LLM inference calls from the Mac Studio Ollama server log.
+
+    Ollama writes GIN-formatted access log lines for every request, e.g.
+        [GIN] 2026/08/20 - 15:03:12 | 200 | 1m45s | 192.168.1.222 | POST "/api/chat"
+        [GIN] 2026/08/20 - 09:00:17 | 200 | 13s  | 100.124.71.12  | POST "/v1/chat/completions"
+    We count only POST requests to the inference endpoints (chat/completions,
+    /v1/completions, /api/chat, /api/generate) as actual LLM calls. This is the
+    real usage source that replaced the abandoned llm_call_log.txt stub, which
+    was only appended by a dead-end proxy and had stopped recording months ago.
+    Timestamps are Ollama server-local time (= America/New_York, same as this
+    host), so direct comparison with the local clock is valid.
+    """
+    try:
+        import subprocess
+        import re
+        LOGS = "/tmp/ollama-serve.log /tmp/ollama.log /tmp/ollama.error.log"
+        cmd = ('ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes '
+               f"macstudio 'cat {LOGS} 2>/dev/null'")
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=25)
+
+        call_re = re.compile(r'(chat/completions|/v1/completions|/api/chat|/api/generate)')
+        gts_re = re.compile(r'^\[GIN\]\s+([0-9]{4}/[0-9]{2}/[0-9]{2} - [0-9]{2}:[0-9]{2}:[0-9]{2})')
+        now = datetime.now()
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        d30 = now - timedelta(days=30)
+        d1 = now - timedelta(hours=24)
+
+        calls = []
+        seen = set()
+        for line in result.stdout.splitlines():
+            if ' POST ' not in line:
+                continue
+            m = call_re.search(line)
+            if not m:
+                continue
+            gm = gts_re.match(line)
+            if not gm:
+                continue
+            try:
+                ts = datetime.strptime(gm.group(1), '%Y/%m/%d - %H:%M:%S')
+            except ValueError:
+                continue
+            # Dedup: the same request can appear in both ollama.log and ollama-serve.log
+            key = (ts, m.group(1))
+            if key in seen:
+                continue
+            seen.add(key)
+            calls.append(ts)
+
+        total = len(calls)
+        today_calls = sum(1 for t in calls if t >= today_start)
+        recent_30 = [t for t in calls if t >= d30]
+        recent_24 = [t for t in calls if t >= d1]
+        avg_30_day = len(recent_30) / 30.0
+        hourly_rate = len(recent_24) / 24.0
+        calls_today = [t.strftime('%H:%M') for t in calls if t >= today_start]
+
+        return {
+            'status': 'ok',
+            'source': 'ollama-gin-log',
+            'total_calls': total,
+            'today_calls': today_calls,
+            'share_of_total': round((today_calls / total * 100), 1) if total else 0,
+            'avg_30_day': round(avg_30_day, 1),
+            'hourly_rate': round(hourly_rate, 2),
+            'calls_today': calls_today,
+            'newest_call': max(calls).strftime('%Y-%m-%d %H:%M') if calls else None,
+        }
+    except Exception as e:
+        return {'status': 'error', 'source': 'ollama-gin-log', 'message': str(e)}
+
+
 # --- 8. Camera Snapshots ---
 def get_camera_snapshots():
     # Return camera metadata - browser will attempt to load snapshots directly

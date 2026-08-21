@@ -18,7 +18,8 @@ from data_fetcher import (
     get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
     get_gmail_summary, get_ollama_status, get_linux_server_status,
     get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
-    get_mac_studio_ollama_status, get_truenas_status, get_stocks
+    get_mac_studio_ollama_status, get_truenas_status, get_stocks,
+    get_ollama_call_metrics
 )
 import os
 import json
@@ -210,55 +211,8 @@ def api_ollama_models():
 
 @app.route('/api/llm-metrics')
 def api_llm_metrics():
-    """API endpoint for LLM call metrics - reads from log files."""
-    try:
-        log_file = '/home/scott/projects/llm_call_log.txt'
-        if not os.path.exists(log_file):
-            return jsonify({
-                'status': 'ok',
-                'total_calls': 0,
-                'today_calls': 0,
-                'share_of_total': 0,
-                'avg_30_day': 0,
-                'hourly_rate': 0,
-                'calls_today': []
-            })
-        with open(log_file, 'r') as f:
-            lines = f.readlines()
-        calls = []
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                timestamp_str = line.split(']')[0][1:]
-                timestamp = datetime.fromisoformat(timestamp_str)
-                calls.append(timestamp)
-            except (ValueError, IndexError):
-                continue
-        total_calls = len(calls)
-        now = datetime.now()
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        today_calls = sum(1 for c in calls if c >= today_start)
-        calls_today = [c.strftime('%H:%M') for c in calls if c >= today_start]
-        thirty_days_ago = now - timedelta(days=30)
-        recent_calls = [c for c in calls if c >= thirty_days_ago]
-        avg_30_day = len(recent_calls) / 30 if recent_calls else 0
-        one_day_ago = now - timedelta(hours=24)
-        recent_24h = [c for c in calls if c >= one_day_ago]
-        hourly_rate = len(recent_24h) / 24 if recent_24h else 0
-        share_of_total = round((today_calls / total_calls * 100), 1) if total_calls > 0 else 0
-        return jsonify({
-            'status': 'ok',
-            'total_calls': total_calls,
-            'today_calls': today_calls,
-            'share_of_total': share_of_total,
-            'avg_30_day': round(avg_30_day, 1),
-            'hourly_rate': round(hourly_rate, 2),
-            'calls_today': calls_today
-        })
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)})
+    return jsonify(get_ollama_call_metrics())
+
 
 @app.route('/api/gateway-logs')
 def api_gateway_logs():

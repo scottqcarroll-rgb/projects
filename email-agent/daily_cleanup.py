@@ -17,7 +17,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from yahoo_client import get_authenticated_service as get_yahoo_service, fetch_recent_emails as fetch_yahoo_emails
-from gmail_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails
+from gmail_imap_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails
 from email_classifier import classify_emails
 
 

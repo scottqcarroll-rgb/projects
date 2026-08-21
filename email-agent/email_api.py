@@ -9,7 +9,7 @@ import threading
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import gmail_client
+import gmail_imap_client
 import yahoo_client
 
 app = Flask(__name__)
@@ -56,7 +56,7 @@ def delete_email():
         if source == 'Gmail':
             if not gmail_service:
                 return jsonify({'error': 'Gmail service not available'}), 500
-            gmail_client.delete_email(gmail_service, email_id)
+            gmail_imap_client.delete_email(gmail_service, email_id)
             return jsonify({'success': True, 'message': f'Email deleted from Gmail'}), 200
 
         elif source == 'Yahoo':

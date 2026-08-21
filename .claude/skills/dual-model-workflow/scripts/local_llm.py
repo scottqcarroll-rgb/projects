@@ -12,7 +12,7 @@ import urllib.request
 import urllib.error
 import time
 
-LLM_URL = "http://192.168.1.174:8081/v1/chat/completions"
+LLM_URL = "http://192.168.1.240:8081/v1/chat/completions"
 MODEL = "gemma-4-E4B-it-Q4_K_M.gguf"
 
 def chat(prompt, max_tokens=512, temperature=0.7, system=None):

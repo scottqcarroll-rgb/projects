@@ -232,39 +232,66 @@ def get_ollama_status():
     try:
         import urllib.request
         import json
-        # Check Mac Studio Ollama API (Tailscale IP 100.75.240.39:11434)
-        url = 'http://100.75.240.39:11434/api/ps'
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=5) as response:
-            data = json.loads(response.read().decode('utf-8'))
-        
-        models = data.get('models', [])
-        if models:
-            model = models[0]
-            details = model.get('details', {})
-            n_params = model.get('size', 0)  # Ollama returns size in bytes
-            n_ctx = model.get('context_length', 0)
-            size_gb = round(n_params / (1024**3), 1) if n_params else 'N/A'
-            
-            # Determine model name from details
-            family = details.get('family', '')
-            param_size = details.get('parameter_size', '')
-            model_name = model.get('name', 'Unknown')
-            
-            if 'hermes' in model_name.lower():
-                model_name = 'Hermes 4 14B'
-            elif 'qwen' in family.lower():
-                model_name = f'Qwen {param_size}' if param_size else 'Qwen'
-            
-            return {
-                'status': 'ok',
-                'model': model_name,
-                'params': param_size if param_size else f'{n_params/1e9:.1f}B',
-                'context': f'{n_ctx//1000}K',
+
+        # Query Ollama API directly on LAN IP (192.168.1.240:11434)
+        # Get installed models via /api/tags
+        req = urllib.request.Request('http://192.168.1.240:11434/api/tags', headers={'User-Agent': 'Dashboard/1.0'})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+
+        models = []
+        for m in data.get('models', []):
+            name = m.get('name', '')
+            size_bytes = m.get('size', 0)
+            size_gb = round(size_bytes / (1024**3), 1)
+            modified = m.get('modified_at', '')
+            # Format modified time
+            if modified:
+                try:
+                    from datetime import datetime
+                    dt = datetime.fromisoformat(modified.replace('Z', '+00:00'))
+                    modified = dt.strftime('%Y-%m-%d')
+                except:
+                    pass
+
+            models.append({
+                'name': name,
+                'size': f'{size_gb} GB',
                 'size_gb': size_gb,
-                'host': 'Mac Studio (100.75.240.39:11434)'
-            }
-        return {'status': 'error', 'message': 'No model loaded'}
+                'modified': modified or 'N/A'
+            })
+
+        # Get running models via /api/ps
+        req2 = urllib.request.Request('http://192.168.1.240:11434/api/ps', headers={'User-Agent': 'Dashboard/1.0'})
+        with urllib.request.urlopen(req2, timeout=10) as resp2:
+            ps_data = json.loads(resp2.read().decode())
+
+        running_models = ps_data.get('models', [])
+        running = len(running_models) > 0
+
+        return {
+            'status': 'ok',
+            'ollama_running': running,
+            'models_installed': len(models),
+            'models': [
+                {
+                    'name': m['name'],
+                    'size': m['size'],
+                    'size_gb': m['size_gb'],
+                    'modified': m['modified'],
+                    'running': any(r.get('name', '') == m['name'] for r in running_models)
+                }
+                for m in models
+            ],
+            'running_models': [
+                {
+                    'name': m.get('name', ''),
+                    'size': m.get('size', 0),
+                    'size_gb': round(m.get('size', 0) / (1024**3), 1),
+                }
+                for m in running_models
+            ]
+        }
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 
@@ -349,7 +376,7 @@ def get_mac_studio_status():
         # Get hardware/software info
         result = subprocess.run(
             ['ssh', 'macstudio', 'system_profiler', 'SPHardwareDataType', 'SPMemoryDataType', 'SPSoftwareDataType', 'SPStorageDataType'],
-            capture_output=True, text=True, timeout=15
+            capture_output=True, text=True, timeout=60
         )
         
         if result.returncode != 0:
@@ -386,7 +413,7 @@ def get_mac_studio_status():
         # Get load/memory/disk via SSH
         result2 = subprocess.run(
             ['ssh', 'macstudio', 'bash -c "top -l 1 -n 0 2>/dev/null | grep -E \'Load Avg|PhysMem\'; df -h / 2>/dev/null | tail -1"'],
-            capture_output=True, text=True, timeout=15
+            capture_output=True, text=True, timeout=60
         )
         
         load_1m = load_5m = load_15m = 'N/A'
@@ -401,12 +428,12 @@ def get_mac_studio_status():
                 load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
                 load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
             elif 'PhysMem' in line:
-                # Parse: "PhysMem: 3981M used (1245M wired, 0B compressor), 28G unused."
+                # Parse: "PhysMem: 5631M used (1183M wired, 0B compressor), 26G unused."
                 import re
                 # Match used value with unit (M/G)
-                used_match = re.search(r'(\d+)([GM])i? used', line)
+                used_match = re.search(r'(\d+)([GM]) used', line)
                 # Match unused value with unit (M/G)
-                unused_match = re.search(r'(\d+)([GM])i? unused', line)
+                unused_match = re.search(r'(\d+)([GM]) unused', line)
                 
                 if used_match:
                     used_val = int(used_match.group(1))
@@ -453,7 +480,7 @@ def get_mac_studio_status():
             'disk_used': disk_used,
             'disk_total': disk_total,
             'disk_pct': disk_pct,
-            'ip': '192.168.1.174 (LAN)'
+            'ip': '192.168.1.240 (LAN)'
         }
     except Exception as e:
         return {'status': 'error', 'message': str(e)}

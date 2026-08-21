@@ -35,6 +35,18 @@
 - 192.168.1.200
 - 192.168.1.242
 
+## Network Access Rule (Dashboard & Internal Services)
+**Dashboard and all internal service-to-service communication uses LAN IPs (192.168.1.x).**
+
+| Context | IP Scheme | Example |
+|---------|-----------|---------|
+| Dashboard → Mac Studio (Ollama, SSH) | LAN | `192.168.1.174:11434` |
+| Dashboard → TrueNAS | LAN | `192.168.1.68` |
+| Dashboard → Linux server (self) | LAN | `192.168.1.222` or `localhost` |
+| You (remote) → any service | Tailscale | `100.124.71.12:5001` or `clawz840.tailnet.ts.net` |
+
+**Tailscale is ONLY for external/remote access.** Never use Tailscale IPs for internal dashboard fetchers, cron jobs, or service-to-service calls on the LAN.
+
 ## How to Access SMB Share (from any Windows PC on LAN)
 ```
 \\192.168.1.222\projects

@@ -12,7 +12,7 @@ import sys
 import requests
 from datetime import datetime
 
-from gmail_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails
+from gmail_imap_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails
 try:
     from llm_classifier import classify_emails
     USE_LLM = True
@@ -121,7 +121,8 @@ def main():
             all_emails.extend(gmail_emails)
         except Exception as e:
             print(f"[WARN] Gmail fetch failed: {e}")
-            raise
+            print("[*] Continuing with empty email list...")
+            gmail_service = None
 
     if not all_emails:
         print("[OK] No emails to classify. Generating empty dashboard...")

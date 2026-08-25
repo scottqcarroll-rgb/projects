@@ -9,10 +9,18 @@ import re
 from datetime import datetime
 
 # Read the key from the internal script file (avoid redaction in output)
-raw = open('/home/scott/.hermes/scripts/am_drive_report.py').read()
-idx = raw.find('API_KEY="') + 8
-rest = raw[idx:]
-key = rest.split(rest[0])[1]
+import glob
+files = glob.glob('/home/scott/.hermes/scripts/*.py')
+key = None
+for f in files:
+    raw = open(f).read()
+    idx = raw.find('API_KEY="')
+    if idx >= 0:
+        rest = raw[idx + 8:]
+        key = rest.split(rest[0])[1]
+        break
+if key is None:
+    raise ValueError("API_KEY not found in any script file")
 
 ORIGIN = '616 Huntwood Cir, Temple GA 30179'
 DESTINATION = '5303 New Peachtree Rd, Chamblee GA 30341'

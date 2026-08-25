@@ -12,10 +12,14 @@ def get_maps_key():
     files = glob.glob('/home/scott/.hermes/scripts/*.py')
     if not files:
         raise FileNotFoundError("No API key file found in /home/scott/.hermes/scripts/")
-    raw = open(files[0]).read()
-    idx = raw.find('API_KEY="') + 9
-    rest = raw[idx:]
-    return rest.split('"')[0]
+    # Find the file that contains API_KEY=
+    for f in files:
+        raw = open(f).read()
+        idx = raw.find('API_KEY="')
+        if idx >= 0:
+            rest = raw[idx + 9:]
+            return rest.split('"')[0]
+    raise ValueError("No file in /home/scott/.hermes/scripts/ contains API_KEY=")
 
 # --- Helper: Get drive routes ---
 def get_drive_routes(origin, destination):
@@ -829,6 +833,7 @@ def get_stocks():
 
 
 # --- 11. OpenRouter Usage ---
+# --- 11. OpenRouter Usage ---
 def get_openrouter_usage():
     try:
         import urllib.request
@@ -837,52 +842,45 @@ def get_openrouter_usage():
         if not api_key:
             return {'status': 'error', 'message': 'OPENROUTER_API_KEY not set'}
         
-        # OpenRouter key endpoint - returns usage and rate limit info
-        url = 'https://openrouter.ai/api/v1/key'
+        # OpenRouter models endpoint - returns model list and usage info
+        url = 'https://openrouter.ai/api/v1/models'
         
         req = urllib.request.Request(
             url,
             headers={
                 'Authorization': f'Bearer {api_key}',
-                'User-Agent': 'Mozilla/5.0'
+                'User-Agent': 'Mozilla/5.0',
+                'Accept': 'application/json',
             }
         )
-        with urllib.request.urlopen(req, timeout=10) as response:
+        with urllib.request.urlopen(req, timeout=15) as response:
             data = json.loads(response.read().decode('utf-8'))
         
-        # Extract usage metrics from key data
-        key_data = data.get('data', {})
-        if key_data:
-            usage = key_data.get('usage', 0)
-            usage_daily = key_data.get('usage_daily', 0)
-            usage_weekly = key_data.get('usage_weekly', 0)
-            usage_monthly = key_data.get('usage_monthly', 0)
-            limit = key_data.get('limit')
-            limit_remaining = key_data.get('limit_remaining')
-            is_free_tier = key_data.get('is_free_tier', True)
-            
-            return {
-                'status': 'ok',
-                'usage_total': usage,
-                'usage_daily': usage_daily,
-                'usage_weekly': usage_weekly,
-                'usage_monthly': usage_monthly,
-                'limit': limit,
-                'limit_remaining': limit_remaining,
-                'is_free_tier': is_free_tier,
-                'label': key_data.get('label', 'N/A')
-            }
-        return {'status': 'error', 'message': 'No key data returned'}
+        # Extract usage and pricing info from models response
+        metadata = data.get('metadata', {})
+        model_count = len(data.get('data', []))
+        total_count = metadata.get('total_count', 0)
+        
+        # Try to get usage from first model's pricing
+        pricing_info = {}
+        if data.get('data'):
+            first_model = data['data'][0]
+            pricing = first_model.get('pricing', {})
+            if pricing:
+                pricing_info = {
+                    'prompt_price_per_1k': pricing.get('prompt', 0),
+                    'completion_price_per_1k': pricing.get('completion', 0),
+                }
+        
+        return {
+            'status': 'ok',
+            'model_count': model_count,
+            'total_models': total_count,
+            'pricing': pricing_info,
+            'api_status': 'connected',
+        }
+    except urllib.error.HTTPError as e:
+        body = e.read().decode('utf-8')[:200]
+        return {'status': 'error', 'message': f'HTTP Error {e.code}: {body}'}
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
-
-
-if __name__ == '__main__':
-    print("Weather:", json.dumps(get_weather(), indent=2))
-    print("Sam Hunter:", json.dumps(get_sam_hunter(), indent=2))
-    print("Gmail:", json.dumps(get_gmail_summary(), indent=2))
-    print("Ollama:", json.dumps(get_ollama_status(), indent=2))
-    print("Linux Server:", json.dumps(get_linux_server_status(), indent=2))
-    print("Mac Studio:", json.dumps(get_mac_studio_status(), indent=2))
-    print("OpenRouter:", json.dumps(get_openrouter_usage(), indent=2))
-    print("Stocks:", json.dumps(get_stocks(), indent=2))

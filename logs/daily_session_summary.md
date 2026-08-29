@@ -1,103 +1,102 @@
 # Hermes AI Daily Session Summary
 
-**Period**: 2026-08-25 22:00 to 2026-08-26 22:00
-**Generated**: 2026-08-26 22:00:00
+**Period**: 2026-08-27 22:00 to 2026-08-28 22:00
+**Generated**: 2026-08-28 22:00:00
 
 ## 📊 Overview
 
 | Metric | Value |
 |--------|-------|
-| LLM Calls (24h) | 3 |
-| Successful LLM Calls | 3 |
+| LLM Calls (24h) | 0 |
+| Successful LLM Calls | 0 |
 | Failed LLM Calls | 0 |
-| Total Tokens Used | 131 |
-| Total Processing Time | 12.68s |
-| System Actions/Cron Jobs | 18 |
-| Successful System Actions | 14 |
-| Failed System Actions | 4 |
-| Errors Logged | 8 |
-| Agent Activities Recorded | 16 |
+| Total Tokens Used | 0 |
+| Total Processing Time | 0s |
+| System Actions/Cron Jobs | 4 |
+| Successful System Actions | 2 |
+| Failed System Actions | 2 |
+| Errors Logged | 15+ |
+| Agent Activities Recorded | 0 |
 
 ## 🤖 LLM Usage Details
 
 ### Models Used
-gemma-4-E4B-it-Q4_K_M.gguf, hermes-4-14b:latest, hermes-4-14b
+*No LLM calls recorded in the last 24 hours*
 
 ### Token Usage Breakdown
 | Model | Calls | Tokens | Time (s) | Avg Tokens/Call |
 |-------|-------|--------|----------|-----------------|
-| gemma-4-E4B-it-Q4_K_M.gguf | 1 | 1 | 0.5 | 1.0 |
-| hermes-4-14b:latest | 1 | 1 | 0.5 | 1.0 |
-| hermes-4-14b | 1 | 129 | 11.68 | 129.0 |
+| *No data* | - | - | - | - |
+
+**Note**: The LLM call log (`/home/scott/projects/logs/llm_calls.jsonl`) has not been updated since 2026-08-05. Local LLM calls may not be logging properly, or no LLM interactions occurred in this period.
 
 ## ⚙️ System Actions & Automation
 
-### Cron Job Executions
-- **Total Jobs**: 18
-- **Successful**: 14
-- **Failed**: 4
-- **Total Execution Time**: 1644.69s
-- **Average Execution Time**: 91.37s per action
+### Cron Job Executions (Last 24h)
+| Job | Schedule | Status | Details |
+|-----|----------|--------|---------|
+| Govt Contracts Report | 08:00 daily | ⚠️ Partial | Ran at 08:00; SAM.gov fetch succeeded but Gmail send failed (auth error) |
+| Email Agent | 09:00 daily | ❌ Failed | Ran at 09:00; Gmail IMAP auth failed (invalid credentials) |
+| Sam Hunter (systemd) | Continuous | ❌ Failed | Service in crash loop (50,512 restarts); port 5002 conflict |
+| Dashboard (systemd) | Continuous | ✅ Running | Stable since 2026-08-25; serving on port 5001 |
 
-### Recent Actions (Last 5)
-| Timestamp | Job ID | Duration | Status |
-|-----------|--------|----------|--------|
-| 2026-08-26T12:10:12.172Z | 60a838f76ece | 591.24s | ❌ Failed: RuntimeError: Non-streaming API call timed out after 180s with no response (threshold: 180s) |
-| 2026-08-26T09:46:18.726Z | 12032b2c99b8 | 22.96s | ✅ Success |
-| 2026-08-26T03:00:51.913Z | 7bade14495b3 | 15.00s | ✅ Success |
-| 2026-08-26T02:03:56.119Z | a8de39ac7da3 | 210.64s | ✅ Success |
-| 2026-08-25T12:03:09.703Z | 60a838f76ece | 169.68s | ✅ Success |
+### Service Status
+- **Dashboard** (port 5001): ✅ Active, running since Aug 25, 32 tasks, 126MB RAM
+- **Sam Hunter** (port 5002): ❌ Failed - port conflict with existing process (PID 1323, running since Aug 22)
+- **Email Agent API** (port 5050): Started by cron but may not persist
+- **Odoo** (port 8069): Not checked in this period
+- **Immich** (port 2283): Docker Compose, not checked in this period
 
 ## 🚨 Errors & Issues
 
-### Errors Logged (Last 24h): 8
+### Critical Issues
+1. **Sam Hunter Service Crash Loop** - systemd restart counter at 50,512; port 5002 occupied by stale process (PID 1323)
+2. **Gmail Authentication Failure** - Both cron jobs (8 AM and 9 AM) failing with `AUTHENTICATIONFAILED: Invalid credentials`
+3. **LLM Call Logging Inactive** - No entries in `llm_calls.jsonl` since 2026-08-05
 
-### Recent Errors
-- 2026-08-26 08:04:04,089 WARNING [cron_60a838f76ece_20260826_080020] agent.conversation_loop: API call failed (attempt 1/3) error_type=TimeoutError thread=ThreadPoolExecutor-177_0:125815874373312 provider=custom base_url=http://192.168.1.240:11434/v1/ model=qwen3.8:27b-mlx summary=Non-streaming API call timed out after 180s with no response (threshold: 180s)
-- 2026-08-26 08:07:06,909 WARNING [cron_60a838f76ece_20260826_080020] agent.conversation_loop: API call failed (attempt 2/3) error_type=TimeoutError thread=ThreadPoolExecutor-177_0:125815874373312 provider=custom base_url=http://192.168.1.240:11434/v1/ model=qwen3.8:27b-mlx summary=Non-streaming API call timed out after 180s with no response (threshold: 180s)
-- 2026-08-26 08:10:11,932 ERROR [cron_60a838f76ece_20260826_080020] agent.conversation_loop: API call failed after 3 retries. Non-streaming API call timed out after 180s with no response (threshold: 180s) | provider=custom model=qwen3.8:27b-mlx msgs=19 tokens=~16,254
-- 2026-08-26 08:10:12,169 ERROR cron.scheduler: Job 'daily-email-agent' failed: RuntimeError: Non-streaming API call timed out after 180s with no response (threshold: 180s)
-- 2026-08-26 22:00:05,839 WARNING [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call failed (attempt 1/3) error_type=NotFoundError thread=ThreadPoolExecutor-185_0:125815874373312 provider=openrouter base_url=https://openrouter.ai/api/v1 model=nvidia/nemotron-3-ultra-550b-a55b:free summary=HTTP 404: Provider returned error
-- 2026-08-26 22:04:37,309 WARNING [cron_a8de39ac7da3_20260826_220004] agent.tool_executor: Tool execute_code returned error (0.02s): {"status": "error", "error": "BLOCKED: execute_code runs arbitrary local Python (including subprocess calls that bypass shell-string approval checks). Cron jobs run without a user present to approve i
-- 2026-08-26 11:51:52,419 WARNING plugins.platforms.telegram.telegram_network: [Telegram] Sticky Telegram path 149.154.166.110 failed; re-walking IPv4 literals before the hostname
-- 2026-08-26 11:51:59,298 WARNING plugins.platforms.telegram.telegram_network: [Telegram] Sticky Telegram path 149.154.166.110 failed; re-walking IPv4 literals before the hostname
+### Recent Errors (from logs)
+- **Email Agent (09:00)**: `Gmail IMAP login failed: b'[AUTHENTICATIONFAILED] Invalid credentials (Failure)'`
+- **Govt Contracts (08:00)**: `Gmail IMAP login failed` when sending report email
+- **Sam Hunter**: `Address already in use - Port 5002 is in use by another program`
+- **Discord Gateway**: Persistent `Improper token has been passed` (ongoing since Aug 19)
+- **Telegram Gateway**: Sticky path failures, connection retries
 
 ## 🔧 Agent Activities
 
-### Key Activities Logged: 16
-
-### Recent Activities
-- 2026-08-26 22:03:07,662 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #4: model=nvidia/nemotron-3-ultra-550b-a55b:free provider=openrouter in=21557 out=41 total=21598 latency=13.4s cache=12960/21557 (60%)
-- 2026-08-26 22:03:21,504 INFO [cron_a8de39ac7da3_20260826_220004] agent.chat_completion_helpers: Fallback activated: nvidia/nemotron-3-ultra-550b-a55b:free → nvidia/nemotron-3-super-120b-a12b:free (openrouter)
-- 2026-08-26 22:03:28,266 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #5: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=21737 out=113 total=21850 latency=6.7s
-- 2026-08-26 22:03:33,531 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #6: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=22239 out=45 total=22284 latency=1.8s
-- 2026-08-26 22:03:36,529 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #7: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=26519 out=65 total=26584 latency=2.7s cache=16896/26519 (64%)
-- 2026-08-26 22:03:42,151 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #8: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=27328 out=78 total=27406 latency=5.3s cache=21120/27328 (77%)
-- 2026-08-26 22:03:48,789 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #9: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=28135 out=179 total=28314 latency=6.4s cache=21120/28135 (75%)
-- 2026-08-26 22:03:49,781 INFO [cron_a8de39ac7da3_20260826_220004] agent.tool_executor: tool read_file completed (0.58s, 109983 chars)
-- 2026-08-26 22:04:00,712 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #10: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=80880 out=138 total=81018 latency=10.8s cache=16896/80880 (21%)
-- 2026-08-26 22:04:03,391 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #11: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=82822 out=60 total=82882 latency=1.5s cache=76032/82822 (92%)
-- 2026-08-26 22:04:05,106 INFO hermes_cli.mem_trim: memory trim: reason=messaging gateway housekeeping malloc_trim=1 rss_kib=408224->402864 rss_anon_kib=370292->364932 threads=52 duration_ms=184.1
-- 2026-08-26 22:04:37,139 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #12: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=88729 out=3342 total=92071 latency=33.3s cache=76032/88729 (86%)
-- 2026-08-26 22:04:44,041 INFO [cron_a8de39ac7da3_20260826_220004] agent.tool_executor: tool read_file completed (0.10s, 2279 chars)
-- 2026-08-26 22:04:47,143 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #13: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=93591 out=89 total=93680 latency=2.9s cache=84480/93591 (90%)
-- 2026-08-26 22:04:50,828 INFO [cron_a8de39ac7da3_20260826_220004] agent.conversation_loop: API call #14: model=nvidia/nemotron-3-super-120b-a12b:free provider=openrouter in=102473 out=51 total=102524 latency=3.4s cache=84480/102473 (82%)
-- 2026-08-26 22:04:51,099 INFO [cron_a8de39ac7da3_20260826_220004] agent.tool_executor: tool terminal completed (0.14s, 4779 chars)
+### Key Activities Logged: 0
+*No Hermes agent conversation sessions recorded in the last 24 hours*
 
 ## 📈 Summary
 
 ### Performance Metrics
-- **LLM Success Rate**: 100.0% (3/3 calls)
-- **System Action Success Rate**: 77.8% (14/18 actions)
-- **Average LLM Response Time**: 4.23s per call
-- **Average System Action Time**: 91.37s per action
+- **LLM Success Rate**: N/A (0 calls)
+- **System Action Success Rate**: 50% (2/4 actions)
+- **Average LLM Response Time**: N/A
+- **Average System Action Time**: ~2-5 min (cron jobs)
+
+### Service Health
+| Service | Status | Uptime | Issues |
+|---------|--------|--------|--------|
+| Dashboard | ✅ Healthy | 3 days | None |
+| Sam Hunter | ❌ Critical | 0% | Port conflict, crash loop |
+| Email Agent Cron | ⚠️ Degraded | Daily | Gmail auth broken |
+| Govt Contracts Cron | ⚠️ Degraded | Daily | Gmail auth broken |
+| Discord Gateway | ❌ Down | Since Aug 19 | Invalid token |
+| Telegram Gateway | ⚠️ Unstable | Ongoing | Connection issues |
 
 ### Recommendations
-- ⚠️ System action success rate below 95% - check cron job reliability (4 failed jobs due to timeouts)
-- ⚠️ High error volume detected - review error logs for patterns (multiple timeout errors)
-- ⚠️ Telegram API connectivity issues - sticky paths failing
-- ⚠️ Execute_code tool blocked in cron mode - security restriction preventing automated code execution
-- ✅ LLM systems operating normally with 100% success rate
+- 🔴 **URGENT**: Fix Sam Hunter systemd service - kill stale PID 1323 on port 5002, restart service
+- 🔴 **URGENT**: Fix Gmail App Password for both cron jobs (email-agent and govt-contracts)
+- 🟡 **HIGH**: Investigate why LLM call logging stopped on 2026-08-05
+- 🟡 **HIGH**: Fix Discord bot token or disable Discord integration
+- 🟢 **MEDIUM**: Add monitoring/alerting for systemd service crash loops
+- 🟢 **MEDIUM**: Verify Immich and Odoo service health
+- 🟢 **LOW**: Clean up stale daily_counts files (git shows deleted files)
+
+### Positive Notes
+- ✅ Dashboard service stable for 3+ days
+- ✅ System resources healthy (memory, CPU)
+- ✅ Git repo clean except for expected log modifications
 
 ---
 *Report generated automatically by Hermes Agent cron job*

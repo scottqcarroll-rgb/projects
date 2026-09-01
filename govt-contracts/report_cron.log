@@ -2609,3 +2609,353 @@ Traceback (most recent call last):
   File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
     raise HTTPError(req.full_url, code, msg, hdrs, fp)
 urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 22, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 23, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:03] Starting contract report — August 24, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 25, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 26, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:01] Starting contract report — August 27, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:01] Starting contract report — August 28, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 29, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 30, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:02] Starting contract report — August 31, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[WARN] SAM.gov attempt 1 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 2/3, timeout=240s)...
+[WARN] SAM.gov attempt 2 failed: HTTP Error 401: Unauthorized
+[...] Fetching from SAM.gov (attempt 3/3, timeout=480s)...
+[WARN] SAM.gov attempt 3 failed: HTTP Error 401: Unauthorized
+Traceback (most recent call last):
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 451, in <module>
+    main()
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 425, in main
+    raw      = fetch_contracts(api_key)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/scott/projects/govt-contracts/send_contract_report.py", line 99, in fetch_contracts
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized

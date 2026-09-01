@@ -1,7 +1,20 @@
 # Hermes AI Daily Session Summary
 
-**Period**: 2026-08-27 22:00 to 2026-08-28 22:00
-**Generated**: 2026-08-28 22:00:00
+**Period**: 2026-08-30 22:00 to 2026-08-31 22:00
+**Generated**: 2026-08-31 22:06:36 EDT
+**Latest full summary**: `daily-session-summary-2026-08-31.md`
+
+## Local LLM Metrics (latest)
+
+| Metric | Value |
+|--------|-------|
+| Calls in last 24h | **0** |
+| Total calls (all-time JSONL) | 13 |
+| Total tokens (all-time) | 125 |
+| Log frozen since | 2026-08-05 (26 days) |
+| Per-model (all-time) | gemma-4-E4B: 9 calls/9 tok · hermes-4-14b: 3/115 · hermes-4-14b:latest: 1/1 |
+
+**Note:** LLM call logging has been inactive for 26 days. Ollama chat traffic (hermes-4-14b, qwen3:14b) likely routed to the Dashboard GIN/SSH metric tile. See full report in `daily-session-summary-2026-08-31.md`.
 
 ## 📊 Overview
 

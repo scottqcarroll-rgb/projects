@@ -17,7 +17,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from yahoo_client import get_authenticated_service as get_yahoo_service, fetch_recent_emails as fetch_yahoo_emails
-from gmail_imap_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails
+from gmail_imap_client import get_authenticated_service as get_gmail_service, fetch_recent_emails as fetch_gmail_emails, delete_email as delete_gmail_email
 from email_classifier import classify_emails
 
 
@@ -73,6 +73,7 @@ def main():
         print(f"[WARN] Yahoo fetch failed: {e}")
     
     # Fetch Gmail emails
+    gmail_service = None
     try:
         print("[*] Fetching Gmail emails...")
         gmail_service = get_gmail_service()
@@ -111,21 +112,30 @@ def main():
     # Delete junk emails
     deleted_count = 0
     failed_deletes = []
-    
+
     for email in junk_emails:
         email_id = email['id']
         source = email['source']
-        
+
         # Convert email_id to string if bytes
         if isinstance(email_id, bytes):
             email_id = email_id.decode()
-        
+
         print(f"[*] Deleting junk: {email.get('from', 'Unknown')} - {email.get('subject', 'No Subject')[:50]}")
-        
-        if delete_via_api(email_id, source):
-            deleted_count += 1
+
+        if source == 'Gmail':
+            try:
+                delete_gmail_email(gmail_service, email_id)
+                deleted_count += 1
+            except Exception as e:
+                print(f"[ERROR] Delete failed for Gmail {email_id}: {e}")
+                failed_deletes.append(f"{source}: {email.get('subject', 'Unknown')[:40]}")
         else:
-            failed_deletes.append(f"{source}: {email.get('subject', 'Unknown')[:40]}")
+            # Yahoo - still use API (would need yahoo_client to support delete)
+            if delete_via_api(email_id, source):
+                deleted_count += 1
+            else:
+                failed_deletes.append(f"{source}: {email.get('subject', 'Unknown')[:40]}")
     
     # Send summary
     today = datetime.now().strftime("%B %d, %Y")

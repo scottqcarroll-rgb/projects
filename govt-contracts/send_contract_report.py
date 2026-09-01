@@ -16,7 +16,7 @@ EMAIL_AGENT_DIR = '/home/scott/projects/email-agent'
 sys.path.insert(0, EMAIL_AGENT_DIR)
 os.chdir(EMAIL_AGENT_DIR)
 
-from gmail_client import get_authenticated_service
+from gmail_imap_client import send_email_via_smtp
 
 SAM_KEY_FILE = '/home/scott/projects/.env.samgov'
 RECIPIENT    = 'scottqcarroll@gmail.com'
@@ -405,15 +405,8 @@ def save_report(bucketed, run_date):
     print(f'[OK] Report saved: {path}')
 
 
-def send_email(service, subject, html_body):
-    msg            = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['From']    = RECIPIENT
-    msg['To']      = RECIPIENT
-    msg.attach(MIMEText(html_body, 'html'))
-    raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
-    service.users().messages().send(userId='me', body={'raw': raw}).execute()
-    print(f'[OK] Email sent to {RECIPIENT}')
+def send_email(subject, html_body):
+    send_email_via_smtp(subject, html_body, RECIPIENT)
 
 
 def main():
@@ -441,10 +434,9 @@ def main():
     save_report(bucketed, run_date)
 
     html         = build_html(bucketed, run_date)
-    gmail        = get_authenticated_service()
     urgent_total = sum(1 for v in bucketed.values() for c in v if c['urgent'])
     subject      = f'📋 Brisar Contracts {run_date} — {total_matched} matched (under $350K), {urgent_total} closing soon'
-    send_email(gmail, subject, html)
+    send_email(subject, html)
 
 
 if __name__ == '__main__':

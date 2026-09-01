@@ -705,13 +705,10 @@
                 const el = document.getElementById('openroute-data');
                 if (data.status === 'ok') {
                     el.innerHTML = `
-                        <div class="metric-row"><span>Total Usage</span><span class="metric-value">$${(data.usage_total || 0).toFixed(2)}</span></div>
-                        <div class="metric-row"><span>Daily</span><span class="metric-value">$${(data.usage_daily || 0).toFixed(2)}</span></div>
-                        <div class="metric-row"><span>Weekly</span><span class="metric-value">$${(data.usage_weekly || 0).toFixed(2)}</span></div>
-                        <div class="metric-row"><span>Monthly</span><span class="metric-value">$${(data.usage_monthly || 0).toFixed(2)}</span></div>
-                        <div class="metric-row"><span>Limit</span><span class="metric-value">${data.limit ? '$' + data.limit : 'N/A'}</span></div>
-                        <div class="metric-row"><span>Remaining</span><span class="metric-value">${data.limit_remaining ? '$' + data.limit_remaining : 'N/A'}</span></div>
-                        <div class="metric-row"><span>Status</span><span class="metric-value status-ok">${data.is_free_tier ? 'Free Tier' : 'Paid'}</span></div>
+                        <div class="metric-row"><span>Models</span><span class="metric-value">${data.model_count}</span></div>
+                        <div class="metric-row"><span>API Status</span><span class="metric-value status-ok">${data.api_status}</span></div>
+                        <div class="metric-row"><span>Prompt Price/1k</span><span class="metric-value">$${(data.pricing.prompt_price_per_1k || 0).toFixed(6)}</span></div>
+                        <div class="metric-row"><span>Completion Price/1k</span><span class="metric-value">$${(data.pricing.completion_price_per_1k || 0).toFixed(6)}</span></div>
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

@@ -199,19 +199,17 @@ def get_gmail_summary():
     try:
         import sys
         sys.path.insert(0, '/home/scott/projects/email-agent')
-        from gmail_client import get_authenticated_service, fetch_recent_emails
+        from gmail_imap_client import get_authenticated_service, fetch_recent_emails
         
         service = get_authenticated_service()
         
-        # Get profile to include email address
-        profile = service.users().getProfile(userId='me').execute()
-        email_address = profile.get('emailAddress', 'Unknown')
-        
         emails = fetch_recent_emails(service, hours=24, max_results=50)
+        email_address = "scottqcarroll@gmail.com"
         
         unread = sum(1 for e in emails if e.get('is_unread'))
         total = len(emails)
-        starred = sum(1 for e in emails if 'STARRED' in e.get('labelIds', []))
+        # IMAP doesn't have starred concept like Gmail API, use 0
+        starred = 0
         
         return {
             'status': 'ok',

@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 """
-Gmail IMAP Client using App Password
-Simple, no OAuth2 - uses IMAP with Gmail App Password directly.
+Gmail IMAP/SMTP Client using App Password
+Simple, no OAuth2 - uses IMAP/SMTP with Gmail App Password directly.
 """
 
 import os
 import imaplib
+import smtplib
 import email
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import base64
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
 GMAIL_IMAP_HOST = 'imap.gmail.com'
 GMAIL_IMAP_PORT = 993
+GMAIL_SMTP_HOST = 'smtp.gmail.com'
+GMAIL_SMTP_PORT = 587
 
 
 def load_gmail_credentials() -> tuple[str, str]:
@@ -167,6 +173,60 @@ def delete_email(service: imaplib.IMAP4_SSL, msg_id) -> bool:
         return True
     except Exception as e:
         print(f"[ERROR] Failed to delete email {msg_id}: {e}")
+        raise
+
+
+def get_smtp_connection() -> smtplib.SMTP:
+    """
+    Create authenticated SMTP connection for sending emails.
+    Uses Gmail App Password.
+    """
+    gmail_email, gmail_app_password = load_gmail_credentials()
+    
+    conn = smtplib.SMTP(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT)
+    conn.starttls()
+    conn.login(gmail_email, gmail_app_password)
+    
+    print(f"[OK] Gmail SMTP authenticated as {gmail_email} via App Password")
+    return conn
+
+
+def send_email_via_smtp(
+    subject: str,
+    html_body: str,
+    to_email: str,
+    from_email: Optional[str] = None
+) -> bool:
+    """
+    Send an HTML email via Gmail SMTP using App Password.
+    
+    Args:
+        subject: Email subject line
+        html_body: HTML content of the email
+        to_email: Recipient email address
+        from_email: Sender email (defaults to Gmail account email)
+    
+    Returns:
+        True if sent successfully
+    """
+    gmail_email, _ = load_gmail_credentials()
+    if from_email is None:
+        from_email = gmail_email
+    
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg.attach(MIMEText(html_body, 'html'))
+    
+    try:
+        smtp_conn = get_smtp_connection()
+        smtp_conn.send_message(msg)
+        smtp_conn.quit()
+        print(f"[OK] Email sent to {to_email}")
+        return True
+    except Exception as e:
+        print(f"[ERROR] Failed to send email: {e}")
         raise
 
 

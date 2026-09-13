@@ -8,7 +8,7 @@ import json
 import requests
 import sys
 
-LLM_URL = "http://100.75.240.39:11434/v1/chat/completions"
+LLM_URL = "http://192.168.1.240:11434/v1/chat/completions"
 LLM_MODEL = "hermes-4-14b"
 
 FALLBACK_KEYWORDS = {
@@ -78,7 +78,7 @@ Now classify these {len(emails_data)} emails:
                 "max_tokens": 800,
                 "temperature": 0.1
             },
-            timeout=120
+            timeout=300
         )
         response.raise_for_status()
         result = response.json()

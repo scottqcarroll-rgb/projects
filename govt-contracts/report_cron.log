@@ -2994,3 +2994,159 @@ Traceback (most recent call last):
   File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
     raise HTTPError(req.full_url, code, msg, hdrs, fp)
 urllib.error.HTTPError: HTTP Error 401: Unauthorized
+[08:00:01] Starting contract report — September 02, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 17956 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-02-raw.json
+[OK] Matched 30 contracts across 4 categories
+     Facility & Grounds Services: 15
+     Security & Pest Control: 4
+     Waste & Environmental Services: 10
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-02-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 03, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 18678 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-03-raw.json
+[OK] Matched 19 contracts across 4 categories
+     Facility & Grounds Services: 14
+     Security & Pest Control: 1
+     Waste & Environmental Services: 3
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-03-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:02] Starting contract report — September 04, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 18423 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-04-raw.json
+[OK] Matched 36 contracts across 4 categories
+     Facility & Grounds Services: 29
+     Security & Pest Control: 1
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-04-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 05, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 17712 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-05-raw.json
+[OK] Matched 41 contracts across 4 categories
+     Facility & Grounds Services: 27
+     Security & Pest Control: 4
+     Waste & Environmental Services: 10
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-05-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 06, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16780 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-06-raw.json
+[OK] Matched 44 contracts across 4 categories
+     Facility & Grounds Services: 30
+     Security & Pest Control: 4
+     Waste & Environmental Services: 10
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-06-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 07, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16623 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-07-raw.json
+[OK] Matched 42 contracts across 4 categories
+     Facility & Grounds Services: 28
+     Security & Pest Control: 4
+     Waste & Environmental Services: 10
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-07-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 08, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16517 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-08-raw.json
+[OK] Matched 41 contracts across 4 categories
+     Facility & Grounds Services: 28
+     Security & Pest Control: 3
+     Waste & Environmental Services: 10
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-08-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 09, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16615 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-09-raw.json
+[OK] Matched 30 contracts across 4 categories
+     Facility & Grounds Services: 19
+     Security & Pest Control: 3
+     Waste & Environmental Services: 8
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-09-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 10, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 17003 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-10-raw.json
+[OK] Matched 24 contracts across 4 categories
+     Facility & Grounds Services: 16
+     Security & Pest Control: 2
+     Waste & Environmental Services: 6
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-10-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 11, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 17089 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-11-raw.json
+[OK] Matched 21 contracts across 4 categories
+     Facility & Grounds Services: 14
+     Security & Pest Control: 1
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-11-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:02] Starting contract report — September 12, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16506 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-12-raw.json
+[OK] Matched 34 contracts across 4 categories
+     Facility & Grounds Services: 26
+     Security & Pest Control: 3
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-12-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — September 13, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 16222 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-13-raw.json
+[OK] Matched 37 contracts across 4 categories
+     Facility & Grounds Services: 28
+     Security & Pest Control: 4
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 0
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-09-13-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com

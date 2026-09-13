@@ -34,6 +34,8 @@ def schedule_shutdown():
                 pass
         os._exit(0)
     shutdown_timer = threading.Timer(SHUTDOWN_SECONDS, shutdown)
+    shutdown_timer.daemon = True
+    shutdown_timer.start()
 
 
 @app.route('/status', methods=['GET'])

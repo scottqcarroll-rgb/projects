@@ -1,40 +1,4 @@
-# Hermes Daily Activity Report
-**Period:** 2026-09-21 22:00 to 2026-09-22 22:00
-**Generated:** 2026-09-22 22:01:34
-
-## LLM Activity (Local Calls)
-- **Total Calls:** 0
-- **Total Tokens:** 0
-- **Total Processing Time:** 0.00s
-- **Average Tokens/Call:** 0.0
-- **Average Time/Call:** 0.00s
-
-### By Model
-- No local LLM calls in period
-
-### By Provider
-- No provider data
-
-## System Actions & Automation
-- Generated daily LLM activity report (this cron job)
-- Government Contracts Hunter: ✅ Ran successfully at 08:00, matched 9 contracts, email sent
-- Email Agent: ⚠️ Ran at 09:00, processed 9 emails, generated dashboard, but crashed on shutdown
-- Sam Hunter: ❌ Continuous restart loop (70k+ attempts) — wrong ExecStart path
-- Dashboard: ✅ Running, /auth 404 spam every 15s
-- Odoo: ✅ Running
-- Immich: ✅ Running (Docker)
-- Open WebUI: ✅ Running (Docker)
-- Midnight GitHub Backup: ✅ Completed
-
-## Overall Summary
-- **LLM Usage:** No local LLM calls in last 24h (last call 48 days ago)
-- **System Status:** 4/6 services running (Dashboard, Odoo, Immich, Open WebUI); Sam Hunter failed; Email Agent intermittent
-- **Gov Contracts:** Working — 9 contracts matched, email delivered
-- **Report Status:** Generated and ready for daily session summary
-
----
-
-# Daily Session Summary — Tuesday, September 22, 2026
+# Daily Session Summary — 2026-09-22
 
 **Generated:** 2026-09-22 22:01:34 EDT
 **Reporting Period:** 2026-09-21 22:00 → 2026-09-22 22:00 (24 hours)
@@ -115,6 +79,7 @@
   ```
   Fatal Python error: _enter_buffered_busy: could not acquire lock for <_io.BufferedWriter name='<stdout>'> at interpreter shutdown, possibly due to daemon threads
   ```
+- **Telegram notifications:** Skipped (no valid bot token)
 
 ### ❌ **Sam Hunter (Continuous)** — systemd service
 - **Status:** Continuous restart loop since 2026-09-21 22:00 EDT

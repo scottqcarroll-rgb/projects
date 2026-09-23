@@ -207,7 +207,12 @@ def fallback_classify(emails_data):
 
 
 def classify_emails(emails):
-    """Main classify function - tries LLM, falls back to keywords."""
+    """Main classify function - tries LLM, falls back to keywords.
+    Returns list of dicts with 'id' key matching input email ids.
+    """
+    if not emails:
+        return []
+    
     # Prepare data for LLM
     emails_data = []
     for e in emails:
@@ -218,4 +223,20 @@ def classify_emails(emails):
             'body': e.get('body', e.get('snippet', ''))
         })
     
-    return llm_classify_batch(emails_data)
+    classifications = llm_classify_batch(emails_data)
+    
+    # Ensure each classification gets the matching email id
+    results = []
+    for i, email in enumerate(emails):
+        if i < len(classifications):
+            c = classifications[i]
+        else:
+            c = {'important': False, 'reason': 'Classification unavailable', 'action': 'none'}
+        results.append({
+            'id': email.get('id', str(i + 1)),
+            'importance': 'important' if c.get('important', False) else 'not_important',
+            'reason': c.get('reason', ''),
+             'action': c.get('action', 'none')
+         })
+    
+    return results

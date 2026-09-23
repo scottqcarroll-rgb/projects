@@ -740,7 +740,7 @@
                                     </div>
                                 `).join('')}
                             </div>
-                        ` : '<span class="loading">No models installed</span>'}
+                        ` : '<span class="loading">No models installed</span>'
                     `;
                 } else {
                     el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;

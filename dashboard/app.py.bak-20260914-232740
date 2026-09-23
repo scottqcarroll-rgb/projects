@@ -24,7 +24,6 @@ from data_fetcher import (
 import os
 import json
 import subprocess
-import requests
 
 # Load .env file for environment variables
 try:
@@ -145,6 +144,7 @@ def api_stocks():
     return jsonify(get_stocks())
 
 
+import requests
 OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://100.75.240.39:11434')
 DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
 

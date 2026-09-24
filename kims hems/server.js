@@ -54,7 +54,12 @@ if (SMTP_ENABLED) {
 }
 
 function readJson(file) {
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (err) {
+    console.error(`[readJson] failed to parse ${file}:`, err.message);
+    return [];
+  }
 }
 
 function writeJson(file, data) {

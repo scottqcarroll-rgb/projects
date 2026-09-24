@@ -66,7 +66,7 @@ function setupContactForm(formId, statusId) {
       setStatus(status, "Thank you! Your message has been sent. We'll be in touch.", "success");
       form.reset();
     } catch (err) {
-      setStatus(status, "Sorry, something went wrong. Please call us at (404) 819-2045 or email kim@kimshems.com.", "error");
+      setStatus(status, "Sorry, something went wrong. Please call us at (404) 819-2045 or email kimshemsfit@gmail.com.", "error");
     }
   });
 }

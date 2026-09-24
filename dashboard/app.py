@@ -47,6 +47,10 @@ def add_cache_control(response):
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/auth')
+def auth():
+    return '', 200
+
 @app.route('/api/drive')
 def api_drive():
     return jsonify(get_drive_report())

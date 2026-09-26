@@ -86,6 +86,7 @@
         .drive-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .weather-icon { background: linear-gradient(135deg, #fdcb6e, #e17055); }
         .gmail-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .openroute-icon { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
         .ollama-icon { background: linear-gradient(135deg, #e17055, #fdcb6e); }
         .linux-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .mac-icon { background: linear-gradient(135deg, #fd79a8, #e17055); }
@@ -364,6 +365,17 @@
             </div>
             <div class="card-body" id="gmail-data">
                 <span class="loading">Loading email...</span>
+            </div>
+        </div>
+        
+        <!-- OpenRouter Usage -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon openroute-icon">🤖</div>
+                <div class="card-title">OpenRouter Usage</div>
+            </div>
+            <div class="card-body" id="openroute-data">
+                <span class="loading">Loading usage...</span>
             </div>
         </div>
         
@@ -674,6 +686,27 @@
             }
         }
         
+        // === Load OpenRouter Usage ===
+        async function loadOpenRoute() {
+            try {
+                const res = await fetch('/api/usage');
+                const data = await res.json();
+                const el = document.getElementById('openroute-data');
+                if (data.status === 'ok') {
+                    el.innerHTML = `
+                        <div class="metric-row"><span>Models</span><span class="metric-value">${data.model_count}</span></div>
+                        <div class="metric-row"><span>API Status</span><span class="metric-value status-ok">${data.api_status}</span></div>
+                        <div class="metric-row"><span>Prompt Price/1k</span><span class="metric-value">$${(data.pricing.prompt_price_per_1k || 0).toFixed(6)}</span></div>
+                        <div class="metric-row"><span>Completion Price/1k</span><span class="metric-value">$${(data.pricing.completion_price_per_1k || 0).toFixed(6)}</span></div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                }
+            } catch (e) {
+                document.getElementById('openroute-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
+        
         // === Load Ollama (Mac Studio) ===
         async function loadOllama() {
             try {
@@ -881,6 +914,7 @@
                                         loadWeather(),
                                         loadLinks(),
                                         loadGmail(),
+                                        loadOpenRoute(),
                                         loadOllama(),
                                         loadLinuxServer(),
                                         loadMacStudio(),

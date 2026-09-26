@@ -305,3 +305,74 @@ Press CTRL+C to quit
 127.0.0.1 - - [08/Aug/2026 11:34:07] "GET /auth HTTP/1.1" 404 -
 127.0.0.1 - - [08/Aug/2026 11:34:22] "GET /auth HTTP/1.1" 404 -
 127.0.0.1 - - [08/Aug/2026 11:34:37] "GET /auth HTTP/1.1" 404 -
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.222:5001
+Press CTRL+C to quit
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:13] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET / HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/linux-server HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/cameras HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /favicon.ico HTTP/1.1" 404 -
+100.67.66.62 - - [25/Sep/2026 11:52:14] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:15] "GET /api/mac-studio/ollama HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:16] "GET /api/mac-studio HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:16] "GET /api/camera-image?url=http://192.168.1.158/cgi-bin/snapshot.cgi?chn%3D0 HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:16] "GET /api/stocks HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:17] "GET /api/camera-image?url=http://192.168.1.163/cgi-bin/snapshot.cgi?chn%3D0 HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:17] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:18] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:18] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:19] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:19] "GET /api/truenas HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:52:41] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:14] "GET /api/server-time HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:14] "GET /api/links HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:14] "GET /api/usage HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/pm-drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/drive HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/linux-server HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/cameras HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/weather HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:15] "GET /api/mac-studio/ollama HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:16] "GET /api/stocks HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:16] "GET /api/mac-studio HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:18] "GET /api/gmail HTTP/1.1" 200 -
+100.67.66.62 - - [25/Sep/2026 11:57:19] "GET /api/truenas HTTP/1.1" 200 -
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 5001 is in use by another program. Either identify and stop that program, or start the server with a different port.

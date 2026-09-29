@@ -26,3 +26,11 @@
 {"timestamp": "2026-09-26T18:44:44", "date": "2026-09-26", "model": "qwen3.8:27b-rco-iq3s", "tokens": 20908, "elapsed_s": 9.81, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-09-26T18:48:18", "date": "2026-09-26", "model": "qwen3.8:27b-rco-iq3s", "tokens": 18985, "elapsed_s": 22.54, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-09-26T19:10:35", "date": "2026-09-26", "model": "qwen3.8:27b-rco-iq3s", "tokens": 27601, "elapsed_s": 33.12, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T18:07:16", "date": "2026-09-28", "model": "qwen3.8:27b-rco-iq3s", "tokens": 8192, "elapsed_s": 71.6, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T18:11:21", "date": "2026-09-28", "model": "qwen3.8:27b-rco-iq3s", "tokens": 8192, "elapsed_s": 67.16, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T18:17:11", "date": "2026-09-28", "model": "qwen3.8:27b-rco-iq3s", "tokens": 8192, "elapsed_s": 25.02, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T19:05:40", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 9490, "elapsed_s": 117.48, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T19:09:29", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 43096, "elapsed_s": 183.76, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T19:23:34", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 46139, "elapsed_s": 134.12, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T19:44:48", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 26447, "elapsed_s": 308.63, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-28T19:57:25", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 57387, "elapsed_s": 107.92, "ok": true, "source": "openwebui"}

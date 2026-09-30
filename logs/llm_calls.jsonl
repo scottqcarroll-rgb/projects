@@ -34,3 +34,10 @@
 {"timestamp": "2026-09-28T19:23:34", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 46139, "elapsed_s": 134.12, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-09-28T19:44:48", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 26447, "elapsed_s": 308.63, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-09-28T19:57:25", "date": "2026-09-28", "model": "qwen3.8:27b-mlx", "tokens": 57387, "elapsed_s": 107.92, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T05:45:36", "date": "2026-09-29", "model": "qwen3.8:27b-mlx", "tokens": 7052, "elapsed_s": 123.03, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T06:09:15", "date": "2026-09-29", "model": "qwen3.8:27b-mlx", "tokens": 7742, "elapsed_s": 127.3, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T16:05:12", "date": "2026-09-29", "model": "qwen3.8:27b-rco-iq3s", "tokens": 19569, "elapsed_s": 522.81, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T16:06:10", "date": "2026-09-29", "model": "qwen3.8:27b-mlx", "tokens": 32344, "elapsed_s": 483.75, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T16:22:37", "date": "2026-09-29", "model": "qwen3.8:27b-rco-iq3s", "tokens": 8192, "elapsed_s": 116.58, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T16:28:40", "date": "2026-09-29", "model": "qwen3.8:27b-rco-iq3s", "tokens": 8152, "elapsed_s": 57.74, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-09-29T16:32:42", "date": "2026-09-29", "model": "qwen3.8:27b-rco-iq3s", "tokens": 7953, "elapsed_s": 37.86, "ok": true, "source": "openwebui"}

@@ -125,7 +125,7 @@ h3 {
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--color-linen);
+  background: rgba(250, 247, 244, 0.94);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(52, 64, 58, 0.1);
 }
@@ -134,7 +134,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 124px;
+  height: 72px;
 }
 
 .brand {
@@ -145,10 +145,42 @@ h3 {
 }
 
 .logo-mark {
-  height: 110px;
-  width: auto;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
-  object-fit: contain;
+}
+
+.logo-mark .needle {
+  stroke: var(--color-ink);
+  stroke-width: 4.5;
+}
+
+.logo-mark .eye {
+  stroke: var(--color-gold-deep);
+  stroke-width: 2.4;
+}
+
+.logo-mark .thread {
+  stroke: var(--color-rose);
+  stroke-width: 3;
+}
+
+.logo-mark .knot {
+  fill: var(--color-rose);
+}
+
+.brand-text {
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand-text em {
+  font-style: italic;
+  color: var(--color-rose);
 }
 
 .nav-links {
@@ -196,7 +228,7 @@ h3 {
     linear-gradient(135deg, rgba(52, 64, 58, 0.55) 0%, rgba(93, 127, 73, 0.45) 100%),
     url("hero-bride.jpg") center / cover no-repeat;
   color: var(--color-white);
-  padding-top: 124px;
+  padding-top: 72px;
 }
 
 .hero-content {
@@ -229,54 +261,6 @@ h3 {
 /* ---------- Sections ---------- */
 .section {
   padding: 88px 0;
-}
-
-#services {
-  position: relative;
-}
-#services::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('seamstress-bg.jpg') center / cover no-repeat;
-  opacity: 0.15;
-  z-index: 0;
-}
-#services > .container {
-  position: relative;
-  z-index: 1;
-}
-
-#process {
-  position: relative;
-}
-#process::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('how-it-works-bg.jpg') center / cover no-repeat;
-  opacity: 0.15;
-  z-index: 0;
-}
-#process > .container {
-  position: relative;
-  z-index: 1;
-}
-
-#book {
-  position: relative;
-}
-#book::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('fitting-bg.jpg') center / cover no-repeat;
-  opacity: 0.15;
-  z-index: 0;
-}
-#book > .container {
-  position: relative;
-  z-index: 1;
 }
 
 .section-alt {
@@ -552,6 +536,27 @@ h3 {
   padding-bottom: 40px;
 }
 
+.site-footer .brand-text {
+  color: var(--color-white);
+}
+
+.site-footer .brand-text em {
+  color: #e6c0a4;
+}
+
+.site-footer .logo-mark .needle {
+  stroke: #e6c0a4;
+}
+
+.site-footer .logo-mark .eye,
+.site-footer .logo-mark .thread {
+  stroke: #e6c0a4;
+}
+
+.site-footer .logo-mark .knot {
+  fill: #e6c0a4;
+}
+
 .site-footer p {
   font-size: 0.9rem;
   color: #d8cfca;
@@ -613,12 +618,12 @@ h3 {
 
   .nav-links {
     position: absolute;
-    top: 124px;
+    top: 72px;
     left: 0;
     right: 0;
     flex-direction: column;
     gap: 0;
-background: var(--color-blush);
+    background: var(--color-linen);
     border-bottom: 1px solid rgba(52, 64, 58, 0.1);
     max-height: 0;
     overflow: hidden;

@@ -3447,3 +3447,16 @@ urllib.error.URLError: <urlopen error [Errno -3] Temporary failure in name resol
 [OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-10-02-categorized.md
 [OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
 [OK] Email sent to scottqcarroll@gmail.com
+[08:00:01] Starting contract report — October 03, 2026
+[...] Fetching up to 1000 records from SAM.gov (last 30 days)...
+[...] Fetching from SAM.gov (attempt 1/3, timeout=120s)...
+[OK] SAM.gov: 12406 total available, 1000 returned
+[OK] Raw data saved: /home/scott/projects/govt-contracts/prospect-lists/2026-10-03-raw.json
+[OK] Matched 44 contracts across 4 categories
+     Facility & Grounds Services: 32
+     Security & Pest Control: 6
+     Waste & Environmental Services: 5
+     Textile & Linen Services: 1
+[OK] Report saved: /home/scott/projects/govt-contracts/prospect-lists/2026-10-03-categorized.md
+[OK] Gmail SMTP authenticated as scottqcarroll@gmail.com via App Password
+[OK] Email sent to scottqcarroll@gmail.com

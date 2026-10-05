@@ -172,52 +172,18 @@ async def resolve(loc) -> tuple[float, float, str]:
     return DEFAULT_LAT, DEFAULT_LON, DEFAULT_NAME
 
 
-def coerce_location(value) -> LocationInput:
-    """Accept a bare string, a mapping, or a LocationInput.
-
-    Models frequently pass a plain place name ("Mobile") where the structured
-    object is expected, which used to raise a pydantic validation error and
-    waste a tool call. A string of the form "lat,lon" is treated as coordinates.
-    """
-    if isinstance(value, LocationInput):
-        return value
-    if isinstance(value, str):
-        parts = [p.strip() for p in value.split(",")]
-        if len(parts) == 2:
-            try:
-                return LocationInput(latitude=float(parts[0]), longitude=float(parts[1]))
-            except ValueError:
-                pass
-        return LocationInput(name=value)
-    if isinstance(value, dict):
-        return LocationInput.model_validate(value)
-    return LocationInput(name=str(value))
-
-
-def coerce_forecast(value) -> ForecastInput:
-    """Accept a bare string, a mapping, or a ForecastInput."""
-    if isinstance(value, ForecastInput):
-        return value
-    if isinstance(value, dict):
-        # Validate directly so fields like 'days' survive.
-        return ForecastInput.model_validate(value)
-    loc = coerce_location(value)
-    return ForecastInput(name=loc.name, latitude=loc.latitude, longitude=loc.longitude)
-
-
 @mcp.tool()
-async def weather_current(location: LocationInput | str) -> dict:
+async def weather_current(location: LocationInput) -> dict:
     """Get current weather conditions for a place.
 
-    Free via Open-Meteo (no API key). Accepts a place name as a plain string
-    ("Denver, CO") or a structured object with name and/or latitude/longitude;
-    coordinates take priority. Defaults to Scott's home in Temple, GA when
-    neither is given.
+    Free via Open-Meteo (no API key). Accepts a place name OR explicit
+    latitude/longitude; coordinates take priority. Defaults to Scott's home in
+    Temple, GA when neither is given.
 
     The returned 'location', 'latitude' and 'longitude' always reflect the point
     actually queried — check them against the request rather than assuming.
     """
-    lat, lon, label = await resolve(coerce_location(location))
+    lat, lon, label = await resolve(location)
     data = await fetch_open_meteo(lat, lon)
     cur = data.get("current", {})
     code = cur.get("weather_code")
@@ -235,24 +201,22 @@ async def weather_current(location: LocationInput | str) -> dict:
 
 
 @mcp.tool()
-async def weather_forecast(location: ForecastInput | str) -> list[dict]:
+async def weather_forecast(location: ForecastInput) -> list[dict]:
     """Get a multi-day high/low forecast for a place.
 
-    Free via Open-Meteo (no API key). Accepts a place name as a plain string
-    ("Denver, CO") or a structured object with name and/or latitude/longitude;
-    coordinates take priority. Defaults to Scott's home in Temple, GA when
-    neither is given.
+    Free via Open-Meteo (no API key). Accepts a place name OR explicit
+    latitude/longitude; coordinates take priority. Defaults to Scott's home in
+    Temple, GA when neither is given.
 
     Each entry repeats the resolved 'location', 'latitude' and 'longitude' so the
     caller can confirm the forecast covers the place that was requested.
     """
-    loc = coerce_forecast(location)
-    lat, lon, label = await resolve(loc)
+    lat, lon, label = await resolve(location)
     data = await fetch_open_meteo(
         lat,
         lon,
         daily="temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code",
-        forecast_days=loc.days,
+        forecast_days=location.days,
     )
     d = data.get("daily", {})
     times = d.get("time", [])

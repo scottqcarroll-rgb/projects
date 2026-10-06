@@ -206,7 +206,7 @@ def coerce_forecast(value) -> ForecastInput:
 
 
 @mcp.tool()
-async def current(location: LocationInput | str) -> dict:
+async def weather_current(location: LocationInput | str) -> dict:
     """Get current weather conditions for a place.
 
     Free via Open-Meteo (no API key). Accepts a place name as a plain string
@@ -235,7 +235,7 @@ async def current(location: LocationInput | str) -> dict:
 
 
 @mcp.tool()
-async def forecast(location: ForecastInput | str) -> list[dict]:
+async def weather_forecast(location: ForecastInput | str) -> list[dict]:
     """Get a multi-day high/low forecast for a place.
 
     Free via Open-Meteo (no API key). Accepts a place name as a plain string

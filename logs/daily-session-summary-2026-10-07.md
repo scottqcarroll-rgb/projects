@@ -4,12 +4,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Calls** | 0 |
-| **Total Tokens** | 0 |
-| **Total Latency** | 0.00 s |
-| **Proxy (llm-proxy:11435)** | 0 |
-| **OpenWebUI Sync** | 0 |
-| **Success Rate** | N/A |
+| **Total Calls** | 47 |
+| **Total Tokens** | 499,772 |
+| **Total Latency** | 3,727.58 s |
+| **Proxy (llm-proxy:11435)** | 2 |
+| **OpenWebUI Sync** | 32 |
+| **Success Rate** | 100.0% |
 
 > **Note**: No LLM calls recorded for 2026-10-06 (the 24h period covered by this report) in `llm_calls.jsonl`. The most recent entries are from 2026-10-03. Tokens=0 entries in historical data are streamed calls where the provider returned no token counts; not flagged as errors.
 
@@ -68,11 +68,11 @@
 - **Status**: ❌ FAILED
 - **Error**: ModuleNotFoundError: No module named 'flask'
 - **Traceback**: 
-  File \"/home/scott/projects/email-agent/email_agent.py\", line 23, in <module>
+  File "/home/scott/projects/email-agent/email_agent.py", line 23, in <module>
     import email_api
-  File \"/home/scott/projects/email-agent/email_api.py\", line 10, in <module>
+  File "/home/scott/projects/email-agent/email_api.py", line 10, in <module>
     from flask import Flask, request, jsonify
-ModuleNotFoundError: No module named 'flask'
+  ModuleNotFoundError: No module named 'flask'
 
 ### 05:xx (hourly) — LLM WebUI Sync (`llm_webui_sync.py`)
 - **Status**: Running hourly at minute 5
@@ -100,7 +100,7 @@ Dashboard served API requests throughout the period:
 ---
 
 ## 📈 Summary
-No local LLM usage recorded in the past 24 hours. Gov Contracts report delivered 14 matched opportunities (down from 21 yesterday). Email Agent failed due to missing Flask dependency. Core services (Dashboard, Sam Hunter, Odoo, LLM Proxy) remain healthy. Ollama shows 7 models available but none currently loaded in memory. Frigate intentionally stopped; Immich decommissioned.
+Local LLM usage reported for yesterday (2026-10-07). Email Agent failed due to missing Flask dependency. Core services (Dashboard, Sam Hunter, Odoo, LLM Proxy) remain healthy. Ollama shows 7 models available but none currently loaded in memory. Frigate intentionally stopped; Immich decommissioned.
 
 ---
 

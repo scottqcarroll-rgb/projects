@@ -1,1 +1,1 @@
-daily-session-summary-2026-10-10.md
+/home/scott/projects/daily-session-summary-2026-10-15.md

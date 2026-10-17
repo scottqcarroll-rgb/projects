@@ -45,3 +45,23 @@
 {"timestamp": "2026-10-01T12:16:36", "date": "2026-10-01", "model": "qwen3.8:27b-rco-iq3s", "tokens": 7342, "elapsed_s": 150.31, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-01T12:18:21", "date": "2026-10-01", "model": "qwen3.8:27b-rco-iq3s", "tokens": 18871, "elapsed_s": 46.96, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-03T14:27:21", "date": "2026-10-03", "model": "qwen3:14b", "tokens": 21, "elapsed_s": 4.87, "ok": true, "endpoint": "chat", "status": 200, "source": "proxy"}
+{"timestamp": "2026-10-16T16:20:34", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 8254, "elapsed_s": 188.95, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:27:33", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 9404, "elapsed_s": 140.96, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:30:46", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 11561, "elapsed_s": 202.08, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:35:16", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 15217, "elapsed_s": 325.2, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:45:31", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 18355, "elapsed_s": 419.86, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:55:45", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 15777, "elapsed_s": 31.53, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:57:12", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 16176, "elapsed_s": 57.01, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T16:59:30", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 18501, "elapsed_s": 180.83, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T17:12:10", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 19585, "elapsed_s": 43.73, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T19:10:25", "date": "2026-10-16", "model": "qwen3.8-27b-abliterated:latest", "tokens": 19694, "elapsed_s": 172.73, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T19:36:27", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 21681, "elapsed_s": 233.15, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T19:42:34", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 23714, "elapsed_s": 230.74, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T19:53:18", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 26170, "elapsed_s": 291.25, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:00:49", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 26906, "elapsed_s": 78.27, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:08:43", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 27094, "elapsed_s": 277.58, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:14:00", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 27607, "elapsed_s": 52.33, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:15:21", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 28672, "elapsed_s": 102.44, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:19:04", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 30505, "elapsed_s": 172.44, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:33:18", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 31370, "elapsed_s": 374.01, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-16T20:39:33", "date": "2026-10-16", "model": "orcarouter/qwen3.8-27b-uncensored:q4_K_M", "tokens": 31921, "elapsed_s": 124.19, "ok": true, "source": "openwebui"}

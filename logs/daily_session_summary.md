@@ -1,1 +1,1 @@
-daily-session-summary-2026-10-07.md
+daily-session-summary-2026-10-18.md

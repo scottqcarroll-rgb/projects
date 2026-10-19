@@ -89,3 +89,6 @@
 {"timestamp": "2026-10-17T20:16:27", "date": "2026-10-17", "model": "qwen3.8-27b-abliterated:vision", "tokens": 21258, "elapsed_s": 462.95, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-17T20:29:18", "date": "2026-10-17", "model": "qwen3.8-27b-abliterated:vision", "tokens": 26865, "elapsed_s": 522.53, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-17T20:50:19", "date": "2026-10-17", "model": "qwen3.8-27b-abliterated:vision", "tokens": 32768, "elapsed_s": 860.51, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-18T19:28:22", "date": "2026-10-18", "model": "qwen3.8-27b-abliterated:text-only", "tokens": 26353, "elapsed_s": 461.79, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-18T19:45:45", "date": "2026-10-18", "model": "qwen3.8-27b-abliterated:text-only", "tokens": 29736, "elapsed_s": 516.06, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-18T19:57:22", "date": "2026-10-18", "model": "qwen3.8-27b-abliterated:text-only", "tokens": 32768, "elapsed_s": 316.34, "ok": true, "source": "openwebui"}

@@ -298,25 +298,112 @@ def get_ollama_status():
         return {'status': 'error', 'message': str(e)}
 
 # --- 6. Linux Server (clawz840) System Status ---
+def _read_linux_memory():
+    """Return Linux memory totals from /proc/meminfo, in GiB."""
+    with open('/proc/meminfo', 'r') as f:
+        meminfo = {
+            line.split(':', 1)[0]: line.split(':', 1)[1].strip()
+            for line in f if ':' in line
+        }
+
+    def kb(key):
+        return int(meminfo.get(key, '0').split()[0])
+
+    total_kb = kb('MemTotal')
+    avail_kb = kb('MemAvailable') or (kb('MemFree') + kb('Buffers') + kb('Cached'))
+    used_kb = max(total_kb - avail_kb, 0)
+    cache_kb = kb('Buffers') + kb('Cached') + kb('SReclaimable')
+    swap_total_kb = kb('SwapTotal')
+    swap_used_kb = max(swap_total_kb - kb('SwapFree'), 0)
+
+    return {
+        'total_gb': round(total_kb / 1024 / 1024, 1),
+        'used_gb': round(used_kb / 1024 / 1024, 1),
+        'avail_gb': round(avail_kb / 1024 / 1024, 1),
+        'cache_gb': round(cache_kb / 1024 / 1024, 1),
+        'used_pct': round(used_kb / total_kb * 100, 1) if total_kb else 0.0,
+        'swap_total_gb': round(swap_total_kb / 1024 / 1024, 1),
+        'swap_used_gb': round(swap_used_kb / 1024 / 1024, 1),
+    }
+
+
+def _read_memory_pressure():
+    """Return PSI 'some avg10' memory stall percentage, or None if unavailable."""
+    try:
+        with open('/proc/pressure/memory', 'r') as f:
+            for line in f:
+                if line.startswith('some '):
+                    for field in line.split():
+                        if field.startswith('avg10='):
+                            return float(field.split('=', 1)[1])
+    except OSError:
+        return None
+    return None
+
+
+def _linux_pressure_label(used_pct, psi_some_avg10):
+    """Map memory usage or PSI stall time to a label and severity level."""
+    if psi_some_avg10 is not None:
+        if psi_some_avg10 < 1.0:
+            return f'Normal (PSI {psi_some_avg10:.2f})', 'ok'
+        if psi_some_avg10 < 10.0:
+            return f'Elevated (PSI {psi_some_avg10:.2f})', 'warning'
+        return f'Critical (PSI {psi_some_avg10:.2f})', 'critical'
+
+    available_pct = 100 - used_pct
+    if available_pct >= 20:
+        return f'Normal ({available_pct:.1f}% available)', 'ok'
+    if available_pct >= 5:
+        return f'Elevated ({available_pct:.1f}% available)', 'warning'
+    return f'Critical ({available_pct:.1f}% available)', 'critical'
+
+
+def _read_cpu_temp():
+    """Return the hottest CPU package temperature in Celsius, or 'N/A'."""
+    temps = []
+    for zone in glob.glob('/sys/class/thermal/thermal_zone*'):
+        try:
+            with open(os.path.join(zone, 'type'), 'r') as f:
+                zone_type = f.read().strip().lower()
+            with open(os.path.join(zone, 'temp'), 'r') as f:
+                millidegrees = int(f.read().strip())
+        except (OSError, ValueError):
+            continue
+        if any(token in zone_type for token in ('x86_pkg_temp', 'cpu', 'coretemp', 'soc')):
+            temps.append(millidegrees / 1000)
+
+    return f'{round(max(temps))}°C' if temps else 'N/A'
+
+
+def _format_cpu_model(model_name, thread_count):
+    """Tidy a /proc/cpuinfo model string, e.g. 'Intel Xeon E5-2630 v3 @ 2.40GHz · 32 threads'."""
+    cleaned = model_name.replace('(R)', '').replace('(TM)', '').replace('CPU ', '')
+    cleaned = ' '.join(cleaned.split())
+    return f'{cleaned} · {thread_count} threads' if thread_count else cleaned
+
+
+def _format_bytes_human(byte_count):
+    """Format a byte count as GB or TB using binary units, e.g. '56 GB' or '1.8 TB'."""
+    gigabytes = byte_count / (1024 ** 3)
+    if gigabytes >= 1024:
+        return f'{gigabytes / 1024:.1f} TB'
+    return f'{gigabytes:.0f} GB'
+
+
 def get_linux_server_status():
     try:
         import subprocess
-        import os
 
         # Get CPU load
         with open('/proc/loadavg', 'r') as f:
             load = f.read().split()[:3]
 
-        # Get memory
-        with open('/proc/meminfo', 'r') as f:
-            meminfo = f.read()
-        mem_total = int([l for l in meminfo.split('\n') if l.startswith('MemTotal')][0].split()[1]) / 1024  # MB
-        mem_avail = int([l for l in meminfo.split('\n') if l.startswith('MemAvailable')][0].split()[1]) / 1024
-        mem_used_pct = round((mem_total - mem_avail) / mem_total * 100, 1)
-        mem_total_gb = round(mem_total / 1024, 1)
-        mem_avail_gb = round(mem_avail / 1024, 1)
+        # Memory and pressure
+        memory = _read_linux_memory()
+        psi_some_avg10 = _read_memory_pressure()
+        pressure, pressure_level = _linux_pressure_label(memory['used_pct'], psi_some_avg10)
 
-        # Get CPU info
+        # CPU
         with open('/proc/cpuinfo', 'r') as f:
             cpuinfo = f.read()
         cpu_model = 'Unknown'
@@ -324,52 +411,144 @@ def get_linux_server_status():
             if line.startswith('model name'):
                 cpu_model = line.split(':')[-1].strip()
                 break
+        cpu_threads = os.cpu_count() or 0
+        cpu_label = _format_cpu_model(cpu_model, cpu_threads)
 
-        # Get disk usage for root
-        disk = subprocess.check_output(['df', '-h', '/'], text=True).split('\n')[1].split()
-        disk_used = disk[2]
-        disk_total = disk[1]
+        # Disk usage for root
+        disk = subprocess.check_output(['df', '-B1', '/'], text=True).splitlines()[1].split()
+        disk_used = _format_bytes_human(int(disk[2]))
+        disk_total = _format_bytes_human(int(disk[1]))
         disk_pct = disk[4]
 
-        # Get uptime
+        # Uptime
         with open('/proc/uptime', 'r') as f:
             uptime_sec = float(f.read().split()[0])
         uptime_days = int(uptime_sec // 86400)
         uptime_hours = int((uptime_sec % 86400) // 3600)
         uptime_str = f'{uptime_days}d {uptime_hours}h' if uptime_days else f'{uptime_hours}h'
 
-        # Get CPU temp if available
-        cpu_temp = 'N/A'
+        # OS release
+        os_version = 'Unknown'
         try:
-            for zone in os.listdir('/sys/class/thermal/'):
-                if 'cpu' in zone.lower():
-                    with open(f'/sys/class/thermal/{zone}/temp', 'r') as f:
-                        cpu_temp = f'{int(f.read().strip()) / 1000}°C'
+            with open('/etc/os-release', 'r') as f:
+                for line in f:
+                    if line.startswith('PRETTY_NAME='):
+                        os_version = line.split('=', 1)[1].strip().strip('"')
                         break
-        except (OSError, ValueError):
+        except OSError:
             pass
 
         return {
             'status': 'ok',
             'hostname': 'clawz840',
-            'cpu_model': cpu_model,
+            'os': os_version,
+            'cpu_model': cpu_label,
+            'cpu_threads': cpu_threads,
             'load_1m': load[0],
             'load_5m': load[1],
             'load_15m': load[2],
-            'memory_total_gb': mem_total_gb,
-            'memory_used_pct': mem_used_pct,
-            'memory_avail_gb': mem_avail_gb,
+            'memory_total_gb': memory['total_gb'],
+            'memory_used_gb': memory['used_gb'],
+            'memory_used_pct': memory['used_pct'],
+            'memory_avail_gb': memory['avail_gb'],
+            'memory_cache_gb': memory['cache_gb'],
+            'swap_used_gb': memory['swap_used_gb'],
+            'swap_total_gb': memory['swap_total_gb'],
+            'memory_pressure': pressure,
+            'pressure_level': pressure_level,
+            'memory_psi_some_avg10': psi_some_avg10,
             'disk_used': disk_used,
             'disk_total': disk_total,
             'disk_pct': disk_pct,
             'uptime': uptime_str,
-            'cpu_temp': cpu_temp,
+            'cpu_temp': _read_cpu_temp(),
             'ip': '100.124.71.12 (Tailscale) / 192.168.1.222 (LAN)'
         }
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 
 # --- 7. Mac Studio System Status ---
+def _bytes_to_gib(byte_count):
+    """Convert a byte count to GiB, rounded to one decimal place."""
+    return round(byte_count / (1024 ** 3), 1)
+
+
+# How far reported memory may drift from physical RAM before we flag it.
+# Page categories can overlap slightly, so a small reconciliation gap is normal.
+MEMORY_ACCOUNTING_TOLERANCE_GB = 2.0
+
+
+def _format_capacity_gb(capacity_text):
+    """Collapse a `system_profiler` capacity string to whole gigabytes.
+
+    Apple reports decimal GB/TB. Converting from the byte value keeps the
+    result consistent with what macOS displays, e.g. '494 GB'.
+    """
+    bytes_match = re.search(r'\(([\d,]+)\s+bytes\)', capacity_text)
+    if bytes_match:
+        gigabytes = int(bytes_match.group(1).replace(',', '')) / 1_000_000_000
+        return f"{round(gigabytes)} GB"
+
+    size_match = re.search(r'([\d.]+)\s*(TB|GB)', capacity_text, re.IGNORECASE)
+    if size_match:
+        value = float(size_match.group(1))
+        unit = size_match.group(2).upper()
+        gigabytes = value * 1000 if unit == 'TB' else value
+        return f"{round(gigabytes)} GB"
+
+    return capacity_text
+
+
+def _parse_vm_stat(vm_stat_output):
+    """Return (page_size_bytes, {page_label: page_count}) from `vm_stat` output."""
+    page_size = 4096
+    size_match = re.search(r'page size of (\d+) bytes', vm_stat_output)
+    if size_match:
+        page_size = int(size_match.group(1))
+
+    pages = {}
+    for line in vm_stat_output.splitlines():
+        label, separator, value = line.partition(':')
+        if not separator:
+            continue
+        label = label.strip().strip('"')
+        value = value.strip().rstrip('.')
+        if value.isdigit():
+            pages[label] = int(value)
+
+    return page_size, pages
+
+
+def _parse_swap_usage(swap_output):
+    """Return (total_gb, used_gb) from `sysctl vm.swapusage` output."""
+    def to_gb(match):
+        if not match:
+            return 0.0
+        value, unit = float(match.group(1)), match.group(2)
+        return value / 1024 if unit == 'M' else value
+
+    total_match = re.search(r'total = ([\d.]+)([MG])', swap_output)
+    used_match = re.search(r'used = ([\d.]+)([MG])', swap_output)
+    return round(to_gb(total_match), 1), round(to_gb(used_match), 1)
+
+
+def _parse_memory_free_pct(pressure_output):
+    """Return the system-wide free-memory percentage from `memory_pressure`."""
+    match = re.search(r'System-wide memory free percentage:\s*(\d+)%', pressure_output)
+    return int(match.group(1)) if match else None
+
+
+def _pressure_label(free_pct):
+    """Map macOS free-memory percentage to a label and severity level."""
+    if free_pct is None:
+        return 'Unknown', 'unknown'
+    if free_pct >= 40:
+        return f'Normal ({free_pct}% free)', 'ok'
+    if free_pct >= 15:
+        return f'Elevated ({free_pct}% free)', 'warning'
+    return f'Critical ({free_pct}% free)', 'critical'
+
+
 def get_mac_studio_status():
     try:
         import subprocess
@@ -406,58 +585,100 @@ def get_mac_studio_status():
             elif 'Capacity' in line and ('TB' in line or 'GB' in line) and 'Available' not in line and 'File System' not in line:
                 # Get the main APFS drive capacity (first one usually)
                 if 'APFS' in output[max(0, output.find(line)-200):output.find(line)] or storage == 'N/A':
-                    storage = line.split(':')[-1].strip()
-            elif 'Available' in line and ('TB' in line or 'GB' in line):
-                # This is available space, format storage nicely
-                avail = line.split(':')[-1].strip()
-                if storage != 'N/A':
-                    storage = f"{storage} ({avail} free)"
+                    storage = _format_capacity_gb(line.split(':')[-1].strip())
         
-        # Get load/memory/disk via SSH
+        # Get load, memory, swap, pressure, and disk via SSH.
+        # vm_stat + sysctl replace top's PhysMem line: top counts macOS file
+        # cache as "used", which massively overstates real memory usage.
+        metrics_command = (
+            "top -l 1 -n 0 2>/dev/null | grep -E 'Load Avg'; "
+            "echo '===VMSTAT==='; vm_stat; "
+            "echo '===MEMSIZE==='; sysctl -n hw.memsize; "
+            "echo '===SWAP==='; sysctl vm.swapusage; "
+            "echo '===PRESSURE==='; memory_pressure 2>/dev/null | tail -20; "
+            "echo '===DF==='; df -h / 2>/dev/null | tail -1"
+        )
         result2 = subprocess.run(
-            ['ssh', 'macstudio', 'bash -c "top -l 1 -n 0 2>/dev/null | grep -E \'Load Avg|PhysMem\'; df -h / 2>/dev/null | tail -1"'],
+            ['ssh', 'macstudio', metrics_command],
             capture_output=True, text=True, timeout=60
         )
-        
+
+        if result2.returncode != 0:
+            return {'status': 'error', 'message': 'SSH to Mac Studio failed while reading metrics'}
+
+        sections = {'top': '', 'VMSTAT': '', 'MEMSIZE': '', 'SWAP': '', 'PRESSURE': '', 'DF': ''}
+        section_markers = {
+            '===VMSTAT===': 'VMSTAT',
+            '===MEMSIZE===': 'MEMSIZE',
+            '===SWAP===': 'SWAP',
+            '===PRESSURE===': 'PRESSURE',
+            '===DF===': 'DF',
+        }
+        current_section = 'top'
+        for line in result2.stdout.splitlines():
+            marker = section_markers.get(line.strip())
+            if marker:
+                current_section = marker
+                continue
+            sections[current_section] += line + '\n'
+
         load_1m = load_5m = load_15m = 'N/A'
-        mem_total_gb = mem_used_gb = mem_free_gb = 0
-        mem_used_pct = 'N/A'
-        disk_used = disk_total = disk_pct = 'N/A'
-        
-        for line in result2.stdout.split('\n'):
+        for line in sections['top'].splitlines():
             if 'Load Avg' in line:
                 parts = line.split(':')[-1].strip().split(',')
                 load_1m = parts[0].strip() if len(parts) > 0 else 'N/A'
                 load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
                 load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
-            elif 'PhysMem' in line:
-                # Parse: "PhysMem: 5631M used (1183M wired, 0B compressor), 26G unused."
-                import re
-                # Match used value with unit (M/G)
-                used_match = re.search(r'(\d+)([GM]) used', line)
-                # Match unused value with unit (M/G)
-                unused_match = re.search(r'(\d+)([GM]) unused', line)
-                
-                if used_match:
-                    used_val = int(used_match.group(1))
-                    used_unit = used_match.group(2)
-                    if used_unit == 'M':
-                        mem_used_gb = round(used_val / 1024, 1)
-                    else:  # G
-                        mem_used_gb = float(used_val)
-                
-                if unused_match:
-                    unused_val = int(unused_match.group(1))
-                    unused_unit = unused_match.group(2)
-                    if unused_unit == 'M':
-                        mem_free_gb = round(unused_val / 1024, 1)
-                    else:  # G
-                        mem_free_gb = float(unused_val)
-                
-                mem_total_gb = round(mem_used_gb + mem_free_gb, 1)
-                if mem_total_gb > 0:
-                    mem_used_pct = round(mem_used_gb / mem_total_gb * 100, 1)
-            elif line.startswith('/dev/') or line.startswith('Filesystem'):
+
+        # Memory, using Activity Monitor semantics.
+        # Used = App (anonymous) + Wired + Compressed. File-backed pages are
+        # reclaimable cache, not usage; counting them is what produced the
+        # inflated "88% used" reading.
+        page_size, pages = _parse_vm_stat(sections['VMSTAT'])
+
+        def page_bytes(label):
+            return pages.get(label, 0) * page_size
+
+        app_bytes = page_bytes('Anonymous pages')
+        wired_bytes = page_bytes('Pages wired down')
+        compressed_bytes = page_bytes('Pages occupied by compressor')
+        cached_bytes = page_bytes('File-backed pages')
+        free_bytes = page_bytes('Pages free')
+
+        try:
+            total_bytes = int(sections['MEMSIZE'].strip())
+        except ValueError:
+            total_bytes = app_bytes + wired_bytes + compressed_bytes + cached_bytes + free_bytes
+
+        mem_total_gb = _bytes_to_gib(total_bytes)
+        mem_used_gb = _bytes_to_gib(app_bytes + wired_bytes + compressed_bytes)
+        mem_free_gb = _bytes_to_gib(free_bytes)
+        mem_app_gb = _bytes_to_gib(app_bytes)
+        mem_wired_gb = _bytes_to_gib(wired_bytes)
+        mem_compressed_gb = _bytes_to_gib(compressed_bytes)
+        mem_cached_gb = _bytes_to_gib(cached_bytes)
+        used_bytes = app_bytes + wired_bytes + compressed_bytes
+        mem_used_pct = round(used_bytes / total_bytes * 100, 1) if total_bytes else 0.0
+
+        # Sanity check: the page categories should reconcile with physical RAM.
+        # A large delta means the parser or the OS accounting changed under us.
+        accounted_bytes = used_bytes + cached_bytes + free_bytes
+        accounted_gb = _bytes_to_gib(accounted_bytes)
+        delta_gb = (total_bytes - accounted_bytes) / (1024 ** 3)
+        memory_sanity = 'ok' if abs(delta_gb) <= MEMORY_ACCOUNTING_TOLERANCE_GB else 'warn'
+        memory_sanity_message = (
+            f'OK (Δ {delta_gb:+.1f} GB)'
+            if memory_sanity == 'ok'
+            else f'DRIFT: {delta_gb:+.1f} GB vs physical RAM'
+        )
+
+        swap_total_gb, swap_used_gb = _parse_swap_usage(sections['SWAP'])
+        memory_free_pct = _parse_memory_free_pct(sections['PRESSURE'])
+        pressure, pressure_level = _pressure_label(memory_free_pct)
+
+        disk_used = disk_total = disk_pct = 'N/A'
+        for line in sections['DF'].splitlines():
+            if line.startswith('/dev/') or line.startswith('Filesystem'):
                 # df output: "/dev/disk3s1s1   460Gi    12Gi   302Gi     4%    459k  3.2G    0%   /"
                 parts = line.split()
                 if len(parts) >= 5:
@@ -480,6 +701,19 @@ def get_mac_studio_status():
             'memory_used_gb': mem_used_gb,
             'memory_free_gb': mem_free_gb,
             'memory_used_pct': mem_used_pct,
+            'memory_app_gb': mem_app_gb,
+            'memory_wired_gb': mem_wired_gb,
+            'memory_compressed_gb': mem_compressed_gb,
+            'memory_cached_gb': mem_cached_gb,
+            'swap_used_gb': swap_used_gb,
+            'swap_total_gb': swap_total_gb,
+            'memory_free_pct': memory_free_pct,
+            'pressure': pressure,
+            'pressure_level': pressure_level,
+            'memory_accounted_gb': accounted_gb,
+            'memory_delta_gb': round(delta_gb, 1),
+            'memory_sanity': memory_sanity,
+            'memory_sanity_message': memory_sanity_message,
             'disk_used': disk_used,
             'disk_total': disk_total,
             'disk_pct': disk_pct,

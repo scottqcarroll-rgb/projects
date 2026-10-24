@@ -724,13 +724,22 @@
                 const data = await res.json();
                 const el = document.getElementById('linux-server-data');
                 if (data.status === 'ok') {
+                    const pressureClass = data.pressure_level === 'critical' ? 'status-error'
+                        : data.pressure_level === 'warning' ? 'status-warn' : 'status-ok';
                     el.innerHTML = `
                         <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
+                        <div class="metric-row"><span>OS</span><span class="metric-value">${data.os}</span></div>
                         <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_model}</span></div>
-                        <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_avail_gb} GB free of ${data.memory_total_gb} GB)</span></div>
-                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
                         <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime}</span></div>
+                        <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
+                        <div class="forecast-divider"></div>
+                        <div class="metric-row"><span>Memory Used</span><span class="metric-value">${data.memory_used_gb} GB / ${data.memory_total_gb} GB (${data.memory_used_pct}%)</span></div>
+                        <div class="metric-row"><span>Cache / Buffers</span><span class="metric-value">${data.memory_cache_gb} GB</span></div>
+                        <div class="metric-row"><span>Available (incl. cache)</span><span class="metric-value">${data.memory_avail_gb} GB</span></div>
+                        <div class="metric-row"><span>Swap</span><span class="metric-value">${data.swap_used_gb} / ${data.swap_total_gb} GB</span></div>
+                        <div class="metric-row"><span>Pressure</span><span class="metric-value ${pressureClass}">${data.memory_pressure}</span></div>
+                        <div class="forecast-divider"></div>
+                        <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
                         <div class="metric-row"><span>CPU Temp</span><span class="metric-value">${data.cpu_temp}</span></div>
                         <div class="metric-row"><span>IP</span><span class="metric-value">${data.ip}</span></div>
                     `;
@@ -749,6 +758,9 @@
                 const data = await res.json();
                 const el = document.getElementById('mac-studio-data');
                 if (data.status === 'ok') {
+                    const pressureClass = data.pressure_level === 'critical' ? 'status-error'
+                        : data.pressure_level === 'warning' ? 'status-warn' : 'status-ok';
+                    const sanityClass = data.memory_sanity === 'ok' ? 'status-ok' : 'status-error';
                     el.innerHTML = `
                         <div class="metric-row"><span>Host</span><span class="metric-value">${data.hostname}</span></div>
                         <div class="metric-row"><span>Model</span><span class="metric-value">${data.model}</span></div>
@@ -757,7 +769,15 @@
                         <div class="metric-row"><span>RAM</span><span class="metric-value">${data.ram}</span></div>
                         <div class="metric-row"><span>Storage</span><span class="metric-value">${data.storage}</span></div>
                         <div class="metric-row"><span>Load (1m/5m/15m)</span><span class="metric-value">${data.load_1m} / ${data.load_5m} / ${data.load_15m}</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_used_pct}% used (${data.memory_used_gb} GB / ${data.memory_total_gb} GB)</span></div>
+                        <div class="forecast-divider"></div>
+                        <div class="metric-row"><span>Memory Used</span><span class="metric-value">${data.memory_used_gb} GB / ${data.memory_total_gb} GB (${data.memory_used_pct}%)</span></div>
+                        <div class="metric-row"><span>App · Wired · Compressed</span><span class="metric-value">${data.memory_app_gb} · ${data.memory_wired_gb} · ${data.memory_compressed_gb} GB</span></div>
+                        <div class="metric-row"><span>Cached Files</span><span class="metric-value">${data.memory_cached_gb} GB</span></div>
+                        <div class="metric-row"><span>Free</span><span class="metric-value">${data.memory_free_gb} GB</span></div>
+                        <div class="metric-row"><span>Accounting</span><span class="metric-value ${sanityClass}">${data.memory_sanity_message}</span></div>
+                        <div class="metric-row"><span>Swap</span><span class="metric-value">${data.swap_used_gb} / ${data.swap_total_gb} GB</span></div>
+                        <div class="metric-row"><span>Pressure</span><span class="metric-value ${pressureClass}">${data.pressure}</span></div>
+                        <div class="forecast-divider"></div>
                         <div class="metric-row"><span>Disk</span><span class="metric-value">${data.disk_pct} used (${data.disk_used} / ${data.disk_total})</span></div>
                     `;
                 } else {

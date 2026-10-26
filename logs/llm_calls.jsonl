@@ -103,3 +103,12 @@
 {"timestamp": "2026-10-20T20:05:50", "date": "2026-10-20", "model": "qwen3.8-27b-abliterated:text-only", "tokens": 67292, "elapsed_s": 142.51, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-23T22:32:06", "date": "2026-10-23", "model": "qwen3.8-27b-abliterated:latest", "tokens": 7391, "elapsed_s": 106.58, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-23T22:34:42", "date": "2026-10-23", "model": "hermes-4-14b:latest", "tokens": 7044, "elapsed_s": 77.81, "ok": false, "source": "openwebui"}
+{"timestamp": "2026-10-25T13:54:32", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 35565, "elapsed_s": 7.38, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T13:58:37", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 21607, "elapsed_s": 9.34, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T14:17:31", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 26807, "elapsed_s": 35.9, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T14:23:00", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 49056, "elapsed_s": 32.5, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T14:39:20", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 18984, "elapsed_s": 80.93, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T14:42:00", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 64022, "elapsed_s": 38.15, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T14:47:39", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 281285, "elapsed_s": 32.17, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T15:13:19", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 132907, "elapsed_s": 158.63, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-25T15:31:23", "date": "2026-10-25", "model": "qwen3-coder:30b", "tokens": 67234, "elapsed_s": 168.22, "ok": true, "source": "openwebui"}

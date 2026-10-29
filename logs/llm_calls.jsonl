@@ -121,3 +121,7 @@
 {"timestamp": "2026-10-27T16:12:01", "date": "2026-10-27", "model": "qwen3.8-27b-abliterated:latest", "tokens": 638849, "elapsed_s": 86.87, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-27T16:39:11", "date": "2026-10-27", "model": "qwen3.8-27b-abliterated:latest", "tokens": 166104, "elapsed_s": 275.63, "ok": true, "source": "openwebui"}
 {"timestamp": "2026-10-27T19:42:39", "date": "2026-10-27", "model": "qwen3.8-27b-abliterated:latest", "tokens": 92532, "elapsed_s": 34.74, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-28T05:11:53", "date": "2026-10-28", "model": "qwen3.8-27b-abliterated:latest", "tokens": 32768, "elapsed_s": 279.37, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-28T05:43:10", "date": "2026-10-28", "model": "qwen3.8-27b-abliterated:latest", "tokens": 32768, "elapsed_s": 277.41, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-28T09:00:19", "date": "2026-10-28", "model": "qwen3-coder:30b", "tokens": 10999, "elapsed_s": 3.95, "ok": true, "source": "openwebui"}
+{"timestamp": "2026-10-28T09:01:32", "date": "2026-10-28", "model": "qwen3.8-27b-abliterated:latest", "tokens": 15350, "elapsed_s": 34.42, "ok": true, "source": "openwebui"}

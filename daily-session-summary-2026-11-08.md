@@ -1,7 +1,7 @@
 # Daily Session Summary — 2026-11-08
 
-**Generated:** 2026-11-08 03:04:23 UTC
-**Reporting Period:** 2026-11-07 03:04 → 2026-11-08 03:04 (24 hours)
+**Generated:** 2026-11-08 22:04:49 UTC
+**Reporting Period:** 2026-11-07 22:00 → 2026-11-08 22:00 (24 hours)
 
 ---
 
@@ -49,7 +49,7 @@
 | **Local LLM** | Tokens (24h, JSONL) | 0 |
 | **Local LLM** | Avg elapsed/call (s) | 0.00 |
 | **Source Split** | Proxy vs Open WebUI | N/A |
-| **Services** | Running (checked) | 4/4 (LLM Proxy, Open WebUI, Dashboard, Odoo) |
+| **Services** | Running (checked) | 1/4 (LLM Proxy only) |
 
 ---
 

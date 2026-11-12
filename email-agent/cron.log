@@ -2752,3 +2752,24 @@ ModuleNotFoundError: No module named 'flask'
 [*] Email API server started on http://localhost:5050
 [*] Telegram notification skipped (no valid bot token)
 [OK] Done! Dashboard generated and digest sent.
+[LLM CLASSIFY] LLM unavailable (404 Client Error: Not Found for url: http://192.168.1.240:11434/v1/chat/completions), using fallback
+[*] Email Agent starting...
+[*] Authenticating with Gmail...
+[OK] Gmail IMAP authenticated as scottqcarroll@gmail.com via App Password
+[*] Fetching Gmail emails...
+[*] Fetched 3 Gmail emails
+[*] Classifying 3 emails...
+[*] Merging classifications with email data...
+[*] Generating dashboard...
+[*] Dashboard written to /home/scott/projects/email-agent/daily_summary.html
+[*] Starting email API server...
+[*] Email API server started on http://localhost:5050
+[*] Telegram notification skipped (no valid bot token)
+[OK] Done! Dashboard generated and digest sent.
+Fatal Python error: _enter_buffered_busy: could not acquire lock for <_io.BufferedWriter name='<stdout>'> at interpreter shutdown, possibly due to daemon threads
+Python runtime state: finalizing (tstate=0x0000000000ba6748)
+
+Current thread 0x00007cdd889ac080 (most recent call first):
+  <no Python frame>
+
+Extension modules: simplejson._speedups, charset_normalizer.md, charset_normalizer.cd, markupsafe._speedups (total: 4)

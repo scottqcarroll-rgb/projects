@@ -24,3 +24,14 @@ cron.log
 # OS
 .DS_Store
 Thumbs.db
+.env
+.env.*
+!.env.example
+*.bak
+venv*/
+**/venv*/
+node_modules/
+__pycache__/
+*.pyc
+token.json
+credentials.json

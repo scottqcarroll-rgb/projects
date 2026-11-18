@@ -1,8 +1,28 @@
 import json
+import os
 from datetime import datetime
+from pathlib import Path
+
+
+def load_api_key():
+    """Read the local API key so dashboard delete calls can authenticate."""
+    api_key = os.environ.get('EMAIL_AGENT_API_KEY')
+    if api_key:
+        return api_key
+
+    env_file = Path(__file__).parent / '.env'
+    if env_file.exists():
+        with open(env_file) as handle:
+            for line in handle:
+                line = line.strip()
+                if line.startswith('EMAIL_AGENT_API_KEY='):
+                    return line.split('=', 1)[1].strip()
+    return ''
+
 
 def generate_dashboard(emails_with_classification, title="Morning Email Summary"):
     """Generate a self-contained HTML dashboard from classified emails."""
+    api_key_literal = json.dumps(load_api_key())
 
     important = [e for e in emails_with_classification if e.get('importance') == 'important']
     not_important = [e for e in emails_with_classification if e.get('importance') == 'not_important']
@@ -388,7 +408,7 @@ def generate_dashboard(emails_with_classification, title="Morning Email Summary"
 
                 const response = await fetch('http://localhost:5050/delete', {{
                     method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
+                    headers: {{'Content-Type': 'application/json', 'X-API-Key': {api_key_literal}}},
                     body: JSON.stringify({{id: emailId, source: source}})
                 }});
 

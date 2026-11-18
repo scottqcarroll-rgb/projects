@@ -7,6 +7,8 @@ Auto-shuts down after 2 hours of operation.
 
 import threading
 import json
+import os
+from pathlib import Path
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import gmail_imap_client
@@ -20,6 +22,25 @@ gmail_service = None
 yahoo_service = None  # Persistent Yahoo OAuth2 connection
 shutdown_timer = None
 SHUTDOWN_SECONDS = 7200  # 2 hours
+
+
+def load_api_key():
+    """Read the API key from the environment or the local .env file."""
+    api_key = os.environ.get('EMAIL_AGENT_API_KEY')
+    if api_key:
+        return api_key
+
+    env_file = Path(__file__).parent / '.env'
+    if env_file.exists():
+        with open(env_file) as handle:
+            for line in handle:
+                line = line.strip()
+                if line.startswith('EMAIL_AGENT_API_KEY='):
+                    return line.split('=', 1)[1].strip()
+    return None
+
+
+API_KEY = load_api_key()
 
 
 def schedule_shutdown():
@@ -47,6 +68,9 @@ def status():
 @app.route('/delete', methods=['POST'])
 def delete_email():
     """Delete an email from Gmail or Yahoo."""
+    if not API_KEY or request.headers.get('X-API-Key') != API_KEY:
+        return jsonify({'error': 'Unauthorized'}), 401
+
     try:
         data = request.get_json()
         email_id = data.get('id')

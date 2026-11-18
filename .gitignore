@@ -1,5 +1,6 @@
 # Python
-venv/
+venv*/
+**/venv*/
 __pycache__/
 *.pyc
 *.pyo
@@ -11,6 +12,8 @@ build/
 
 # Secrets & credentials
 .env
+.env.*
+!.env.example
 .env.apify
 .env.samgov
 credentials.json
@@ -24,14 +27,7 @@ cron.log
 # OS
 .DS_Store
 Thumbs.db
-.env
-.env.*
-!.env.example
 *.bak
-venv*/
-**/venv*/
+
+# Other
 node_modules/
-__pycache__/
-*.pyc
-token.json
-credentials.json

@@ -39,45 +39,24 @@ This will:
 4. Approve permissions
 5. Tokens saved to `yahoo_tokens.json` (auto-refreshed thereafter)
 
-### 4. Test the Cleanup
+### 4. Deprecated Cleanup (removed 2026-11-23)
 
-```bash
-python3 daily_cleanup.py
-```
+`daily_cleanup.py` and its `setup_cron.py` installer were decommissioned.
+The installer is now a stub that refuses to run, and nothing creates an
+`email-cleanup.timer` any more.
 
-This will:
-- Fetch last 24h emails from Yahoo (and Gmail if configured)
-- Classify using rule-based keywords
-- Delete "not_important" (junk) emails
-- Send Telegram summary
-
-### 5. Install as Daily Systemd Timer
-
-```bash
-python3 setup_cron.py
-```
-
-This creates:
-- `email-cleanup.service` — runs the cleanup
-- `email-cleanup.timer` — triggers daily at 6 AM
-
-**Manage the timer:**
-```bash
-sudo systemctl status email-cleanup.timer     # Check status
-sudo systemctl start email-cleanup.service    # Run manually now
-sudo journalctl -u email-cleanup.service -f   # View live logs
-sudo systemctl stop email-cleanup.timer       # Disable
-```
+The live mailbox services are:
+- `sqc@bellsouth.net` — `/home/scott/inbox-cleanup/run_inbox_cleanup.sh` (cron 08:00)
+- `scottqcarroll@gmail.com` — `run_email_agent.sh` (cron 09:00)
 
 ## Architecture
 
 ```
-daily_cleanup.py (main entry)
-    ├── yahoo_client.py (OAuth2 IMAP wrapper)
-    │     └── yahoo_oauth2.py (OAuth2: device flow + XOAUTH2 SASL)
-    ├── gmail_client.py (Gmail API - optional)
-    ├── email_classifier.py (Rule-based: keywords + senders)
-    └── email_api.py (Flask API on :5050 for delete operations)
+email_agent.py (active, cron 09:00 — Gmail summary only)
+    ├── gmail_imap_client.py (IMAP + SMTP app-password client)
+    ├── llm_classifier.py (LLM classification, falls back to email_classifier.py)
+    ├── dashboard.py (HTML summary)
+    └── email_api.py (Flask API on :5050 for dashboard actions)
 ```
 
 ## Customizing Junk Rules
@@ -106,9 +85,8 @@ NOT_IMPORTANT_SENDERS = [
 | `yahoo_client.py` | Wrapper using OAuth2 for email fetch/delete |
 | `email_classifier.py` | Rule-based email importance classification |
 | `email_api.py` | Flask API server for delete operations |
-| `daily_cleanup.py` | Main cron job: fetch → classify → delete → notify |
-| `setup_yahoo_oauth2.py` | One-time OAuth2 setup wizard |
-| `setup_cron.py` | Install systemd timer |
+| `setup_yahoo_oauth2.py` | Legacy OAuth2 setup wizard (no active consumer) |
+| `setup_cron.py` | Disabled stub — installer for the retired cleanup agent |
 | `.env` | Credentials (not in git) |
 | `yahoo_tokens.json` | OAuth2 tokens (auto-managed) |
 

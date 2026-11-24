@@ -196,7 +196,33 @@
         .status-error {
             color: #e17055;
         }
-        
+
+        .alert-critical {
+            color: #e17055;
+        }
+
+        .alert-warning {
+            color: #fdcb6e;
+        }
+
+        .alert-info {
+            color: #00d4ff;
+        }
+
+        .app-link {
+            color: #00d4ff;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+
+        .alert-text {
+            flex: 1;
+            text-align: left;
+            font-size: 0.75rem;
+            color: #ccc;
+            padding-left: 8px;
+        }
+
         .camera-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -286,6 +312,20 @@
                         box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
                     }
 
+                    #refresh-stocks-btn:disabled {
+                        opacity: 0.6;
+                        cursor: wait;
+                        transform: none;
+                        box-shadow: none;
+                    }
+
+                    .stock-meta {
+                        padding: 0 20px 14px;
+                        font-size: 0.72rem;
+                        color: #8892a6;
+                        text-align: right;
+                    }
+
                     .footer {
             text-align: center;
             margin-top: 30px;
@@ -356,14 +396,15 @@
             </div>
         </div>
         
-        <!-- Gmail Summary -->
+        <!-- Email Accounts -->
         <div class="card">
             <div class="card-header">
                 <div class="card-icon gmail-icon">📧</div>
-                <div class="card-title">Email Summary</div>
+                <div class="card-title">Email Accounts</div>
             </div>
-            <div class="card-body" id="gmail-data">
-                <span class="loading">Loading email...</span>
+            <div class="card-body">
+                <div id="gmail-data"><span class="loading">Loading Gmail...</span></div>
+                <div id="bellsouth-data" style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;"><span class="loading">Loading Bellsouth...</span></div>
             </div>
         </div>
         
@@ -416,11 +457,12 @@
             <div class="card-header">
                 <div class="card-icon stock-icon">📈</div>
                 <div class="card-title">Stock Watcher</div>
-                <button id="refresh-stocks-btn" onclick="fetchStocks()">Refresh</button>
+                <button id="refresh-stocks-btn" onclick="fetchStocks(true)">Refresh</button>
             </div>
             <div class="card-body" id="stocks-data">
                 <span class="loading">Loading stocks...</span>
             </div>
+            <div class="stock-meta" id="stocks-meta"></div>
         </div>
 
         <!-- Cameras -->
@@ -446,7 +488,16 @@
             div.textContent = text;
             return div.innerHTML;
         }
-        
+
+        function safeUrl(value) {
+            try {
+                const parsed = new URL(value, window.location.origin);
+                return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '#';
+            } catch (e) {
+                return '#';
+            }
+        }
+
         function formatTime() {
             const now = new Date();
             return now.toLocaleString('en-US', {
@@ -648,29 +699,35 @@
         }
         
         // === Load Gmail ===
+        function renderInbox(el, label, data) {
+            if (data.status !== 'ok') {
+                el.innerHTML = `<span class="loading">${label}: Error: ${data.message || 'Unknown'}</span>`;
+                return;
+            }
+            el.innerHTML = `
+                <div style="font-weight:600;color:#00d4ff;margin-bottom:4px;">${label}</div>
+                ${data.email_address ? `<div class="metric-row"><span>Account</span><span class="metric-value" style="font-size:0.85rem;color:#00d4ff;">${escapeHtml(data.email_address)}</span></div>` : ''}
+                <div class="metric-row"><span>Inbox total</span><span class="metric-value">${data.total_count || 0}</span></div>
+                <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count || 0}</span></div>
+                <div class="metric-row"><span>New today</span><span class="metric-value">${data.new_today_count || 0}</span></div>
+            `;
+        }
+
         async function loadGmail() {
             try {
                 const res = await fetch('/api/gmail');
-                const data = await res.json();
-                const el = document.getElementById('gmail-data');
-                if (data.status === 'ok') {
-                    el.innerHTML = `
-                        ${data.email_address && data.email_address !== 'Unknown' ? `<div class="metric-row"><span>Account</span><span class="metric-value" style="font-size:0.85rem;color:#00d4ff;">${escapeHtml(data.email_address)}</span></div>` : ''}
-                        <div class="metric-row"><span>Unread</span><span class="metric-value">${data.unread_count || 0}</span></div>
-                        <div class="metric-row"><span>Total</span><span class="metric-value">${data.total_count || 0}</span></div>
-                        ${data.latest && data.latest.length > 0 ? data.latest.map(m => `
-                            <div style="margin:8px 0;padding:8px;background:rgba(255,255,255,0.05);border-radius:4px;font-size:0.85rem;">
-                                <div style="color:#00d4ff;font-weight:600;">${escapeHtml(m.from)}</div>
-                                <div style="color:#aaa;margin-top:2px;">${escapeHtml(m.subject)}</div>
-                                <div style="color:#666;font-size:0.75rem;margin-top:2px;">${m.date}</div>
-                            </div>
-                        `).join('') : '<span class="loading">No recent messages</span>'}
-                    `;
-                } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
-                }
+                renderInbox(document.getElementById('gmail-data'), 'Gmail', await res.json());
             } catch (e) {
-                document.getElementById('gmail-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                document.getElementById('gmail-data').innerHTML = `<span class="loading">Gmail: Error loading data</span>`;
+            }
+        }
+
+        async function loadBellsouth() {
+            try {
+                const res = await fetch('/api/bellsouth');
+                renderInbox(document.getElementById('bellsouth-data'), 'Bellsouth', await res.json());
+            } catch (e) {
+                document.getElementById('bellsouth-data').innerHTML = `<span class="loading">Bellsouth: Error loading data</span>`;
             }
         }
         
@@ -797,29 +854,59 @@
                 if (data.status === 'ok') {
                     const pools = data.pools || [];
                     const alerts = data.alerts || {};
+                    const activeAlerts = data.active_alerts || [];
+                    const keyApps = data.key_apps || [];
+                    const alertClass = alerts.CRITICAL ? 'status-error'
+                        : alerts.WARNING ? 'status-warn' : 'status-ok';
                     el.innerHTML = `
-                        <div class="metric-row"><span>Version</span><span class="metric-value">${data.version || 'N/A'}</span></div>
-                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${data.uptime || 'N/A'}</span></div>
-                        <div class="metric-row"><span>CPU</span><span class="metric-value">${data.cpu_physical_cores || 'N/A'} cores</span></div>
-                        <div class="metric-row"><span>Memory</span><span class="metric-value">${data.memory_total_gb || 'N/A'} GB</span></div>
-                        <div class="metric-row"><span>Alerts</span><span class="metric-value">${alerts.CRITICAL || 0} crit / ${alerts.WARNING || 0} warn / ${alerts.INFO || 0} info</span></div>
+                        <div class="metric-row"><span>Version</span><span class="metric-value">${escapeHtml(data.version || 'N/A')}</span></div>
+                        <div class="metric-row"><span>Uptime</span><span class="metric-value">${escapeHtml(data.uptime || 'N/A')}</span></div>
+                        <div class="metric-row"><span>CPU</span><span class="metric-value">${escapeHtml(data.cpu_physical_cores || 'N/A')} cores</span></div>
+                        <div class="metric-row"><span>Memory</span><span class="metric-value">${escapeHtml(data.memory_total_gb || 'N/A')} GB</span></div>
+                        <div class="metric-row"><span>Alerts</span><span class="metric-value ${alertClass}">${alerts.CRITICAL || 0} crit / ${alerts.WARNING || 0} warn / ${alerts.INFO || 0} info</span></div>
                         <div class="metric-row"><span>Apps</span><span class="metric-value">${data.apps_running || 0}/${data.apps_total || 0} running</span></div>
+                        ${activeAlerts.length > 0 ? `
+                            <div class="forecast-divider"></div>
+                            <div class="forecast-label">Active Alerts (${activeAlerts.length})</div>
+                            ${activeAlerts.map(alert => {
+                                const level = (alert.level || 'INFO').toLowerCase();
+                                const levelClass = level === 'critical' ? 'alert-critical'
+                                    : level === 'warning' ? 'alert-warning' : 'alert-info';
+                                return `
+                                    <div class="forecast-day">
+                                        <span class="forecast-date ${levelClass}">${escapeHtml(alert.level || 'INFO')}</span>
+                                        <span class="alert-text">${escapeHtml(alert.text || '')}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        ` : ''}
+                        ${keyApps.length > 0 ? `
+                            <div class="forecast-divider"></div>
+                            <div class="forecast-label">Key Apps</div>
+                            ${keyApps.map(app => `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">${escapeHtml(app.name || 'N/A')}</span>
+                                    <span class="forecast-condition">${app.state === 'RUNNING' ? '🟢' : '🔴'} ${escapeHtml(app.state || 'N/A')}</span>
+                                    ${app.url ? `<a class="app-link" href="${escapeHtml(safeUrl(app.url))}" target="_blank" rel="noopener noreferrer">Open</a>` : ''}
+                                </div>
+                            `).join('')}
+                        ` : ''}
                         ${pools.length > 0 ? `
                             <div class="forecast-divider"></div>
                             <div class="forecast-label">Storage Pools (${pools.length})</div>
                             ${pools.map(pool => `
                                 <div class="forecast-day">
-                                    <span class="forecast-date">${pool.name}</span>
+                                    <span class="forecast-date">${escapeHtml(pool.name || 'N/A')}</span>
                                     <span class="forecast-icon">${pool.status === 'ONLINE' ? '🟢' : pool.status === 'DEGRADED' ? '🟡' : '🔴'}</span>
-                                    <span class="forecast-condition">${pool.pct_used}% used</span>
-                                    <span class="forecast-temps">${pool.allocated_tb} TB / ${pool.size_tb} TB</span>
-                                    <span class="forecast-precip">${pool.free_tb} TB free</span>
+                                    <span class="forecast-condition">${escapeHtml(pool.pct_used)}% used</span>
+                                    <span class="forecast-temps">${escapeHtml(pool.allocated_tb)} TB / ${escapeHtml(pool.size_tb)} TB</span>
+                                    <span class="forecast-precip">${escapeHtml(pool.free_tb)} TB free</span>
                                 </div>
                             `).join('')}
                         ` : ''}
                     `;
                 } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+                    el.innerHTML = `<span class="loading">Error: ${escapeHtml(data.message || 'Unknown')}</span>`;
                 }
             } catch (e) {
                 document.getElementById('truenas-data').innerHTML = `<span class="loading">Error loading data</span>`;
@@ -835,8 +922,8 @@
                 if (data.status === 'ok' && data.cameras) {
                     el.innerHTML = data.cameras.map(cam => `
                         <div class="camera-item">
-                            <img src="/api/camera-image?url=${encodeURIComponent(cam.snapshot_url)}" alt="${cam.name}" loading="lazy">
-                            <span>${cam.name}</span>
+                            <img src="/api/camera-image?id=${encodeURIComponent(cam.id)}" alt="${escapeHtml(cam.name)}" loading="lazy">
+                            <span>${escapeHtml(cam.name)}</span>
                         </div>
                     `).join('');
                 } else {
@@ -847,50 +934,47 @@
             }
         }
         
-        // === Load LLM Metrics ===
-        async function loadLLMMetrics() {
+        // === Load Stocks ===
+        async function fetchStocks(force = false) {
+            const button = document.getElementById('refresh-stocks-btn');
+            const el = document.getElementById('stocks-data');
+            const meta = document.getElementById('stocks-meta');
             try {
-                const res = await fetch('/api/llm-metrics');
+                button.disabled = true;
+                button.textContent = force ? 'Refreshing…' : 'Refresh';
+                const url = force ? '/api/stocks?force=1' : '/api/stocks';
+                const res = await fetch(url);
                 const data = await res.json();
-                const el = document.getElementById('llm-metrics-data');
-                if (data.status === 'ok') {
-                    el.innerHTML = `
-                        <div class="metric-row"><span>Total Requests</span><span class="metric-value">${data.total_calls || 0}</span></div>
-                        <div class="metric-row"><span>Today</span><span class="metric-value">${data.today_calls || 0}</span></div>
-                        <div class="metric-row"><span>30-Day Avg/Day</span><span class="metric-value">${data.avg_30_day || 0}</span></div>
-                        <div class="metric-row"><span>Hourly Rate</span><span class="metric-value">${data.hourly_rate || 0}</span></div>
-                        <div class="metric-row"><span>Share of Total</span><span class="metric-value">${(data.share_of_total * 100).toFixed(1)}%</span></div>
-                    `;
-                } else {
-                    el.innerHTML = `<span class="loading">Error: ${data.message || 'Unknown'}</span>`;
+
+                if (data.status !== 'ok') {
+                    el.innerHTML = `<span class="loading">Error: ${escapeHtml(data.message || 'Unknown')}</span>`;
+                    meta.textContent = '';
+                    return;
                 }
+
+                let html = '';
+                for (const [symbol, stock] of Object.entries(data.stocks || {})) {
+                    const changeClass = stock.change_percent && stock.change_percent.startsWith('-') ? 'negative' : 'positive';
+                    html += `
+                        <div class="stock-item">
+                            <span class="symbol">${escapeHtml(symbol)}</span>
+                            <span class="price">${escapeHtml(String(stock.price))}</span>
+                            <span class="change ${changeClass}">${escapeHtml(stock.change_percent || 'N/A')}</span>
+                        </div>
+                    `;
+                }
+                el.innerHTML = html || '<span class="loading">No stock data</span>';
+                meta.textContent = data.refreshed
+                    ? `Just refreshed · ${data.cached_at}`
+                    : `Cached ${data.age_seconds ?? 0}s ago · ${data.cached_at}`;
             } catch (e) {
-                document.getElementById('llm-metrics-data').innerHTML = `<span class="loading">Error loading data</span>`;
+                el.innerHTML = `<span class="loading">Error loading data</span>`;
+                meta.textContent = '';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Refresh';
             }
         }
-
-        // === Load Stocks ===
-                async function fetchStocks() {
-                    try {
-                        const res = await fetch('/api/stocks');
-                        const data = await res.json();
-                        const el = document.getElementById('stocks-data');
-                        let html = '';
-                        for (const [symbol, stock] of Object.entries(data)) {
-                            const changeClass = stock.change_percent && stock.change_percent.startsWith('-') ? 'negative' : 'positive';
-                            html += `
-                                <div class="stock-item">
-                                    <span class="symbol">${escapeHtml(symbol)}</span>
-                                    <span class="price">${stock.price}</span>
-                                    <span class="change ${changeClass}">${stock.change_percent || 'N/A'}</span>
-                                </div>
-                            `;
-                        }
-                        el.innerHTML = html || '<span class="loading">No stock data</span>';
-                    } catch (e) {
-                        document.getElementById('stocks-data').innerHTML = `<span class="loading">Error loading data</span>`;
-                    }
-                }
 
                 // === Initial Load ==
                                 async function init() {
@@ -901,6 +985,7 @@
                                         loadWeather(),
                                         loadLinks(),
                                         loadGmail(),
+                                        loadBellsouth(),
                                         loadOllama(),
                                         loadLinuxServer(),
                                         loadMacStudio(),

@@ -52,8 +52,8 @@ def main():
         print(f"Refresh token: {tokens.get('refresh_token', 'N/A')[:20]}...")
         print(f"Expires in: {tokens.get('expires_in', 'N/A')} seconds")
         print(f"\nTokens saved to: yahoo_tokens.json")
-        print("\nYou can now run the daily cleanup:")
-        print("  python3 daily_cleanup.py")
+        print("\nNote: daily_cleanup.py was decommissioned on 2026-11-23.")
+        print("The live Gmail agent is run by cron via run_email_agent.sh.")
         return 0
     except Exception as e:
         print(f"\n[ERROR] Setup failed: {e}")

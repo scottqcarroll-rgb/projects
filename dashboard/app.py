@@ -1,29 +1,27 @@
 #!/usr/bin/env python3
-"""Dashboard web interface with LLM metrics support.
+"""Dashboard web interface.
 
 This Flask app provides a real-time dashboard showing:
 - Drive reports (AM/PM)
 - Weather status
-- System health (Linux server, Mac Studio)
-- LLM call metrics and usage data
+- System health (Linux server, Mac Studio, TrueNAS)
+- Email inbox counters and stock prices
 - Camera status and snapshots
-- OpenRoute usage statistics
 - Quick links to related services
-- TrueNAS server monitoring
 """
 from flask import Flask, render_template, jsonify, request, Response
 import pytz
-from datetime import datetime, timedelta
+import ipaddress
+from urllib.parse import urlparse
+from datetime import datetime
 from data_fetcher import (
-    get_drive_report, get_pm_drive_report, get_weather, get_sam_hunter,
-    get_gmail_summary, get_ollama_status, get_linux_server_status,
-    get_mac_studio_status, get_camera_snapshots, get_openrouter_usage,
+    get_drive_report, get_pm_drive_report, get_weather,
+    get_gmail_summary, get_bellsouth_summary, get_linux_server_status,
+    get_mac_studio_status, get_camera_snapshots,
+    get_camera_snapshot_url, get_camera_snapshot_urls,
     get_mac_studio_ollama_status, get_truenas_status, get_stocks,
-    get_ollama_call_metrics
 )
 import os
-import json
-import subprocess
 import requests
 
 # Load .env file for environment variables
@@ -34,6 +32,28 @@ except ImportError:
     pass  # python-dotenv not installed, will rely on system env vars
 
 app = Flask(__name__)
+
+ALLOWED_NETWORKS = tuple(
+    ipaddress.ip_network(entry.strip(), strict=False)
+    for entry in os.environ.get(
+        'DASHBOARD_ALLOWED_NETWORKS',
+        '127.0.0.1/32,192.168.1.0/24,100.64.0.0/10',
+    ).split(',')
+    if entry.strip()
+)
+
+ALLOWED_CAMERA_URLS = get_camera_snapshot_urls()
+ALLOWED_CAMERA_HOSTS = {urlparse(url).hostname for url in ALLOWED_CAMERA_URLS}
+
+@app.before_request
+def restrict_dashboard_access():
+    """Keeps this internal dashboard off the public internet."""
+    try:
+        client_ip = ipaddress.ip_address(request.remote_addr or '')
+    except ValueError:
+        return Response('Forbidden', status=403)
+    if not any(client_ip in network for network in ALLOWED_NETWORKS):
+        return Response('Forbidden', status=403)
 
 @app.after_request
 def add_cache_control(response):
@@ -46,10 +66,6 @@ def add_cache_control(response):
 @app.route('/')
 def dashboard():
     return render_template('dashboard.html')
-
-@app.route('/auth')
-def auth():
-    return '', 200
 
 @app.route('/api/drive')
 def api_drive():
@@ -79,17 +95,13 @@ def api_links():
 def api_pm_drive():
     return jsonify(get_pm_drive_report())
 
-@app.route('/api/samhunter')
-def api_samhunter():
-    return jsonify(get_sam_hunter())
-
 @app.route('/api/gmail')
 def api_gmail():
     return jsonify(get_gmail_summary())
 
-@app.route('/api/ollama')
-def api_ollama():
-    return jsonify(get_ollama_status())
+@app.route('/api/bellsouth')
+def api_bellsouth():
+    return jsonify(get_bellsouth_summary())
 
 @app.route('/api/linux-server')
 def api_linux_server():
@@ -111,15 +123,27 @@ def api_cameras():
 
 @app.route('/api/camera-image')
 def api_camera_image():
-    url = request.args.get('url')
-    if not url:
-        return Response('Missing url parameter', status=400)
+    camera_id = request.args.get('id')
+    if camera_id:
+        target_url = get_camera_snapshot_url(camera_id)
+    else:
+        candidate = request.args.get('url', '')
+        target_url = candidate if candidate in ALLOWED_CAMERA_URLS else None
+
+    if not target_url:
+        return Response('Unknown camera', status=400)
+
+    parsed = urlparse(target_url)
+    if parsed.scheme != 'http' or parsed.hostname not in ALLOWED_CAMERA_HOSTS:
+        return Response('Camera not permitted', status=403)
+
     try:
-        import requests as req
-        r = req.get(url, timeout=10)
-        return Response(r.content, mimetype=r.headers.get('Content-Type', 'image/jpeg'))
-    except Exception as e:
-        return Response(f'Failed to fetch image: {str(e)}', status=500)
+        response = requests.get(target_url, timeout=10)
+        response.raise_for_status()
+        return Response(response.content, mimetype=response.headers.get('Content-Type', 'image/jpeg'))
+    except requests.RequestException:
+        app.logger.warning('Camera snapshot fetch failed for %s', target_url)
+        return Response('Failed to fetch image', status=502)
 
 @app.route('/api/server-time')
 def api_server_time():
@@ -128,13 +152,9 @@ def api_server_time():
     return jsonify({
         'status': 'ok',
         'datetime': now.strftime('%A, %B %d • %I:%M %p'),
-        'timestamp': now.isoformat()
+        'timestamp': now.isoformat(),
+        'timezone': str(eastern),
     })
-
-@app.route('/api/usage')
-def api_usage():
-    return jsonify(get_openrouter_usage())
-
 
 @app.route('/api/truenas')
 def api_truenas():
@@ -143,76 +163,7 @@ def api_truenas():
 
 @app.route('/api/stocks')
 def api_stocks():
-    return jsonify(get_stocks())
-
-
-OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://100.75.240.39:11434')
-DEFAULT_OLLAMA_MODEL = 'hermes-4-14b:latest'
-
-@app.route('/api/ollama-chat', methods=['POST'])
-def api_ollama_chat():
-    """Proxy chat requests to Mac Studio Ollama API."""
-    try:
-        data = request.get_json(force=True)
-        if not data:
-            return jsonify({'error': 'No JSON data provided'}), 400
-        
-        model = data.get('model', DEFAULT_OLLAMA_MODEL)
-        messages = data.get('messages', [])
-        stream = data.get('stream', False)
-        tools = data.get('tools', None)
-        
-        # Forward to Ollama API
-        payload = {'model': model, 'messages': messages, 'stream': stream}
-        if tools is not None:
-            payload['tools'] = tools
-        
-        resp = requests.post(
-            f'{OLLAMA_BASE_URL}/api/chat',
-            json=payload,
-            timeout=120,
-            stream=stream
-        )
-        
-        if stream:
-            def generate():
-                for line in resp.iter_lines():
-                    if line:
-                        yield line.decode('utf-8') + '\n'
-            return Response(generate(), mimetype='application/x-ndjson')
-        else:
-            result = resp.json()
-            # Log the call for metrics
-            try:
-                log_file = '/home/scott/projects/llm_call_log.txt'
-                with open(log_file, 'a') as f:
-                    f.write(f'[{datetime.now().isoformat()}] ollama-chat model={model} status=ok\n')
-            except Exception as log_err:
-                print(f"Failed to log LLM call: {log_err}")
-            return jsonify(result)
-    except requests.exceptions.ConnectionError:
-        return jsonify({'error': 'Cannot connect to Ollama at ' + OLLAMA_BASE_URL}), 503
-    except requests.exceptions.Timeout:
-        return jsonify({'error': 'Ollama request timed out'}), 504
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/ollama-models')
-def api_ollama_models():
-    """Get available models from Ollama."""
-    try:
-        resp = requests.get(f'{OLLAMA_BASE_URL}/api/tags', timeout=10)
-        return jsonify(resp.json())
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/llm-metrics')
-def api_llm_metrics():
-    return jsonify(get_ollama_call_metrics())
+    return jsonify(get_stocks(force=request.args.get('force') == '1'))
 
 
 @app.route('/api/gateway-logs')

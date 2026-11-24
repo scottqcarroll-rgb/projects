@@ -1,12 +1,36 @@
 #!/usr/bin/env python3
-import urllib.request
+import functools
 import json
-import re
 import os
-from datetime import datetime, timedelta
+import re
+import time
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 
 # --- Google Maps API Key ---
 import glob
+
+_response_cache = {}
+
+
+def ttl_cache(ttl_seconds):
+    """Cache successful fetch results so dashboard polls stop hammering remote hosts."""
+    def decorator(fetcher):
+        @functools.wraps(fetcher)
+        def wrapper(*args, force=False, **kwargs):
+            cache_key = (fetcher.__name__, args, tuple(sorted(kwargs.items())))
+            cached = _response_cache.get(cache_key)
+            now = time.monotonic()
+            if not force and cached and now - cached['at'] < ttl_seconds:
+                return cached['value']
+
+            value = fetcher(*args, **kwargs)
+            if isinstance(value, dict) and value.get('status') == 'ok':
+                _response_cache[cache_key] = {'at': now, 'value': value}
+            return value
+        return wrapper
+    return decorator
 
 def get_maps_key():
     files = glob.glob('/home/scott/.hermes/scripts/*.py')
@@ -187,117 +211,89 @@ def get_weather():
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 
-def get_sam_hunter():
-    return {
-        'status': 'ok',
-        'url': 'http://100.124.71.12:5002',
-        'name': 'Sam Hunter'
-    }
+# --- 4. Email Inbox Counters ---
+def _imap_inbox_counts(service):
+    status, _ = service.select("INBOX")
+    if status != "OK":
+        raise RuntimeError("Could not select INBOX")
 
-# --- 4. Gmail Summary (integrated with email-agent) ---
-def get_gmail_summary():
-    try:
-        import sys
-        sys.path.insert(0, '/home/scott/projects/email-agent')
-        from gmail_imap_client import get_authenticated_service, fetch_recent_emails
-        
-        service = get_authenticated_service()
-        
-        emails = fetch_recent_emails(service, hours=24, max_results=50)
-        email_address = "scottqcarroll@gmail.com"
-        
-        unread = sum(1 for e in emails if e.get('is_unread'))
-        total = len(emails)
-        # IMAP doesn't have starred concept like Gmail API, use 0
-        starred = 0
-        
+    def count_messages(criterion):
+        status, data = service.search(None, criterion)
+        if status != "OK":
+            raise RuntimeError(f"IMAP SEARCH {criterion} failed")
+        return len(data[0].split()) if data and data[0] else 0
+
+    today = datetime.now().strftime("%d-%b-%Y")
+    return count_messages("ALL"), count_messages("UNSEEN"), count_messages("SINCE " + today)
+
+
+def _inbox_payload(label, email_address, total=0, unread=0, new_today=0, error=None):
+    if error is not None:
         return {
-            'status': 'ok',
-            'email_address': email_address,
-            'unread_count': unread,
-            'total_count': total,
-            'starred_count': starred,
-            'message': f'{total} emails in last 24h'
-        }
-    except Exception as e:
-        return {
-            'status': 'ok',
+            'status': 'error',
             'email_address': 'Unknown',
             'unread_count': 0,
             'total_count': 0,
-            'starred_count': 0,
-            'message': f'Gmail error: {str(e)}'
+            'new_today_count': 0,
+            'message': f'{label} error: {error}',
         }
+    return {
+        'status': 'ok',
+        'email_address': email_address,
+        'unread_count': unread,
+        'total_count': total,
+        'new_today_count': new_today,
+        'message': f'{total} total, {unread} unread',
+    }
 
-# --- 5. Ollama Model Status (Mac Studio) ---
-def get_ollama_status():
+
+def get_gmail_summary():
+    service = None
     try:
-        import urllib.request
-        import json
+        import sys
+        sys.path.insert(0, '/home/scott/projects/email-agent')
+        from gmail_imap_client import get_authenticated_service, load_gmail_credentials
 
-        # Query Ollama API directly on LAN IP (192.168.1.240:11434)
-        # Get installed models via /api/tags
-        req = urllib.request.Request('http://192.168.1.240:11434/api/tags', headers={'User-Agent': 'Dashboard/1.0'})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            data = json.loads(resp.read().decode())
-
-        models = []
-        for m in data.get('models', []):
-            name = m.get('name', '')
-            size_bytes = m.get('size', 0)
-            size_gb = round(size_bytes / (1024**3), 1)
-            modified = m.get('modified_at', '')
-            # Format modified time
-            if modified:
-                try:
-                    from datetime import datetime
-                    dt = datetime.fromisoformat(modified.replace('Z', '+00:00'))
-                    modified = dt.strftime('%Y-%m-%d')
-                except (ValueError, TypeError):
-                    pass
-
-            models.append({
-                'name': name,
-                'size': f'{size_gb} GB',
-                'size_gb': size_gb,
-                'modified': modified or 'N/A'
-            })
-
-        # Get running models via /api/ps
-        req2 = urllib.request.Request('http://192.168.1.240:11434/api/ps', headers={'User-Agent': 'Dashboard/1.0'})
-        with urllib.request.urlopen(req2, timeout=10) as resp2:
-            ps_data = json.loads(resp2.read().decode())
-
-        running_models = ps_data.get('models', [])
-        running = len(running_models) > 0
-
-        return {
-            'status': 'ok',
-            'ollama_running': running,
-            'models_installed': len(models),
-            'models': [
-                {
-                    'name': m['name'],
-                    'size': m['size'],
-                    'size_gb': m['size_gb'],
-                    'modified': m['modified'],
-                    'running': any(r.get('name', '') == m['name'] for r in running_models)
-                }
-                for m in models
-            ],
-            'running_models': [
-                {
-                    'name': m.get('name', ''),
-                    'size': m.get('size', 0),
-                    'size_gb': round(m.get('size', 0) / (1024**3), 1),
-                }
-                for m in running_models
-            ]
-        }
+        service = get_authenticated_service()
+        total, unread, new_today = _imap_inbox_counts(service)
+        email_address, _ = load_gmail_credentials()
+        return _inbox_payload('Gmail', email_address, total, unread, new_today)
     except Exception as e:
-        return {'status': 'error', 'message': str(e)}
+        return _inbox_payload('Gmail', 'Unknown', error=e)
+    finally:
+        if service is not None:
+            try:
+                service.logout()
+            except Exception:
+                pass
 
-# --- 6. Linux Server (clawz840) System Status ---
+
+def get_bellsouth_summary():
+    service = None
+    try:
+        import imaplib
+        import sys
+        sys.path.insert(0, '/home/scott/inbox-cleanup')
+        from inbox_cleanup import IMAP_SERVER, IMAP_PORT, EMAIL_USER, get_mail_password
+
+        password = get_mail_password()
+        if not password:
+            raise RuntimeError('Bellsouth password not configured')
+
+        service = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)
+        service.login(EMAIL_USER, password)
+        total, unread, new_today = _imap_inbox_counts(service)
+        return _inbox_payload('Bellsouth', EMAIL_USER, total, unread, new_today)
+    except Exception as e:
+        return _inbox_payload('Bellsouth', 'Unknown', error=e)
+    finally:
+        if service is not None:
+            try:
+                service.logout()
+            except Exception:
+                pass
+
+# --- 5. Linux Server (clawz840) System Status ---
 def _read_linux_memory():
     """Return Linux memory totals from /proc/meminfo, in GiB."""
     with open('/proc/meminfo', 'r') as f:
@@ -549,22 +545,54 @@ def _pressure_label(free_pct):
     return f'Critical ({free_pct}% free)', 'critical'
 
 
+@ttl_cache(60)
 def get_mac_studio_status():
     try:
         import subprocess
         import json
-        
-        # Get hardware/software info
-        result = subprocess.run(
-            ['ssh', 'macstudio', 'system_profiler', 'SPHardwareDataType', 'SPMemoryDataType', 'SPSoftwareDataType', 'SPStorageDataType'],
-            capture_output=True, text=True, timeout=60
+
+        # One SSH round-trip gathers the static profile and live metrics.
+        combined_command = (
+            "echo '===HARDWARE==='; "
+            "system_profiler SPHardwareDataType SPMemoryDataType SPSoftwareDataType SPStorageDataType 2>/dev/null; "
+            "echo '===LOAD==='; top -l 1 -n 0 2>/dev/null | grep -E 'Load Avg'; "
+            "echo '===VMSTAT==='; vm_stat; "
+            "echo '===MEMSIZE==='; sysctl -n hw.memsize; "
+            "echo '===SWAP==='; sysctl vm.swapusage; "
+            "echo '===PRESSURE==='; memory_pressure 2>/dev/null | tail -20; "
+            "echo '===DF==='; df -h / 2>/dev/null | tail -1"
         )
-        
+        result = subprocess.run(
+            ['ssh', 'macstudio', combined_command],
+            capture_output=True, text=True, timeout=90
+        )
+
         if result.returncode != 0:
             return {'status': 'error', 'message': 'SSH to Mac Studio failed'}
-        
-        output = result.stdout
-        
+
+        sections = {name: '' for name in (
+            'HARDWARE', 'LOAD', 'VMSTAT', 'MEMSIZE', 'SWAP', 'PRESSURE', 'DF'
+        )}
+        section_markers = {
+            '===HARDWARE===': 'HARDWARE',
+            '===LOAD===': 'LOAD',
+            '===VMSTAT===': 'VMSTAT',
+            '===MEMSIZE===': 'MEMSIZE',
+            '===SWAP===': 'SWAP',
+            '===PRESSURE===': 'PRESSURE',
+            '===DF===': 'DF',
+        }
+        current_section = None
+        for line in result.stdout.splitlines():
+            marker = section_markers.get(line.strip())
+            if marker:
+                current_section = marker
+                continue
+            if current_section:
+                sections[current_section] += line + '\n'
+
+        output = sections['HARDWARE']
+
         # Parse basic info (defaults are unknown/N/A; SSH success is required
         # before these are reported as facts - no fabricated specs)
         model = 'unknown'
@@ -587,43 +615,8 @@ def get_mac_studio_status():
                 if 'APFS' in output[max(0, output.find(line)-200):output.find(line)] or storage == 'N/A':
                     storage = _format_capacity_gb(line.split(':')[-1].strip())
         
-        # Get load, memory, swap, pressure, and disk via SSH.
-        # vm_stat + sysctl replace top's PhysMem line: top counts macOS file
-        # cache as "used", which massively overstates real memory usage.
-        metrics_command = (
-            "top -l 1 -n 0 2>/dev/null | grep -E 'Load Avg'; "
-            "echo '===VMSTAT==='; vm_stat; "
-            "echo '===MEMSIZE==='; sysctl -n hw.memsize; "
-            "echo '===SWAP==='; sysctl vm.swapusage; "
-            "echo '===PRESSURE==='; memory_pressure 2>/dev/null | tail -20; "
-            "echo '===DF==='; df -h / 2>/dev/null | tail -1"
-        )
-        result2 = subprocess.run(
-            ['ssh', 'macstudio', metrics_command],
-            capture_output=True, text=True, timeout=60
-        )
-
-        if result2.returncode != 0:
-            return {'status': 'error', 'message': 'SSH to Mac Studio failed while reading metrics'}
-
-        sections = {'top': '', 'VMSTAT': '', 'MEMSIZE': '', 'SWAP': '', 'PRESSURE': '', 'DF': ''}
-        section_markers = {
-            '===VMSTAT===': 'VMSTAT',
-            '===MEMSIZE===': 'MEMSIZE',
-            '===SWAP===': 'SWAP',
-            '===PRESSURE===': 'PRESSURE',
-            '===DF===': 'DF',
-        }
-        current_section = 'top'
-        for line in result2.stdout.splitlines():
-            marker = section_markers.get(line.strip())
-            if marker:
-                current_section = marker
-                continue
-            sections[current_section] += line + '\n'
-
         load_1m = load_5m = load_15m = 'N/A'
-        for line in sections['top'].splitlines():
+        for line in sections['LOAD'].splitlines():
             if 'Load Avg' in line:
                 parts = line.split(':')[-1].strip().split(',')
                 load_1m = parts[0].strip() if len(parts) > 0 else 'N/A'
@@ -724,21 +717,28 @@ def get_mac_studio_status():
 
 
 # --- 7b. Mac Studio Ollama Status ---
+@ttl_cache(120)
 def get_mac_studio_ollama_status():
     try:
         import subprocess
         import json
         import re
-        
-        # Get Ollama models (text output, no --json flag on this version)
-        result = subprocess.run(
-            ['ssh', 'macstudio', '/Applications/Ollama.app/Contents/Resources/ollama list'],
-            capture_output=True, text=True, timeout=15
+
+        # One SSH round-trip lists models and reports what is currently loaded.
+        combined_command = (
+            "/Applications/Ollama.app/Contents/Resources/ollama list 2>/dev/null; "
+            "echo '===PS==='; curl -s http://localhost:11434/api/ps 2>/dev/null"
         )
-        
+        result = subprocess.run(
+            ['ssh', 'macstudio', combined_command],
+            capture_output=True, text=True, timeout=25
+        )
+
+        list_output, _, ps_output = result.stdout.partition('===PS===')
+
         models = []
         if result.returncode == 0:
-            lines = result.stdout.strip().split('\n')
+            lines = list_output.strip().split('\n')
             for line in lines[1:]:  # Skip header
                 parts = line.split()
                 if len(parts) >= 3:
@@ -767,17 +767,10 @@ def get_mac_studio_ollama_status():
                         'modified': modified
                     })
         
-        # Also check if Ollama is running and what's loaded (use /api/ps for running models)
-        # Use shell string (not list) with shell=True for proper redirection
-        result2 = subprocess.run(
-            'ssh macstudio "curl -s http://localhost:11434/api/ps 2>/dev/null"',
-            capture_output=True, text=True, timeout=10, shell=True
-        )
-        
         running_models = []
-        if result2.returncode == 0 and result2.stdout.strip():
+        if ps_output.strip():
             try:
-                data = json.loads(result2.stdout)
+                data = json.loads(ps_output)
                 running_models = data.get('models', [])
             except (json.JSONDecodeError, TypeError, ValueError):
                 pass
@@ -811,106 +804,42 @@ def get_mac_studio_ollama_status():
         return {'status': 'error', 'message': str(e)}
 
 
-# --- 7c. LLM Call Metrics (from Ollama GIN access logs on the Mac) ---
-def get_ollama_call_metrics():
-    """Count real LLM inference calls from the Mac Studio Ollama server log.
-
-    Ollama writes GIN-formatted access log lines for every request, e.g.
-        [GIN] 2026/08/20 - 15:03:12 | 200 | 1m45s | 192.168.1.222 | POST "/api/chat"
-        [GIN] 2026/08/20 - 09:00:17 | 200 | 13s  | 100.124.71.12  | POST "/v1/chat/completions"
-    We count only POST requests to the inference endpoints (chat/completions,
-    /v1/completions, /api/chat, /api/generate) as actual LLM calls. This is the
-    real usage source that replaced the abandoned llm_call_log.txt stub, which
-    was only appended by a dead-end proxy and had stopped recording months ago.
-    Timestamps are Ollama server-local time (= America/New_York, same as this
-    host), so direct comparison with the local clock is valid.
-    """
-    try:
-        import subprocess
-        import re
-        LOGS = "/tmp/ollama-serve.log /tmp/ollama.log /tmp/ollama.error.log"
-        cmd = ('ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes '
-               f"macstudio 'cat {LOGS} 2>/dev/null'")
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=25)
-
-        call_re = re.compile(r'(chat/completions|/v1/completions|/api/chat|/api/generate)')
-        gts_re = re.compile(r'^\[GIN\]\s+([0-9]{4}/[0-9]{2}/[0-9]{2} - [0-9]{2}:[0-9]{2}:[0-9]{2})')
-        now = datetime.now()
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        d30 = now - timedelta(days=30)
-        d1 = now - timedelta(hours=24)
-
-        calls = []
-        seen = set()
-        for line in result.stdout.splitlines():
-            if ' POST ' not in line:
-                continue
-            m = call_re.search(line)
-            if not m:
-                continue
-            gm = gts_re.match(line)
-            if not gm:
-                continue
-            try:
-                ts = datetime.strptime(gm.group(1), '%Y/%m/%d - %H:%M:%S')
-            except ValueError:
-                continue
-            # Dedup: the same request can appear in both ollama.log and ollama-serve.log
-            key = (ts, m.group(1))
-            if key in seen:
-                continue
-            seen.add(key)
-            calls.append(ts)
-
-        total = len(calls)
-        today_calls = sum(1 for t in calls if t >= today_start)
-        recent_30 = [t for t in calls if t >= d30]
-        recent_24 = [t for t in calls if t >= d1]
-        avg_30_day = len(recent_30) / 30.0
-        hourly_rate = len(recent_24) / 24.0
-        calls_today = [t.strftime('%H:%M') for t in calls if t >= today_start]
-
-        return {
-            'status': 'ok',
-            'source': 'ollama-gin-log',
-            'total_calls': total,
-            'today_calls': today_calls,
-            'share_of_total': round((today_calls / total * 100), 1) if total else 0,
-            'avg_30_day': round(avg_30_day, 1),
-            'hourly_rate': round(hourly_rate, 2),
-            'calls_today': calls_today,
-            'newest_call': max(calls).strftime('%Y-%m-%d %H:%M') if calls else None,
-        }
-    except Exception as e:
-        return {'status': 'error', 'source': 'ollama-gin-log', 'message': str(e)}
-
-
 # --- 8. Camera Snapshots ---
-def get_camera_snapshots():
-    # Return camera metadata - browser will attempt to load snapshots directly
-    # Only works when accessing dashboard from LAN (not via Tailscale only)
-    return {
+CAMERA_SNAPSHOTS = {
+    'flir_158': {
         'status': 'ok',
-        'cameras': [
-            {
-                'status': 'ok',
-                'id': 'flir_158',
-                'name': 'Gun Room (158)',
-                'ip': '192.168.1.158',
-                'snapshot_url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0'
-            },
-            {
-                'status': 'ok',
-                'id': 'flir_163',
-                'name': 'Office (163)',
-                'ip': '192.168.1.163',
-                'snapshot_url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0'
-            }
-        ]
-    }
+        'id': 'flir_158',
+        'name': 'Gun Room (158)',
+        'ip': '192.168.1.158',
+        'snapshot_url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0',
+    },
+    'flir_163': {
+        'status': 'ok',
+        'id': 'flir_163',
+        'name': 'Office (163)',
+        'ip': '192.168.1.163',
+        'snapshot_url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0',
+    },
+}
+
+
+def get_camera_snapshot_url(camera_id):
+    """Returns the configured snapshot URL for a known camera ID."""
+    camera = CAMERA_SNAPSHOTS.get(camera_id)
+    return camera['snapshot_url'] if camera else None
+
+
+def get_camera_snapshot_urls():
+    """Returns every configured snapshot URL for request validation."""
+    return {camera['snapshot_url'] for camera in CAMERA_SNAPSHOTS.values()}
+
+
+def get_camera_snapshots():
+    return {'status': 'ok', 'cameras': list(CAMERA_SNAPSHOTS.values())}
 
 
 # --- 9. TrueNAS Server Status ---
+@ttl_cache(60)
 def get_truenas_status():
     """Fetch TrueNAS system info, pool status, alerts, and running apps."""
     try:
@@ -942,11 +871,21 @@ def get_truenas_status():
             with urllib.request.urlopen(req, context=ssl_context, timeout=10) as response:
                 return json.loads(response.read().decode('utf-8'))
         
-        # Fetch all data in parallel-ish (sequential but fast)
-        system_info = fetch_json('/system/info')
-        pools = fetch_json('/pool')
-        alerts = fetch_json('/alert/list')
-        apps = fetch_json('/app')
+        # These four API reads are independent, so run them concurrently.
+        endpoints = ('/system/info', '/pool', '/alert/list', '/app')
+        with ThreadPoolExecutor(max_workers=len(endpoints)) as executor:
+            future_by_endpoint = {
+                executor.submit(fetch_json, endpoint): endpoint for endpoint in endpoints
+            }
+            results = {
+                endpoint: future.result()
+                for future, endpoint in future_by_endpoint.items()
+            }
+
+        system_info = results['/system/info']
+        pools = results['/pool']
+        alerts = results['/alert/list']
+        apps = results['/app']
         
         # Parse pools - extract key metrics
         pool_summary = []
@@ -1019,28 +958,41 @@ def get_truenas_status():
 
 # --- 10. Stock Watcher ---
 import yfinance as yf
-import time
 
-_stock_cache = {}
-_stock_cache_time = {}
+STOCK_SYMBOLS = ('AAPL', 'TSLA', 'NVDA', 'SPY')
+STOCK_CACHE_TTL_SECONDS = 300
+_stock_cache = {'prices': {}, 'cached_at': None}
 
-def get_stocks():
-    symbols = ['AAPL', 'TSLA', 'NVDA', 'SPY']
-    current_time = time.time()
-    
-    # Check if cached data is still valid (5 min cache)
-    if all(symbol in _stock_cache and 
-           current_time - _stock_cache_time.get(symbol, 0) < 300
-           for symbol in symbols):
-        return _stock_cache
+
+def _stocks_payload(prices, cached_at, refreshed):
+    return {
+        'status': 'ok',
+        'symbols': list(STOCK_SYMBOLS),
+        'stocks': prices,
+        'cached_at': datetime.fromtimestamp(cached_at, tz=timezone.utc).isoformat(),
+        'age_seconds': max(0, int(time.time() - cached_at)),
+        'refreshed': refreshed,
+    }
+
+
+def get_stocks(force=False):
+    """Return prices with cache metadata; force=True bypasses the five-minute TTL."""
+    cached_at = _stock_cache['cached_at']
+    if (
+        not force
+        and _stock_cache['prices']
+        and cached_at is not None
+        and time.time() - cached_at < STOCK_CACHE_TTL_SECONDS
+    ):
+        return _stocks_payload(_stock_cache['prices'], cached_at, False)
 
     stock_data = {}
-    for symbol in symbols:
+    for symbol in STOCK_SYMBOLS:
         try:
             ticker = yf.Ticker(symbol)
             info = ticker.info
             hist = ticker.history(period="2d")
-            
+
             if len(hist) >= 2:
                 current_price = hist['Close'].iloc[-1]
                 previous_price = hist['Close'].iloc[-2]
@@ -1049,69 +1001,15 @@ def get_stocks():
             else:
                 current_price = info.get('currentPrice', 'N/A')
                 change_percent = 'N/A'
-                
+
             stock_data[symbol] = {
                 'price': round(current_price, 2) if current_price != 'N/A' else 'N/A',
                 'change_percent': change_percent
             }
         except Exception:
             stock_data[symbol] = {'price': 'N/A', 'change_percent': 'N/A'}
-    
-    # Cache the results
-    for symbol in symbols:
-        _stock_cache[symbol] = stock_data[symbol]
-        _stock_cache_time[symbol] = current_time
-    
-    return stock_data
 
-
-# --- 11. OpenRouter Usage ---
-def get_openrouter_usage():
-    try:
-        import urllib.request
-        import json
-        api_key = os.environ.get('OPENROUTER_API_KEY', '')
-        if not api_key:
-            return {'status': 'error', 'message': 'OPENROUTER_API_KEY not set'}
-        
-        # OpenRouter models endpoint - returns model list and usage info
-        url = 'https://openrouter.ai/api/v1/models'
-        
-        req = urllib.request.Request(
-            url,
-            headers={
-                'Authorization': f'Bearer {api_key}',
-                'User-Agent': 'Mozilla/5.0',
-                'Accept': 'application/json',
-            }
-        )
-        with urllib.request.urlopen(req, timeout=15) as response:
-            data = json.loads(response.read().decode('utf-8'))
-        
-        # Extract usage and pricing info from models response
-        model_count = len(data.get('data', []))
-        total_count = data.get('total_count', 0)
-        
-        # Try to get usage from first model's pricing
-        pricing_info = {}
-        if data.get('data'):
-            first_model = data['data'][0]
-            pricing = first_model.get('pricing', {})
-            if pricing:
-                pricing_info = {
-                    'prompt_price_per_1k': pricing.get('prompt', 0),
-                    'completion_price_per_1k': pricing.get('completion', 0),
-                }
-        
-        return {
-            'status': 'ok',
-            'model_count': model_count,
-            'total_models': total_count,
-            'pricing': pricing_info,
-            'api_status': 'connected',
-        }
-    except urllib.error.HTTPError as e:
-        body = e.read().decode('utf-8')[:200]
-        return {'status': 'error', 'message': f'HTTP Error {e.code}: {body}'}
-    except Exception as e:
-        return {'status': 'error', 'message': str(e)}
+    cached_at = time.time()
+    _stock_cache['prices'] = stock_data
+    _stock_cache['cached_at'] = cached_at
+    return _stocks_payload(stock_data, cached_at, True)

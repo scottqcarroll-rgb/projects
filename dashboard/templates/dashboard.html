@@ -93,6 +93,65 @@
         .truenas-icon { background: linear-gradient(135deg, #00b894, #00cec9); }
         .stock-icon { background: linear-gradient(135deg, #ffd700, #ff8c00); }
         .link-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .docker-icon { background: linear-gradient(135deg, #2496ed, #0b6ba8); }
+
+        .docker-summary {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .docker-stat {
+            background: rgba(0, 0, 0, 0.22);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.72rem;
+        }
+
+        .docker-stat strong {
+            display: block;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .docker-container-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+        }
+
+        .docker-container-row:last-child {
+            border-bottom: none;
+        }
+
+        .docker-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .docker-dot.healthy { background: #00b894; }
+        .docker-dot.attention { background: #fdcb6e; }
+        .docker-dot.unhealthy { background: #e17055; }
+        .docker-dot.unknown { background: #888; }
+
+        .docker-console-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .docker-console-link:hover {
+            text-decoration: underline;
+        }
         
         .card-title {
             font-size: 1rem;
@@ -427,6 +486,17 @@
             </div>
             <div class="card-body" id="linux-server-data">
                 <span class="loading">Loading server status...</span>
+            </div>
+        </div>
+
+        <!-- Docker Containers -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon docker-icon">🐳</div>
+                <div class="card-title">Docker Containers</div>
+            </div>
+            <div class="card-body" id="docker-data">
+                <span class="loading">Loading Docker status...</span>
             </div>
         </div>
         
@@ -807,6 +877,47 @@
                 document.getElementById('linux-server-data').innerHTML = `<span class="loading">Error loading data</span>`;
             }
         }
+
+        // === Load Docker Containers ===
+        async function loadDocker() {
+            try {
+                const res = await fetch('/api/docker');
+                const data = await res.json();
+                const el = document.getElementById('docker-data');
+                if (data.status !== 'ok') {
+                    el.innerHTML = `<span class="loading">Error: ${escapeHtml(data.message || 'Unknown')}</span>`;
+                    return;
+                }
+
+                const healthClasses = ['healthy', 'attention', 'unhealthy', 'unknown'];
+                const rows = data.containers.slice(0, 5).map(container => {
+                    const dotClass = healthClasses.includes(container.health) ? container.health : 'unknown';
+                    return `
+                        <div class="docker-container-row">
+                            <span><span class="docker-dot ${dotClass}"></span>${escapeHtml(container.name)}</span>
+                            <span class="metric-value">${escapeHtml(container.status)}</span>
+                        </div>
+                    `;
+                }).join('');
+                const extra = data.containers.length > 5
+                    ? `<div class="loading" style="font-size:0.75rem;">+${data.containers.length - 5} more</div>`
+                    : '';
+                const unhealthyClass = data.unhealthy > 0 ? 'status-error' : 'status-ok';
+
+                el.innerHTML = `
+                    <div class="docker-summary">
+                        <div class="docker-stat"><strong>${data.running}</strong>Running</div>
+                        <div class="docker-stat"><strong>${data.images}</strong>Images</div>
+                        <div class="docker-stat"><strong class="${unhealthyClass}">${data.unhealthy}</strong>Unhealthy</div>
+                    </div>
+                    ${rows || '<span class="loading">No running containers</span>'}
+                    ${extra}
+                    <a class="docker-console-link" href="/docker">Open Docker Console →</a>
+                `;
+            } catch (e) {
+                document.getElementById('docker-data').innerHTML = `<span class="loading">Error loading data</span>`;
+            }
+        }
         
         // === Load Mac Studio ===
         async function loadMacStudio() {
@@ -988,6 +1099,7 @@
                                         loadBellsouth(),
                                         loadOllama(),
                                         loadLinuxServer(),
+                                        loadDocker(),
                                         loadMacStudio(),
                                         loadTrueNAS(),
                                         loadCameras(),

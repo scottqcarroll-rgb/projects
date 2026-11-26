@@ -20,8 +20,10 @@ from data_fetcher import (
     get_mac_studio_status, get_camera_snapshots,
     get_camera_snapshot_url, get_camera_snapshot_urls,
     get_mac_studio_ollama_status, get_truenas_status, get_stocks,
+    get_docker_status, get_docker_logs, start_docker_cache_refresher,
 )
 import os
+import sys
 import requests
 
 # Load .env file for environment variables
@@ -44,6 +46,8 @@ ALLOWED_NETWORKS = tuple(
 
 ALLOWED_CAMERA_URLS = get_camera_snapshot_urls()
 ALLOWED_CAMERA_HOSTS = {urlparse(url).hostname for url in ALLOWED_CAMERA_URLS}
+
+start_docker_cache_refresher()
 
 @app.before_request
 def restrict_dashboard_access():
@@ -106,6 +110,20 @@ def api_bellsouth():
 @app.route('/api/linux-server')
 def api_linux_server():
     return jsonify(get_linux_server_status())
+
+
+@app.route('/api/docker')
+def api_docker():
+    return jsonify(get_docker_status(force=request.args.get('force') == '1'))
+
+
+@app.route('/api/docker/logs')
+def api_docker_logs():
+    try:
+        line_count = int(request.args.get('lines', 100))
+    except ValueError:
+        line_count = 100
+    return jsonify(get_docker_logs(request.args.get('name', ''), line_count))
 
 @app.route('/api/mac-studio')
 def api_mac_studio():
@@ -230,5 +248,25 @@ def api_gateway_errors():
         return jsonify({'status': 'error', 'message': str(e)})
 
 
+@app.route('/docker')
+def docker_console():
+    return render_template('docker.html')
+
+
 if __name__ == '__main__':
+    if os.environ.get('DASHBOARD_RUNNING_GUNICORN') != '1':
+        os.environ['DASHBOARD_RUNNING_GUNICORN'] = '1'
+        os.execv(
+            sys.executable,
+            [
+                sys.executable, '-m', 'gunicorn',
+                '--chdir', os.path.dirname(os.path.abspath(__file__)),
+                '--workers', '2',
+                '--bind', '0.0.0.0:5001',
+                '--timeout', '90',
+                '--access-logfile', '-',
+                '--error-logfile', '-',
+                'app:app',
+            ],
+        )
     app.run(host='0.0.0.0', port=5001, debug=False)

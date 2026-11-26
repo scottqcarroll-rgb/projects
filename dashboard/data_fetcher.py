@@ -3,6 +3,7 @@ import functools
 import json
 import os
 import re
+import threading
 import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -1013,3 +1014,243 @@ def get_stocks(force=False):
     _stock_cache['prices'] = stock_data
     _stock_cache['cached_at'] = cached_at
     return _stocks_payload(stock_data, cached_at, True)
+
+
+# --- Docker containers (clawz840) ---
+DOCKER_NAME_PATTERN = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$')
+DOCKER_SOCKET_URL = 'unix://var/run/docker.sock'
+_docker_client = None
+
+
+def _get_docker_client():
+    """Reuse one Engine API client; import lazily so the dashboard boots without docker-py."""
+    global _docker_client
+    if _docker_client is None:
+        import docker
+        _docker_client = docker.DockerClient(base_url=DOCKER_SOCKET_URL, timeout=20)
+    return _docker_client
+
+
+def _parse_docker_time(value):
+    """Parse Docker's RFC3339 timestamps, including nanosecond fractions."""
+    if not value or value.startswith('0001-01-01'):
+        return None
+    match = re.match(r'^(.*?\d{2}:\d{2}:\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:\d{2})$', value)
+    if not match:
+        return None
+    base, fraction, offset = match.groups()
+    if offset == 'Z':
+        offset = '+00:00'
+    return datetime.fromisoformat(f'{base}.{(fraction or "0")[:6]}{offset}')
+
+
+def _format_running_for(started_at):
+    """Describe uptime the way `docker ps` does, e.g. '2 days'."""
+    if started_at is None:
+        return 'N/A'
+    seconds = max(0, int((datetime.now(timezone.utc) - started_at).total_seconds()))
+    for unit, length in (
+        ('year', 365 * 86400), ('month', 30 * 86400), ('week', 7 * 86400),
+        ('day', 86400), ('hour', 3600), ('minute', 60),
+    ):
+        if seconds >= length:
+            count = seconds // length
+            return f'{count} {unit}{"s" if count != 1 else ""}'
+    return f'{seconds} seconds'
+
+
+def _format_docker_bytes(byte_count):
+    """Format bytes with binary units, e.g. '23.73MiB'."""
+    value = float(byte_count)
+    for unit in ('B', 'KiB', 'MiB', 'GiB', 'TiB'):
+        if value < 1024 or unit == 'TiB':
+            return f'{int(value)}B' if unit == 'B' else f'{value:.2f}{unit}'
+        value /= 1024
+    return f'{value:.2f}TiB'
+
+
+def _docker_health(state, health_status):
+    """Map container state and health check to a display level."""
+    if health_status == 'unhealthy':
+        return 'unhealthy'
+    if state != 'running' or health_status == 'starting':
+        return 'attention'
+    return 'healthy' if state == 'running' else 'unknown'
+
+
+def _docker_ports(ports):
+    """Render NetworkSettings.Ports as human-readable published ports."""
+    rendered = []
+    for port_protocol, bindings in sorted((ports or {}).items()):
+        if not bindings:
+            rendered.append(port_protocol)
+            continue
+        for binding in bindings:
+            host_ip = binding.get('HostIp') or '0.0.0.0'
+            rendered.append(f'{host_ip}:{binding.get("HostPort", "")}->{port_protocol}')
+    return ', '.join(rendered)
+
+
+def _container_statistics(stats):
+    """Derive CPU, memory and PID figures from one Engine stats sample."""
+    cpu_stats = stats.get('cpu_stats') or {}
+    previous = stats.get('precpu_stats') or {}
+    cpu_delta = (
+        cpu_stats.get('cpu_usage', {}).get('total_usage', 0)
+        - previous.get('cpu_usage', {}).get('total_usage', 0)
+    )
+    system_delta = cpu_stats.get('system_cpu_usage', 0) - previous.get('system_cpu_usage', 0)
+    online_cpus = (
+        cpu_stats.get('online_cpus')
+        or len(cpu_stats.get('cpu_usage', {}).get('percpu_usage') or [])
+        or 1
+    )
+    cpu_percent = (cpu_delta / system_delta) * online_cpus * 100 if system_delta > 0 else 0.0
+
+    memory_stats = stats.get('memory_stats') or {}
+    cache = (memory_stats.get('stats') or {}).get('cache', 0)
+    used_memory = max(0, memory_stats.get('usage', 0) - cache)
+    limit = memory_stats.get('limit', 0)
+    memory_percent = (used_memory / limit * 100) if limit else 0.0
+
+    return {
+        'cpu': f'{cpu_percent:.2f}%',
+        'memory': f'{_format_docker_bytes(used_memory)} / {_format_docker_bytes(limit)}' if limit else 'N/A',
+        'memory_pct': f'{memory_percent:.2f}%',
+        'pids': (stats.get('pids_stats') or {}).get('current', 'N/A'),
+    }
+
+
+def _fetch_container_stats(container_ids, api_version):
+    """Fetch one stats sample per container in parallel, with isolated API clients."""
+    import docker
+
+    def fetch(container_id):
+        api = docker.APIClient(
+            base_url=DOCKER_SOCKET_URL,
+            version=api_version,
+            timeout=20,
+        )
+        try:
+            return container_id, api.stats(container_id, stream=False)
+        finally:
+            api.close()
+
+    if not container_ids:
+        return {}
+    with ThreadPoolExecutor(max_workers=min(16, len(container_ids))) as pool:
+        return dict(pool.map(fetch, container_ids))
+
+
+@ttl_cache(30)
+def get_docker_status():
+    """Return running containers and Docker engine totals via the Engine API."""
+    try:
+        client = _get_docker_client()
+        info = client.info()
+        containers = client.containers.list()
+        stats_by_id = _fetch_container_stats(
+            [container.id for container in containers],
+            client.api._version,
+        )
+        container_rows = []
+
+        for container in containers:
+            attributes = container.attrs
+            state_config = attributes.get('State') or {}
+            state = state_config.get('Status', 'unknown')
+            health_status = (state_config.get('Health') or {}).get('Status')
+            running_for = _format_running_for(_parse_docker_time(state_config.get('StartedAt')))
+            status = f'Up {running_for}' if state == 'running' else state
+            if health_status:
+                status = f'{status} ({health_status})'
+
+            sample = stats_by_id.get(container.id)
+            if sample:
+                statistics = _container_statistics(sample)
+            else:
+                statistics = {'cpu': 'N/A', 'memory': 'N/A', 'memory_pct': 'N/A', 'pids': 'N/A'}
+
+            container_rows.append({
+                'id': container.id[:12],
+                'name': container.name,
+                'image': attributes.get('Config', {}).get('Image', 'N/A'),
+                'state': state,
+                'status': status,
+                'running_for': running_for,
+                'ports': _docker_ports(attributes.get('NetworkSettings', {}).get('Ports')),
+                'health': _docker_health(state, health_status),
+                **statistics,
+            })
+        container_rows.sort(key=lambda item: item['name'].lower())
+
+        return {
+            'status': 'ok',
+            'host': 'clawz840',
+            'docker_version': info.get('ServerVersion', 'N/A'),
+            'total': info.get('Containers', len(container_rows)),
+            'running': info.get('ContainersRunning', len(container_rows)),
+            'stopped': info.get('ContainersStopped', 0),
+            'paused': info.get('ContainersPaused', 0),
+            'images': info.get('Images', 0),
+            'unhealthy': sum(1 for item in container_rows if item['health'] == 'unhealthy'),
+            'containers': container_rows,
+            'updated_at': datetime.now().strftime('%-I:%M:%S %p'),
+        }
+    except Exception as exc:
+        return {'status': 'error', 'message': str(exc)}
+
+
+@ttl_cache(15)
+def get_docker_logs(name, lines=100):
+    """Return recent log lines for one running container via the Engine API."""
+    if not DOCKER_NAME_PATTERN.fullmatch(name or ''):
+        return {'status': 'error', 'message': 'Invalid container name'}
+    try:
+        status = get_docker_status()
+        if status.get('status') != 'ok':
+            return {'status': 'error', 'message': status.get('message', 'Docker unavailable')}
+        if not any(container['name'] == name for container in status['containers']):
+            return {'status': 'error', 'message': 'Container is not running'}
+
+        line_count = max(1, min(int(lines), 500))
+        raw_logs = _get_docker_client().containers.get(name).logs(
+            stdout=True,
+            stderr=True,
+            timestamps=True,
+            tail=line_count,
+        )
+        if isinstance(raw_logs, bytes):
+            raw_logs = raw_logs.decode('utf-8', errors='replace')
+        log_lines = raw_logs.splitlines()
+        return {
+            'status': 'ok',
+            'name': name,
+            'lines': log_lines[-line_count:],
+            'truncated': len(log_lines) > line_count,
+        }
+    except Exception as exc:
+        return {'status': 'error', 'message': str(exc)}
+
+
+DOCKER_STATUS_TTL_SECONDS = 30
+DOCKER_REFRESH_INTERVAL_SECONDS = 20
+_docker_refresh_stop = threading.Event()
+
+
+def start_docker_cache_refresher():
+    """Warm the Docker cache once, then refresh it off the request path."""
+    get_docker_status(force=True)
+
+    def refresh_forever():
+        while not _docker_refresh_stop.wait(DOCKER_REFRESH_INTERVAL_SECONDS):
+            try:
+                get_docker_status(force=True)
+            except Exception:
+                pass
+
+    threading.Thread(
+        target=refresh_forever,
+        name='docker-status-refresher',
+        daemon=True,
+    ).start()

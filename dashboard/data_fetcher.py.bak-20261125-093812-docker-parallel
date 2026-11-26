@@ -1,0 +1,1209 @@
+#!/usr/bin/env python3
+import functools
+import json
+import os
+import re
+import time
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
+
+# --- Google Maps API Key ---
+import glob
+
+_response_cache = {}
+
+
+def ttl_cache(ttl_seconds):
+    """Cache successful fetch results so dashboard polls stop hammering remote hosts."""
+    def decorator(fetcher):
+        @functools.wraps(fetcher)
+        def wrapper(*args, force=False, **kwargs):
+            cache_key = (fetcher.__name__, args, tuple(sorted(kwargs.items())))
+            cached = _response_cache.get(cache_key)
+            now = time.monotonic()
+            if not force and cached and now - cached['at'] < ttl_seconds:
+                return cached['value']
+
+            value = fetcher(*args, **kwargs)
+            if isinstance(value, dict) and value.get('status') == 'ok':
+                _response_cache[cache_key] = {'at': now, 'value': value}
+            return value
+        return wrapper
+    return decorator
+
+def get_maps_key():
+    files = glob.glob('/home/scott/.hermes/scripts/*.py')
+    if not files:
+        raise FileNotFoundError("No API key file found in /home/scott/.hermes/scripts/")
+    # Find the file that contains API_KEY=
+    for f in files:
+        raw = open(f).read()
+        idx = raw.find('API_KEY="')
+        if idx >= 0:
+            rest = raw[idx + 9:]
+            return rest.split('"')[0]
+    raise ValueError("No file in /home/scott/.hermes/scripts/ contains API_KEY=")
+
+# --- Helper: Get drive routes ---
+def get_drive_routes(origin, destination):
+    try:
+        key = get_maps_key()
+        url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' + origin.replace(' ', '+') + '&destination=' + destination.replace(' ', '+') + '&departure_time=now&alternatives=true&key=' + key
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=30) as response:
+            data = json.loads(response.read().decode('utf-8'))
+
+        if data.get('status') == 'OK':
+            routes = []
+            for route in data.get('routes', []):
+                leg = route['legs'][0]
+                duration_in_traffic = leg.get('duration_in_traffic', {}).get('text', 'N/A')
+                traffic_val = leg.get('duration_in_traffic', {}).get('value', 0)
+                dur_val = leg.get('duration', {}).get('value', 0)
+                delay = ''
+                if traffic_val > dur_val:
+                    delay = f"+{int((traffic_val - dur_val) / 60)} min traffic"
+                routes.append({
+                    'summary': route.get('summary', 'N/A'),
+                    'distance': leg.get('distance', {}).get('text', 'N/A'),
+                    'duration': leg.get('duration', {}).get('text', 'N/A'),
+                    'traffic': duration_in_traffic,
+                    'delay': delay
+                })
+            return {'status': 'ok', 'routes': routes}
+        else:
+            return {'status': 'error', 'message': data.get('status', 'Unknown error')}
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+def get_drive_report():
+    ORIGIN = '616 Huntwood Cir, Temple GA 30179'
+    DESTINATION = '5303 New Peachtree Rd, Chamblee GA 30341'
+    result = get_drive_routes(ORIGIN, DESTINATION)
+    if result.get('status') == 'ok' and result.get('routes'):
+        # Use first route as primary
+        route = result['routes'][0]
+        # Use TRAFFIC duration (with traffic) for arrival time calculation
+        traffic_duration = route.get('traffic', route.get('duration', '0'))
+        duration_minutes = parse_duration_to_minutes(traffic_duration)
+        departure_time = datetime.now().strftime('%-I:%M %p')
+        arrival_time = (datetime.now() + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
+        return {
+            'status': 'ok',
+            'origin': ORIGIN.split(',')[0],  # "616 Huntwood Cir"
+            'destination': DESTINATION.split(',')[0],  # "5303 New Peachtree Rd"
+            'departure_time': departure_time,
+            'arrival_time': arrival_time,
+            'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
+            'duration_minutes': duration_minutes,
+            'routes': result['routes']
+        }
+    return result
+
+# --- PM Drive Report (Work → Home) ---
+def get_pm_drive_report():
+    ORIGIN = '5303 New Peachtree Rd, Chamblee GA 30341'
+    DESTINATION = '616 Huntwood Cir, Temple GA 30179'
+    result = get_drive_routes(ORIGIN, DESTINATION)
+    if result.get('status') == 'ok' and result.get('routes'):
+        route = result['routes'][0]
+        # Use TRAFFIC duration (with traffic) for arrival time calculation
+        traffic_duration = route.get('traffic', route.get('duration', '0'))
+        duration_minutes = parse_duration_to_minutes(traffic_duration)
+        # Use current time (synced with dashboard) like AM report
+        departure_time = datetime.now().strftime('%-I:%M %p')
+        departure_dt = datetime.now()
+        arrival_time = (departure_dt + timedelta(minutes=duration_minutes)).strftime('%-I:%M %p')
+        return {
+            'status': 'ok',
+            'origin': ORIGIN.split(',')[0],
+            'destination': DESTINATION.split(',')[0],
+            'departure_time': departure_time,
+            'arrival_time': arrival_time,
+            'distance_miles': route.get('distance', 'N/A').replace(' mi', '').replace(',', ''),
+            'duration_minutes': duration_minutes,
+            'routes': result['routes']
+        }
+    return result
+
+def parse_duration_to_minutes(duration_str):
+    """Convert '1 hour 15 mins' or '45 mins' to minutes integer"""
+    try:
+        if 'hour' in duration_str:
+            parts = duration_str.split()
+            hours = int(parts[0])
+            mins = int(parts[2]) if len(parts) > 2 else 0
+            return hours * 60 + mins
+        elif 'min' in duration_str:
+            return int(duration_str.split()[0])
+    except (ValueError, IndexError):
+        pass
+    return 0
+
+# --- 2. Weather Report ---
+def get_weather():
+    try:
+        # Open-Meteo API (free, no key needed) for Temple, GA
+        # Request 6 days (today + 5 future days), we'll skip today in the forecast display
+        lat, lon = 33.7353, -85.0308
+        url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=America%2FNew_York&forecast_days=6'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = json.loads(response.read().decode('utf-8'))
+
+        current = data.get('current', {})
+        daily = data.get('daily', {})
+
+        # WMO Weather codes to text
+        wmo = {
+            0: 'Clear', 1: 'Mostly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+            45: 'Foggy', 48: 'Foggy', 51: 'Light Drizzle', 53: 'Drizzle',
+            55: 'Heavy Drizzle', 61: 'Light Rain', 63: 'Rain', 65: 'Heavy Rain',
+            71: 'Light Snow', 73: 'Snow', 75: 'Heavy Snow', 77: 'Snow Grains',
+            80: 'Light Showers', 81: 'Showers', 82: 'Heavy Showers',
+            85: 'Snow Showers', 86: 'Heavy Snow Showers', 95: 'Thunderstorm',
+            96: 'Thunderstorm + Hail', 99: 'Thunderstorm + Heavy Hail'
+        }
+
+        code = current.get('weather_code', -1)
+
+        def c_to_f(c):
+            if c == 'N/A' or c is None:
+                return 'N/A'
+            return round(c * 9/5 + 32)
+
+        temp_c = current.get('temperature_2m', 'N/A')
+        feels_c = current.get('apparent_temperature', 'N/A')
+        high_c = daily.get('temperature_2m_max', ['N/A'])[0]
+        low_c = daily.get('temperature_2m_min', ['N/A'])[0]
+
+        # Build 5-day forecast (skip index 0 = today, show indices 1-5 = next 5 days)
+        forecast = []
+        daily_times = daily.get('time', [])
+        daily_max = daily.get('temperature_2m_max', [])
+        daily_min = daily.get('temperature_2m_min', [])
+        daily_precip = daily.get('precipitation_sum', [])
+        daily_codes = daily.get('weather_code', [])
+        # Start from index 1 to skip today, show next 5 days
+        for i in range(1, min(6, len(daily_times))):
+            day_code = daily_codes[i] if i < len(daily_codes) else -1
+            forecast.append({
+                'date': daily_times[i],
+                'high': c_to_f(daily_max[i]) if i < len(daily_max) else 'N/A',
+                'low': c_to_f(daily_min[i]) if i < len(daily_min) else 'N/A',
+                'precip': daily_precip[i] if i < len(daily_precip) else 'N/A',
+                'condition': wmo.get(day_code, f'Unknown ({day_code})')
+            })
+
+        return {
+            'status': 'ok',
+            'temperature': c_to_f(temp_c),
+            'condition': wmo.get(code, f'Unknown ({code})'),
+            'humidity': current.get('relative_humidity_2m', 'N/A'),
+            'wind_speed': round(current.get('wind_speed_10m', 0) * 0.621371, 1) if current.get('wind_speed_10m') else 'N/A',  # km/h to mph
+            'feels_like': c_to_f(feels_c),
+            'high': c_to_f(high_c),
+            'low': c_to_f(low_c),
+            'precip': daily.get('precipitation_sum', ['N/A'])[0],
+            'forecast': forecast
+        }
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+# --- 4. Email Inbox Counters ---
+def _imap_inbox_counts(service):
+    status, _ = service.select("INBOX")
+    if status != "OK":
+        raise RuntimeError("Could not select INBOX")
+
+    def count_messages(criterion):
+        status, data = service.search(None, criterion)
+        if status != "OK":
+            raise RuntimeError(f"IMAP SEARCH {criterion} failed")
+        return len(data[0].split()) if data and data[0] else 0
+
+    today = datetime.now().strftime("%d-%b-%Y")
+    return count_messages("ALL"), count_messages("UNSEEN"), count_messages("SINCE " + today)
+
+
+def _inbox_payload(label, email_address, total=0, unread=0, new_today=0, error=None):
+    if error is not None:
+        return {
+            'status': 'error',
+            'email_address': 'Unknown',
+            'unread_count': 0,
+            'total_count': 0,
+            'new_today_count': 0,
+            'message': f'{label} error: {error}',
+        }
+    return {
+        'status': 'ok',
+        'email_address': email_address,
+        'unread_count': unread,
+        'total_count': total,
+        'new_today_count': new_today,
+        'message': f'{total} total, {unread} unread',
+    }
+
+
+def get_gmail_summary():
+    service = None
+    try:
+        import sys
+        sys.path.insert(0, '/home/scott/projects/email-agent')
+        from gmail_imap_client import get_authenticated_service, load_gmail_credentials
+
+        service = get_authenticated_service()
+        total, unread, new_today = _imap_inbox_counts(service)
+        email_address, _ = load_gmail_credentials()
+        return _inbox_payload('Gmail', email_address, total, unread, new_today)
+    except Exception as e:
+        return _inbox_payload('Gmail', 'Unknown', error=e)
+    finally:
+        if service is not None:
+            try:
+                service.logout()
+            except Exception:
+                pass
+
+
+def get_bellsouth_summary():
+    service = None
+    try:
+        import imaplib
+        import sys
+        sys.path.insert(0, '/home/scott/inbox-cleanup')
+        from inbox_cleanup import IMAP_SERVER, IMAP_PORT, EMAIL_USER, get_mail_password
+
+        password = get_mail_password()
+        if not password:
+            raise RuntimeError('Bellsouth password not configured')
+
+        service = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)
+        service.login(EMAIL_USER, password)
+        total, unread, new_today = _imap_inbox_counts(service)
+        return _inbox_payload('Bellsouth', EMAIL_USER, total, unread, new_today)
+    except Exception as e:
+        return _inbox_payload('Bellsouth', 'Unknown', error=e)
+    finally:
+        if service is not None:
+            try:
+                service.logout()
+            except Exception:
+                pass
+
+# --- 5. Linux Server (clawz840) System Status ---
+def _read_linux_memory():
+    """Return Linux memory totals from /proc/meminfo, in GiB."""
+    with open('/proc/meminfo', 'r') as f:
+        meminfo = {
+            line.split(':', 1)[0]: line.split(':', 1)[1].strip()
+            for line in f if ':' in line
+        }
+
+    def kb(key):
+        return int(meminfo.get(key, '0').split()[0])
+
+    total_kb = kb('MemTotal')
+    avail_kb = kb('MemAvailable') or (kb('MemFree') + kb('Buffers') + kb('Cached'))
+    used_kb = max(total_kb - avail_kb, 0)
+    cache_kb = kb('Buffers') + kb('Cached') + kb('SReclaimable')
+    swap_total_kb = kb('SwapTotal')
+    swap_used_kb = max(swap_total_kb - kb('SwapFree'), 0)
+
+    return {
+        'total_gb': round(total_kb / 1024 / 1024, 1),
+        'used_gb': round(used_kb / 1024 / 1024, 1),
+        'avail_gb': round(avail_kb / 1024 / 1024, 1),
+        'cache_gb': round(cache_kb / 1024 / 1024, 1),
+        'used_pct': round(used_kb / total_kb * 100, 1) if total_kb else 0.0,
+        'swap_total_gb': round(swap_total_kb / 1024 / 1024, 1),
+        'swap_used_gb': round(swap_used_kb / 1024 / 1024, 1),
+    }
+
+
+def _read_memory_pressure():
+    """Return PSI 'some avg10' memory stall percentage, or None if unavailable."""
+    try:
+        with open('/proc/pressure/memory', 'r') as f:
+            for line in f:
+                if line.startswith('some '):
+                    for field in line.split():
+                        if field.startswith('avg10='):
+                            return float(field.split('=', 1)[1])
+    except OSError:
+        return None
+    return None
+
+
+def _linux_pressure_label(used_pct, psi_some_avg10):
+    """Map memory usage or PSI stall time to a label and severity level."""
+    if psi_some_avg10 is not None:
+        if psi_some_avg10 < 1.0:
+            return f'Normal (PSI {psi_some_avg10:.2f})', 'ok'
+        if psi_some_avg10 < 10.0:
+            return f'Elevated (PSI {psi_some_avg10:.2f})', 'warning'
+        return f'Critical (PSI {psi_some_avg10:.2f})', 'critical'
+
+    available_pct = 100 - used_pct
+    if available_pct >= 20:
+        return f'Normal ({available_pct:.1f}% available)', 'ok'
+    if available_pct >= 5:
+        return f'Elevated ({available_pct:.1f}% available)', 'warning'
+    return f'Critical ({available_pct:.1f}% available)', 'critical'
+
+
+def _read_cpu_temp():
+    """Return the hottest CPU package temperature in Celsius, or 'N/A'."""
+    temps = []
+    for zone in glob.glob('/sys/class/thermal/thermal_zone*'):
+        try:
+            with open(os.path.join(zone, 'type'), 'r') as f:
+                zone_type = f.read().strip().lower()
+            with open(os.path.join(zone, 'temp'), 'r') as f:
+                millidegrees = int(f.read().strip())
+        except (OSError, ValueError):
+            continue
+        if any(token in zone_type for token in ('x86_pkg_temp', 'cpu', 'coretemp', 'soc')):
+            temps.append(millidegrees / 1000)
+
+    return f'{round(max(temps))}°C' if temps else 'N/A'
+
+
+def _format_cpu_model(model_name, thread_count):
+    """Tidy a /proc/cpuinfo model string, e.g. 'Intel Xeon E5-2630 v3 @ 2.40GHz · 32 threads'."""
+    cleaned = model_name.replace('(R)', '').replace('(TM)', '').replace('CPU ', '')
+    cleaned = ' '.join(cleaned.split())
+    return f'{cleaned} · {thread_count} threads' if thread_count else cleaned
+
+
+def _format_bytes_human(byte_count):
+    """Format a byte count as GB or TB using binary units, e.g. '56 GB' or '1.8 TB'."""
+    gigabytes = byte_count / (1024 ** 3)
+    if gigabytes >= 1024:
+        return f'{gigabytes / 1024:.1f} TB'
+    return f'{gigabytes:.0f} GB'
+
+
+def get_linux_server_status():
+    try:
+        import subprocess
+
+        # Get CPU load
+        with open('/proc/loadavg', 'r') as f:
+            load = f.read().split()[:3]
+
+        # Memory and pressure
+        memory = _read_linux_memory()
+        psi_some_avg10 = _read_memory_pressure()
+        pressure, pressure_level = _linux_pressure_label(memory['used_pct'], psi_some_avg10)
+
+        # CPU
+        with open('/proc/cpuinfo', 'r') as f:
+            cpuinfo = f.read()
+        cpu_model = 'Unknown'
+        for line in cpuinfo.split('\n'):
+            if line.startswith('model name'):
+                cpu_model = line.split(':')[-1].strip()
+                break
+        cpu_threads = os.cpu_count() or 0
+        cpu_label = _format_cpu_model(cpu_model, cpu_threads)
+
+        # Disk usage for root
+        disk = subprocess.check_output(['df', '-B1', '/'], text=True).splitlines()[1].split()
+        disk_used = _format_bytes_human(int(disk[2]))
+        disk_total = _format_bytes_human(int(disk[1]))
+        disk_pct = disk[4]
+
+        # Uptime
+        with open('/proc/uptime', 'r') as f:
+            uptime_sec = float(f.read().split()[0])
+        uptime_days = int(uptime_sec // 86400)
+        uptime_hours = int((uptime_sec % 86400) // 3600)
+        uptime_str = f'{uptime_days}d {uptime_hours}h' if uptime_days else f'{uptime_hours}h'
+
+        # OS release
+        os_version = 'Unknown'
+        try:
+            with open('/etc/os-release', 'r') as f:
+                for line in f:
+                    if line.startswith('PRETTY_NAME='):
+                        os_version = line.split('=', 1)[1].strip().strip('"')
+                        break
+        except OSError:
+            pass
+
+        return {
+            'status': 'ok',
+            'hostname': 'clawz840',
+            'os': os_version,
+            'cpu_model': cpu_label,
+            'cpu_threads': cpu_threads,
+            'load_1m': load[0],
+            'load_5m': load[1],
+            'load_15m': load[2],
+            'memory_total_gb': memory['total_gb'],
+            'memory_used_gb': memory['used_gb'],
+            'memory_used_pct': memory['used_pct'],
+            'memory_avail_gb': memory['avail_gb'],
+            'memory_cache_gb': memory['cache_gb'],
+            'swap_used_gb': memory['swap_used_gb'],
+            'swap_total_gb': memory['swap_total_gb'],
+            'memory_pressure': pressure,
+            'pressure_level': pressure_level,
+            'memory_psi_some_avg10': psi_some_avg10,
+            'disk_used': disk_used,
+            'disk_total': disk_total,
+            'disk_pct': disk_pct,
+            'uptime': uptime_str,
+            'cpu_temp': _read_cpu_temp(),
+            'ip': '100.124.71.12 (Tailscale) / 192.168.1.222 (LAN)'
+        }
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+# --- 7. Mac Studio System Status ---
+def _bytes_to_gib(byte_count):
+    """Convert a byte count to GiB, rounded to one decimal place."""
+    return round(byte_count / (1024 ** 3), 1)
+
+
+# How far reported memory may drift from physical RAM before we flag it.
+# Page categories can overlap slightly, so a small reconciliation gap is normal.
+MEMORY_ACCOUNTING_TOLERANCE_GB = 2.0
+
+
+def _format_capacity_gb(capacity_text):
+    """Collapse a `system_profiler` capacity string to whole gigabytes.
+
+    Apple reports decimal GB/TB. Converting from the byte value keeps the
+    result consistent with what macOS displays, e.g. '494 GB'.
+    """
+    bytes_match = re.search(r'\(([\d,]+)\s+bytes\)', capacity_text)
+    if bytes_match:
+        gigabytes = int(bytes_match.group(1).replace(',', '')) / 1_000_000_000
+        return f"{round(gigabytes)} GB"
+
+    size_match = re.search(r'([\d.]+)\s*(TB|GB)', capacity_text, re.IGNORECASE)
+    if size_match:
+        value = float(size_match.group(1))
+        unit = size_match.group(2).upper()
+        gigabytes = value * 1000 if unit == 'TB' else value
+        return f"{round(gigabytes)} GB"
+
+    return capacity_text
+
+
+def _parse_vm_stat(vm_stat_output):
+    """Return (page_size_bytes, {page_label: page_count}) from `vm_stat` output."""
+    page_size = 4096
+    size_match = re.search(r'page size of (\d+) bytes', vm_stat_output)
+    if size_match:
+        page_size = int(size_match.group(1))
+
+    pages = {}
+    for line in vm_stat_output.splitlines():
+        label, separator, value = line.partition(':')
+        if not separator:
+            continue
+        label = label.strip().strip('"')
+        value = value.strip().rstrip('.')
+        if value.isdigit():
+            pages[label] = int(value)
+
+    return page_size, pages
+
+
+def _parse_swap_usage(swap_output):
+    """Return (total_gb, used_gb) from `sysctl vm.swapusage` output."""
+    def to_gb(match):
+        if not match:
+            return 0.0
+        value, unit = float(match.group(1)), match.group(2)
+        return value / 1024 if unit == 'M' else value
+
+    total_match = re.search(r'total = ([\d.]+)([MG])', swap_output)
+    used_match = re.search(r'used = ([\d.]+)([MG])', swap_output)
+    return round(to_gb(total_match), 1), round(to_gb(used_match), 1)
+
+
+def _parse_memory_free_pct(pressure_output):
+    """Return the system-wide free-memory percentage from `memory_pressure`."""
+    match = re.search(r'System-wide memory free percentage:\s*(\d+)%', pressure_output)
+    return int(match.group(1)) if match else None
+
+
+def _pressure_label(free_pct):
+    """Map macOS free-memory percentage to a label and severity level."""
+    if free_pct is None:
+        return 'Unknown', 'unknown'
+    if free_pct >= 40:
+        return f'Normal ({free_pct}% free)', 'ok'
+    if free_pct >= 15:
+        return f'Elevated ({free_pct}% free)', 'warning'
+    return f'Critical ({free_pct}% free)', 'critical'
+
+
+@ttl_cache(60)
+def get_mac_studio_status():
+    try:
+        import subprocess
+        import json
+
+        # One SSH round-trip gathers the static profile and live metrics.
+        combined_command = (
+            "echo '===HARDWARE==='; "
+            "system_profiler SPHardwareDataType SPMemoryDataType SPSoftwareDataType SPStorageDataType 2>/dev/null; "
+            "echo '===LOAD==='; top -l 1 -n 0 2>/dev/null | grep -E 'Load Avg'; "
+            "echo '===VMSTAT==='; vm_stat; "
+            "echo '===MEMSIZE==='; sysctl -n hw.memsize; "
+            "echo '===SWAP==='; sysctl vm.swapusage; "
+            "echo '===PRESSURE==='; memory_pressure 2>/dev/null | tail -20; "
+            "echo '===DF==='; df -h / 2>/dev/null | tail -1"
+        )
+        result = subprocess.run(
+            ['ssh', 'macstudio', combined_command],
+            capture_output=True, text=True, timeout=90
+        )
+
+        if result.returncode != 0:
+            return {'status': 'error', 'message': 'SSH to Mac Studio failed'}
+
+        sections = {name: '' for name in (
+            'HARDWARE', 'LOAD', 'VMSTAT', 'MEMSIZE', 'SWAP', 'PRESSURE', 'DF'
+        )}
+        section_markers = {
+            '===HARDWARE===': 'HARDWARE',
+            '===LOAD===': 'LOAD',
+            '===VMSTAT===': 'VMSTAT',
+            '===MEMSIZE===': 'MEMSIZE',
+            '===SWAP===': 'SWAP',
+            '===PRESSURE===': 'PRESSURE',
+            '===DF===': 'DF',
+        }
+        current_section = None
+        for line in result.stdout.splitlines():
+            marker = section_markers.get(line.strip())
+            if marker:
+                current_section = marker
+                continue
+            if current_section:
+                sections[current_section] += line + '\n'
+
+        output = sections['HARDWARE']
+
+        # Parse basic info (defaults are unknown/N/A; SSH success is required
+        # before these are reported as facts - no fabricated specs)
+        model = 'unknown'
+        chip = 'unknown'
+        ram = 'N/A'
+        os_version = 'unknown'
+        storage = 'N/A'
+        
+        for line in output.split('\n'):
+            if 'Model Name' in line:
+                model = line.split(':')[-1].strip()
+            elif 'Chip' in line:
+                chip = line.split(':')[-1].strip()
+            elif 'Memory' in line and 'GB' in line:
+                ram = line.split(':')[-1].strip()
+            elif 'System Version' in line:
+                os_version = line.split(':')[-1].strip()
+            elif 'Capacity' in line and ('TB' in line or 'GB' in line) and 'Available' not in line and 'File System' not in line:
+                # Get the main APFS drive capacity (first one usually)
+                if 'APFS' in output[max(0, output.find(line)-200):output.find(line)] or storage == 'N/A':
+                    storage = _format_capacity_gb(line.split(':')[-1].strip())
+        
+        load_1m = load_5m = load_15m = 'N/A'
+        for line in sections['LOAD'].splitlines():
+            if 'Load Avg' in line:
+                parts = line.split(':')[-1].strip().split(',')
+                load_1m = parts[0].strip() if len(parts) > 0 else 'N/A'
+                load_5m = parts[1].strip() if len(parts) > 1 else 'N/A'
+                load_15m = parts[2].strip() if len(parts) > 2 else 'N/A'
+
+        # Memory, using Activity Monitor semantics.
+        # Used = App (anonymous) + Wired + Compressed. File-backed pages are
+        # reclaimable cache, not usage; counting them is what produced the
+        # inflated "88% used" reading.
+        page_size, pages = _parse_vm_stat(sections['VMSTAT'])
+
+        def page_bytes(label):
+            return pages.get(label, 0) * page_size
+
+        app_bytes = page_bytes('Anonymous pages')
+        wired_bytes = page_bytes('Pages wired down')
+        compressed_bytes = page_bytes('Pages occupied by compressor')
+        cached_bytes = page_bytes('File-backed pages')
+        free_bytes = page_bytes('Pages free')
+
+        try:
+            total_bytes = int(sections['MEMSIZE'].strip())
+        except ValueError:
+            total_bytes = app_bytes + wired_bytes + compressed_bytes + cached_bytes + free_bytes
+
+        mem_total_gb = _bytes_to_gib(total_bytes)
+        mem_used_gb = _bytes_to_gib(app_bytes + wired_bytes + compressed_bytes)
+        mem_free_gb = _bytes_to_gib(free_bytes)
+        mem_app_gb = _bytes_to_gib(app_bytes)
+        mem_wired_gb = _bytes_to_gib(wired_bytes)
+        mem_compressed_gb = _bytes_to_gib(compressed_bytes)
+        mem_cached_gb = _bytes_to_gib(cached_bytes)
+        used_bytes = app_bytes + wired_bytes + compressed_bytes
+        mem_used_pct = round(used_bytes / total_bytes * 100, 1) if total_bytes else 0.0
+
+        # Sanity check: the page categories should reconcile with physical RAM.
+        # A large delta means the parser or the OS accounting changed under us.
+        accounted_bytes = used_bytes + cached_bytes + free_bytes
+        accounted_gb = _bytes_to_gib(accounted_bytes)
+        delta_gb = (total_bytes - accounted_bytes) / (1024 ** 3)
+        memory_sanity = 'ok' if abs(delta_gb) <= MEMORY_ACCOUNTING_TOLERANCE_GB else 'warn'
+        memory_sanity_message = (
+            f'OK (Δ {delta_gb:+.1f} GB)'
+            if memory_sanity == 'ok'
+            else f'DRIFT: {delta_gb:+.1f} GB vs physical RAM'
+        )
+
+        swap_total_gb, swap_used_gb = _parse_swap_usage(sections['SWAP'])
+        memory_free_pct = _parse_memory_free_pct(sections['PRESSURE'])
+        pressure, pressure_level = _pressure_label(memory_free_pct)
+
+        disk_used = disk_total = disk_pct = 'N/A'
+        for line in sections['DF'].splitlines():
+            if line.startswith('/dev/') or line.startswith('Filesystem'):
+                # df output: "/dev/disk3s1s1   460Gi    12Gi   302Gi     4%    459k  3.2G    0%   /"
+                parts = line.split()
+                if len(parts) >= 5:
+                    disk_total = parts[1]
+                    disk_used = parts[2]
+                    disk_pct = parts[4]
+        
+        return {
+            'status': 'ok',
+            'hostname': 'macstudio',
+            'model': model,
+            'chip': chip,
+            'ram': ram,
+            'os': os_version,
+            'storage': storage,
+            'load_1m': load_1m,
+            'load_5m': load_5m,
+            'load_15m': load_15m,
+            'memory_total_gb': mem_total_gb,
+            'memory_used_gb': mem_used_gb,
+            'memory_free_gb': mem_free_gb,
+            'memory_used_pct': mem_used_pct,
+            'memory_app_gb': mem_app_gb,
+            'memory_wired_gb': mem_wired_gb,
+            'memory_compressed_gb': mem_compressed_gb,
+            'memory_cached_gb': mem_cached_gb,
+            'swap_used_gb': swap_used_gb,
+            'swap_total_gb': swap_total_gb,
+            'memory_free_pct': memory_free_pct,
+            'pressure': pressure,
+            'pressure_level': pressure_level,
+            'memory_accounted_gb': accounted_gb,
+            'memory_delta_gb': round(delta_gb, 1),
+            'memory_sanity': memory_sanity,
+            'memory_sanity_message': memory_sanity_message,
+            'disk_used': disk_used,
+            'disk_total': disk_total,
+            'disk_pct': disk_pct,
+            'ip': '192.168.1.240 (LAN)'
+        }
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
+# --- 7b. Mac Studio Ollama Status ---
+@ttl_cache(120)
+def get_mac_studio_ollama_status():
+    try:
+        import subprocess
+        import json
+        import re
+
+        # One SSH round-trip lists models and reports what is currently loaded.
+        combined_command = (
+            "/Applications/Ollama.app/Contents/Resources/ollama list 2>/dev/null; "
+            "echo '===PS==='; curl -s http://localhost:11434/api/ps 2>/dev/null"
+        )
+        result = subprocess.run(
+            ['ssh', 'macstudio', combined_command],
+            capture_output=True, text=True, timeout=25
+        )
+
+        list_output, _, ps_output = result.stdout.partition('===PS===')
+
+        models = []
+        if result.returncode == 0:
+            lines = list_output.strip().split('\n')
+            for line in lines[1:]:  # Skip header
+                parts = line.split()
+                if len(parts) >= 3:
+                    # Parse: NAME ID SIZE MODIFIED
+                    name = parts[0]
+                    model_id = parts[1]
+                    size_str = ' '.join(parts[2:4]) if len(parts) >= 4 else parts[2]
+                    modified = ' '.join(parts[4:]) if len(parts) > 4 else 'N/A'
+                    
+                    # Parse size to GB
+                    size_gb = 0
+                    if 'GB' in size_str:
+                        m = re.search(r'([\d.]+)\s*GB', size_str)
+                        if m:
+                            size_gb = float(m.group(1))
+                    elif 'MB' in size_str:
+                        m = re.search(r'([\d.]+)\s*MB', size_str)
+                        if m:
+                            size_gb = float(m.group(1)) / 1024
+                    
+                    models.append({
+                        'name': name,
+                        'id': model_id,
+                        'size': size_str,
+                        'size_gb': round(size_gb, 1),
+                        'modified': modified
+                    })
+        
+        running_models = []
+        if ps_output.strip():
+            try:
+                data = json.loads(ps_output)
+                running_models = data.get('models', [])
+            except (json.JSONDecodeError, TypeError, ValueError):
+                pass
+        
+        running = len(running_models) > 0
+        
+        return {
+            'status': 'ok',
+            'ollama_running': running,
+            'models_installed': len(models),
+            'models': [
+                {
+                    'name': m['name'],
+                    'size': m['size'],
+                    'size_gb': m['size_gb'],
+                    'modified': m['modified'],
+                    'running': any(r.get('name', '') == m['name'] for r in running_models)
+                }
+                for m in models
+            ],
+            'running_models': [
+                {
+                    'name': m.get('name', ''),
+                    'size': m.get('size', 0),
+                    'size_gb': round(m.get('size', 0) / (1024**3), 1),
+                }
+                for m in running_models
+            ]
+        }
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
+# --- 8. Camera Snapshots ---
+CAMERA_SNAPSHOTS = {
+    'flir_158': {
+        'status': 'ok',
+        'id': 'flir_158',
+        'name': 'Gun Room (158)',
+        'ip': '192.168.1.158',
+        'snapshot_url': 'http://192.168.1.158/cgi-bin/snapshot.cgi?chn=0',
+    },
+    'flir_163': {
+        'status': 'ok',
+        'id': 'flir_163',
+        'name': 'Office (163)',
+        'ip': '192.168.1.163',
+        'snapshot_url': 'http://192.168.1.163/cgi-bin/snapshot.cgi?chn=0',
+    },
+}
+
+
+def get_camera_snapshot_url(camera_id):
+    """Returns the configured snapshot URL for a known camera ID."""
+    camera = CAMERA_SNAPSHOTS.get(camera_id)
+    return camera['snapshot_url'] if camera else None
+
+
+def get_camera_snapshot_urls():
+    """Returns every configured snapshot URL for request validation."""
+    return {camera['snapshot_url'] for camera in CAMERA_SNAPSHOTS.values()}
+
+
+def get_camera_snapshots():
+    return {'status': 'ok', 'cameras': list(CAMERA_SNAPSHOTS.values())}
+
+
+# --- 9. TrueNAS Server Status ---
+@ttl_cache(60)
+def get_truenas_status():
+    """Fetch TrueNAS system info, pool status, alerts, and running apps."""
+    try:
+        import urllib.request
+        import json
+        import ssl
+        
+        api_key = os.environ.get('TRUENAS_API_KEY', '')
+        truenas_host = os.environ.get('TRUENAS_HOST', '192.168.1.68')
+        
+        if not api_key:
+            return {'status': 'error', 'message': 'TRUENAS_API_KEY not set'}
+        
+        # Disable SSL verification for self-signed certs
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Accept': 'application/json',
+        }
+        
+        base_url = f'https://{truenas_host}/api/v2.0'
+        
+        def fetch_json(endpoint):
+            url = f'{base_url}{endpoint}'
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as response:
+                return json.loads(response.read().decode('utf-8'))
+        
+        # These four API reads are independent, so run them concurrently.
+        endpoints = ('/system/info', '/pool', '/alert/list', '/app')
+        with ThreadPoolExecutor(max_workers=len(endpoints)) as executor:
+            future_by_endpoint = {
+                executor.submit(fetch_json, endpoint): endpoint for endpoint in endpoints
+            }
+            results = {
+                endpoint: future.result()
+                for future, endpoint in future_by_endpoint.items()
+            }
+
+        system_info = results['/system/info']
+        pools = results['/pool']
+        alerts = results['/alert/list']
+        apps = results['/app']
+        
+        # Parse pools - extract key metrics
+        pool_summary = []
+        for pool in pools:
+            pool_summary.append({
+                'name': pool.get('name'),
+                'status': pool.get('status'),
+                'healthy': pool.get('healthy', False),
+                'size_tb': round(pool.get('size', 0) / (1024**4), 2),
+                'allocated_tb': round(pool.get('allocated', 0) / (1024**4), 2),
+                'free_tb': round(pool.get('free', 0) / (1024**4), 2),
+                'pct_used': round((pool.get('allocated', 0) / pool.get('size', 1)) * 100, 1) if pool.get('size', 0) > 0 else 0,
+                'fragmentation': pool.get('fragmentation', '0'),
+            })
+        
+        # Parse alerts - count by level
+        alert_counts = {'CRITICAL': 0, 'WARNING': 0, 'INFO': 0}
+        active_alerts = []
+        for alert in alerts:
+            level = alert.get('level', 'INFO')
+            if level in alert_counts:
+                alert_counts[level] += 1
+            if not alert.get('dismissed', False):
+                active_alerts.append({
+                    'level': level,
+                    'text': alert.get('formatted', alert.get('text', '')),
+                })
+        
+        # Parse apps - running count and key apps
+        running_apps = [a for a in apps if a.get('state') == 'RUNNING']
+        key_apps = ['immich', 'jellyfin', 'tailscale', 'actual-budget']
+        app_status = []
+        for app in apps:
+            if app.get('name') in key_apps:
+                portals = app.get('portals', {})
+                web_url = list(portals.values())[0] if portals else None
+                app_status.append({
+                    'name': app.get('name'),
+                    'state': app.get('state'),
+                    'version': app.get('human_version', app.get('version')),
+                    'url': web_url,
+                })
+        
+        # Memory calculation
+        mem_total_gb = round(system_info.get('physmem', 0) / (1024**3), 1)
+        
+        return {
+            'status': 'ok',
+            'hostname': system_info.get('hostname'),
+            'version': system_info.get('version'),
+            'uptime': system_info.get('uptime'),
+            'uptime_seconds': system_info.get('uptime_seconds'),
+            'cpu_model': system_info.get('model'),
+            'cpu_cores': system_info.get('cores'),
+            'cpu_physical_cores': system_info.get('physical_cores'),
+            'load_avg': system_info.get('loadavg', [0, 0, 0]),
+            'memory_total_gb': mem_total_gb,
+            'pools': pool_summary,
+            'alerts': alert_counts,
+            'active_alerts': active_alerts[:5],  # top 5
+            'apps_running': len(running_apps),
+            'apps_total': len(apps),
+            'key_apps': app_status,
+        }
+    except urllib.error.HTTPError as e:
+        return {'status': 'error', 'message': f'HTTP {e.code}: {e.read().decode()}'}
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
+# --- 10. Stock Watcher ---
+import yfinance as yf
+
+STOCK_SYMBOLS = ('AAPL', 'TSLA', 'NVDA', 'SPY')
+STOCK_CACHE_TTL_SECONDS = 300
+_stock_cache = {'prices': {}, 'cached_at': None}
+
+
+def _stocks_payload(prices, cached_at, refreshed):
+    return {
+        'status': 'ok',
+        'symbols': list(STOCK_SYMBOLS),
+        'stocks': prices,
+        'cached_at': datetime.fromtimestamp(cached_at, tz=timezone.utc).isoformat(),
+        'age_seconds': max(0, int(time.time() - cached_at)),
+        'refreshed': refreshed,
+    }
+
+
+def get_stocks(force=False):
+    """Return prices with cache metadata; force=True bypasses the five-minute TTL."""
+    cached_at = _stock_cache['cached_at']
+    if (
+        not force
+        and _stock_cache['prices']
+        and cached_at is not None
+        and time.time() - cached_at < STOCK_CACHE_TTL_SECONDS
+    ):
+        return _stocks_payload(_stock_cache['prices'], cached_at, False)
+
+    stock_data = {}
+    for symbol in STOCK_SYMBOLS:
+        try:
+            ticker = yf.Ticker(symbol)
+            info = ticker.info
+            hist = ticker.history(period="2d")
+
+            if len(hist) >= 2:
+                current_price = hist['Close'].iloc[-1]
+                previous_price = hist['Close'].iloc[-2]
+                change = ((current_price - previous_price) / previous_price) * 100
+                change_percent = f"{change:.2f}%"
+            else:
+                current_price = info.get('currentPrice', 'N/A')
+                change_percent = 'N/A'
+
+            stock_data[symbol] = {
+                'price': round(current_price, 2) if current_price != 'N/A' else 'N/A',
+                'change_percent': change_percent
+            }
+        except Exception:
+            stock_data[symbol] = {'price': 'N/A', 'change_percent': 'N/A'}
+
+    cached_at = time.time()
+    _stock_cache['prices'] = stock_data
+    _stock_cache['cached_at'] = cached_at
+    return _stocks_payload(stock_data, cached_at, True)
+
+
+# --- Docker containers (clawz840) ---
+DOCKER_NAME_PATTERN = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$')
+DOCKER_SOCKET_URL = 'unix://var/run/docker.sock'
+_docker_client = None
+
+
+def _get_docker_client():
+    """Reuse one Engine API client; import lazily so the dashboard boots without docker-py."""
+    global _docker_client
+    if _docker_client is None:
+        import docker
+        _docker_client = docker.DockerClient(base_url=DOCKER_SOCKET_URL, timeout=20)
+    return _docker_client
+
+
+def _parse_docker_time(value):
+    """Parse Docker's RFC3339 timestamps, including nanosecond fractions."""
+    if not value or value.startswith('0001-01-01'):
+        return None
+    match = re.match(r'^(.*?\d{2}:\d{2}:\d{2})(?:\.(\d+))?(Z|[+-]\d{2}:\d{2})$', value)
+    if not match:
+        return None
+    base, fraction, offset = match.groups()
+    if offset == 'Z':
+        offset = '+00:00'
+    return datetime.fromisoformat(f'{base}.{(fraction or "0")[:6]}{offset}')
+
+
+def _format_running_for(started_at):
+    """Describe uptime the way `docker ps` does, e.g. '2 days'."""
+    if started_at is None:
+        return 'N/A'
+    seconds = max(0, int((datetime.now(timezone.utc) - started_at).total_seconds()))
+    for unit, length in (
+        ('year', 365 * 86400), ('month', 30 * 86400), ('week', 7 * 86400),
+        ('day', 86400), ('hour', 3600), ('minute', 60),
+    ):
+        if seconds >= length:
+            count = seconds // length
+            return f'{count} {unit}{"s" if count != 1 else ""}'
+    return f'{seconds} seconds'
+
+
+def _format_docker_bytes(byte_count):
+    """Format bytes with binary units, e.g. '23.73MiB'."""
+    value = float(byte_count)
+    for unit in ('B', 'KiB', 'MiB', 'GiB', 'TiB'):
+        if value < 1024 or unit == 'TiB':
+            return f'{int(value)}B' if unit == 'B' else f'{value:.2f}{unit}'
+        value /= 1024
+    return f'{value:.2f}TiB'
+
+
+def _docker_health(state, health_status):
+    """Map container state and health check to a display level."""
+    if health_status == 'unhealthy':
+        return 'unhealthy'
+    if state != 'running' or health_status == 'starting':
+        return 'attention'
+    return 'healthy' if state == 'running' else 'unknown'
+
+
+def _docker_ports(ports):
+    """Render NetworkSettings.Ports as human-readable published ports."""
+    rendered = []
+    for port_protocol, bindings in sorted((ports or {}).items()):
+        if not bindings:
+            rendered.append(port_protocol)
+            continue
+        for binding in bindings:
+            host_ip = binding.get('HostIp') or '0.0.0.0'
+            rendered.append(f'{host_ip}:{binding.get("HostPort", "")}->{port_protocol}')
+    return ', '.join(rendered)
+
+
+def _container_statistics(stats):
+    """Derive CPU, memory and PID figures from one Engine stats sample."""
+    cpu_stats = stats.get('cpu_stats') or {}
+    previous = stats.get('precpu_stats') or {}
+    cpu_delta = (
+        cpu_stats.get('cpu_usage', {}).get('total_usage', 0)
+        - previous.get('cpu_usage', {}).get('total_usage', 0)
+    )
+    system_delta = cpu_stats.get('system_cpu_usage', 0) - previous.get('system_cpu_usage', 0)
+    online_cpus = (
+        cpu_stats.get('online_cpus')
+        or len(cpu_stats.get('cpu_usage', {}).get('percpu_usage') or [])
+        or 1
+    )
+    cpu_percent = (cpu_delta / system_delta) * online_cpus * 100 if system_delta > 0 else 0.0
+
+    memory_stats = stats.get('memory_stats') or {}
+    cache = (memory_stats.get('stats') or {}).get('cache', 0)
+    used_memory = max(0, memory_stats.get('usage', 0) - cache)
+    limit = memory_stats.get('limit', 0)
+    memory_percent = (used_memory / limit * 100) if limit else 0.0
+
+    return {
+        'cpu': f'{cpu_percent:.2f}%',
+        'memory': f'{_format_docker_bytes(used_memory)} / {_format_docker_bytes(limit)}' if limit else 'N/A',
+        'memory_pct': f'{memory_percent:.2f}%',
+        'pids': (stats.get('pids_stats') or {}).get('current', 'N/A'),
+    }
+
+
+@ttl_cache(30)
+def get_docker_status():
+    """Return running containers and Docker engine totals via the Engine API."""
+    try:
+        client = _get_docker_client()
+        info = client.info()
+        containers = []
+
+        for container in client.containers.list():
+            attributes = container.attrs
+            state_config = attributes.get('State') or {}
+            state = state_config.get('Status', 'unknown')
+            health_status = (state_config.get('Health') or {}).get('Status')
+            running_for = _format_running_for(_parse_docker_time(state_config.get('StartedAt')))
+            status = f'Up {running_for}' if state == 'running' else state
+            if health_status:
+                status = f'{status} ({health_status})'
+
+            try:
+                tags = container.image.tags if container.image else []
+            except Exception:
+                tags = []
+            try:
+                statistics = _container_statistics(container.stats(stream=False))
+            except Exception:
+                statistics = {'cpu': 'N/A', 'memory': 'N/A', 'memory_pct': 'N/A', 'pids': 'N/A'}
+
+            containers.append({
+                'id': container.id[:12],
+                'name': container.name,
+                'image': tags[0] if tags else attributes.get('Config', {}).get('Image', 'N/A'),
+                'state': state,
+                'status': status,
+                'running_for': running_for,
+                'ports': _docker_ports(attributes.get('NetworkSettings', {}).get('Ports')),
+                'health': _docker_health(state, health_status),
+                **statistics,
+            })
+        containers.sort(key=lambda item: item['name'].lower())
+
+        return {
+            'status': 'ok',
+            'host': 'clawz840',
+            'docker_version': info.get('ServerVersion', 'N/A'),
+            'total': info.get('Containers', len(containers)),
+            'running': info.get('ContainersRunning', len(containers)),
+            'stopped': info.get('ContainersStopped', 0),
+            'paused': info.get('ContainersPaused', 0),
+            'images': info.get('Images', 0),
+            'unhealthy': sum(1 for item in containers if item['health'] == 'unhealthy'),
+            'containers': containers,
+            'updated_at': datetime.now().strftime('%-I:%M:%S %p'),
+        }
+    except Exception as exc:
+        return {'status': 'error', 'message': str(exc)}
+
+
+@ttl_cache(15)
+def get_docker_logs(name, lines=100):
+    """Return recent log lines for one running container via the Engine API."""
+    if not DOCKER_NAME_PATTERN.fullmatch(name or ''):
+        return {'status': 'error', 'message': 'Invalid container name'}
+    try:
+        status = get_docker_status()
+        if status.get('status') != 'ok':
+            return {'status': 'error', 'message': status.get('message', 'Docker unavailable')}
+        if not any(container['name'] == name for container in status['containers']):
+            return {'status': 'error', 'message': 'Container is not running'}
+
+        line_count = max(1, min(int(lines), 500))
+        raw_logs = _get_docker_client().containers.get(name).logs(
+            stdout=True,
+            stderr=True,
+            timestamps=True,
+            tail=line_count,
+        )
+        if isinstance(raw_logs, bytes):
+            raw_logs = raw_logs.decode('utf-8', errors='replace')
+        log_lines = raw_logs.splitlines()
+        return {
+            'status': 'ok',
+            'name': name,
+            'lines': log_lines[-line_count:],
+            'truncated': len(log_lines) > line_count,
+        }
+    except Exception as exc:
+        return {'status': 'error', 'message': str(exc)}

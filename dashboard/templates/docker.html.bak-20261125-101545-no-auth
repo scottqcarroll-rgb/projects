@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Console — Scott's Dashboard</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 1.7rem;
+            background: linear-gradient(90deg, #2496ed, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle { color: #888; font-size: 0.85rem; margin-top: 6px; }
+
+        .header-actions { display: flex; align-items: center; gap: 14px; font-size: 0.85rem; color: #aaa; }
+
+        .header-actions a { color: #00d4ff; text-decoration: none; }
+        .header-actions a:hover { text-decoration: underline; }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .summary-card strong { display: block; font-size: 1.6rem; color: #fff; }
+        .summary-card span { font-size: 0.75rem; color: #888; }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #eee;
+            padding: 9px 12px;
+            font-size: 0.9rem;
+            min-width: 260px;
+        }
+
+        .toolbar input::placeholder { color: #777; }
+        .updated { color: #888; font-size: 0.78rem; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .container-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .container-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .container-head strong { font-size: 1rem; overflow-wrap: anywhere; }
+
+        .badge {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .badge.healthy { background: rgba(0, 184, 148, 0.2); color: #00b894; }
+        .badge.attention { background: rgba(253, 203, 110, 0.2); color: #fdcb6e; }
+        .badge.unhealthy { background: rgba(225, 112, 85, 0.2); color: #e17055; }
+        .badge.unknown { background: rgba(136, 136, 136, 0.2); color: #aaa; }
+
+        .image {
+            font-size: 0.75rem;
+            color: #8892a6;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.82rem;
+            padding: 3px 0;
+        }
+
+        .metric-row span:first-child { color: #888; }
+        .metric-row span:last-child { color: #fff; text-align: right; overflow-wrap: anywhere; }
+
+        .ports {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.72rem;
+            color: #00d4ff;
+            overflow-wrap: anywhere;
+        }
+
+        .logs-btn {
+            margin-top: 12px;
+            background: linear-gradient(135deg, #2496ed, #0b6ba8);
+            border: none;
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .logs-btn:hover { filter: brightness(1.15); }
+
+        .empty { color: #888; font-style: italic; }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 24px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            z-index: 10;
+            padding: 4vh 4vw;
+        }
+
+        .modal.open { display: flex; }
+
+        .modal-panel {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            background: #12172b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .modal-head button {
+            background: none;
+            border: none;
+            color: #eee;
+            font-size: 1.3rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal pre {
+            margin: 0;
+            padding: 16px;
+            max-height: 70vh;
+            overflow: auto;
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: #c8d3e0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .toolbar input { min-width: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🐳 Docker Console</h1>
+            <div class="subtitle">clawz840 · read-only view · signed in as {{ username }}</div>
+        </div>
+        <div class="header-actions">
+            <a href="/">← Dashboard</a>
+            <a href="/docker/logout">Sign out</a>
+        </div>
+    </div>
+
+    <div class="summary" id="summary">
+        <div class="summary-card"><strong>—</strong><span>Containers</span></div>
+    </div>
+
+    <div class="toolbar">
+        <input type="search" id="search" placeholder="Filter by name or image…" aria-label="Filter containers">
+        <div class="updated" id="updated">Loading…</div>
+    </div>
+
+    <div class="grid" id="grid">
+        <div class="empty">Loading containers…</div>
+    </div>
+
+    <div class="footer">Refreshes every 15 seconds · no container actions available from this page</div>
+
+    <div class="modal" id="log-modal" role="dialog" aria-modal="true" aria-label="Container logs">
+        <div class="modal-panel">
+            <div class="modal-head">
+                <span id="log-title">Logs</span>
+                <button type="button" id="log-close" aria-label="Close logs">×</button>
+            </div>
+            <pre id="log-content">Loading…</pre>
+        </div>
+    </div>
+
+    <script>
+        const validHealthClasses = ['healthy', 'attention', 'unhealthy', 'unknown'];
+        let containers = [];
+
+        function escapeHtml(value) {
+            const div = document.createElement('div');
+            div.textContent = String(value ?? '');
+            return div.innerHTML;
+        }
+
+        function healthClass(health) {
+            return validHealthClasses.includes(health) ? health : 'unknown';
+        }
+
+        function renderSummary(data) {
+            document.getElementById('summary').innerHTML = `
+                <div class="summary-card"><strong>${data.running}</strong><span>Running containers</span></div>
+                <div class="summary-card"><strong>${data.images}</strong><span>Images</span></div>
+                <div class="summary-card"><strong>${data.unhealthy}</strong><span>Unhealthy</span></div>
+                <div class="summary-card"><strong>${escapeHtml(data.docker_version)}</strong><span>Docker engine</span></div>
+            `;
+            document.getElementById('updated').textContent = `Updated ${data.updated_at} · ${data.total} total, ${data.stopped} stopped, ${data.paused} paused`;
+        }
+
+        function renderContainers() {
+            const query = document.getElementById('search').value.trim().toLowerCase();
+            const visible = containers.filter(container =>
+                container.name.toLowerCase().includes(query) ||
+                container.image.toLowerCase().includes(query)
+            );
+            const grid = document.getElementById('grid');
+
+            if (!visible.length) {
+                grid.innerHTML = '<div class="empty">No running containers match this filter.</div>';
+                return;
+            }
+
+            grid.innerHTML = visible.map(container => `
+                <div class="container-card">
+                    <div class="container-head">
+                        <span class="badge ${healthClass(container.health)}">${escapeHtml(container.health)}</span>
+                        <strong>${escapeHtml(container.name)}</strong>
+                    </div>
+                    <div class="image">${escapeHtml(container.image)}</div>
+                    <div class="metric-row"><span>Status</span><span>${escapeHtml(container.status)}</span></div>
+                    <div class="metric-row"><span>Uptime</span><span>${escapeHtml(container.running_for)}</span></div>
+                    <div class="metric-row"><span>CPU</span><span>${escapeHtml(container.cpu)}</span></div>
+                    <div class="metric-row"><span>Memory</span><span>${escapeHtml(container.memory)} (${escapeHtml(container.memory_pct)})</span></div>
+                    <div class="metric-row"><span>PIDs</span><span>${escapeHtml(container.pids)}</span></div>
+                    <div class="ports">${container.ports ? escapeHtml(container.ports) : 'No published ports'}</div>
+                    <button type="button" class="logs-btn" data-container-name="${escapeHtml(container.name)}">View logs</button>
+                </div>
+            `).join('');
+        }
+
+        async function refresh() {
+            try {
+                const response = await fetch('/api/docker');
+                if (response.status === 401) {
+                    window.location.href = '/docker/login';
+                    return;
+                }
+                const data = await response.json();
+                if (data.status !== 'ok' || !response.ok) {
+                    document.getElementById('updated').textContent = `Error: ${data.message || 'Unable to load Docker status'}`;
+                    return;
+                }
+                containers = data.containers;
+                renderSummary(data);
+                renderContainers();
+            } catch (error) {
+                document.getElementById('updated').textContent = 'Error loading Docker status';
+            }
+        }
+
+        async function showLogs(name) {
+            const modal = document.getElementById('log-modal');
+            const content = document.getElementById('log-content');
+            document.getElementById('log-title').textContent = `Logs — ${name}`;
+            content.textContent = 'Loading…';
+            modal.classList.add('open');
+
+            try {
+                const response = await fetch(`/api/docker/logs?name=${encodeURIComponent(name)}&lines=200`);
+                const data = await response.json();
+                if (!response.ok || data.status !== 'ok') {
+                    content.textContent = data.message || 'Unable to load logs';
+                    return;
+                }
+                content.textContent = data.lines.join('\n') || '(no log output)';
+            } catch (error) {
+                content.textContent = 'Error loading logs';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('search').addEventListener('input', renderContainers);
+            document.getElementById('grid').addEventListener('click', event => {
+                const button = event.target.closest('.logs-btn');
+                if (button) {
+                    showLogs(button.dataset.containerName);
+                }
+            });
+            document.getElementById('log-close').addEventListener('click', () => {
+                document.getElementById('log-modal').classList.remove('open');
+            });
+            document.getElementById('log-modal').addEventListener('click', event => {
+                if (event.target.id === 'log-modal') {
+                    event.currentTarget.classList.remove('open');
+                }
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    document.getElementById('log-modal').classList.remove('open');
+                }
+            });
+            refresh();
+        });
+
+        setInterval(refresh, 15000);
+    </script>
+</body>
+</html>
